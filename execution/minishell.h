@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 15:27:28 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/16 15:08:49 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/17 15:44:07 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ char				*ft_strdupp(char *str);
 int					ft_strlenn(char *str);
 int					ft_strncmp(const char *s1, const char *s2, size_t n);
 char				*ft_strjoinn(char *s1, char *s2);
+int					ft_atoi(char *str);
+int					is_digit(char *str);
 
 //			Linked lists prototypes			//
 

@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 17:19:46 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/16 15:06:32 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/17 15:56:55 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,4 +89,47 @@ char	*ft_strjoinn(char *s1, char *s2)
 		new[j++] = s2[i++];
 	new[j] = '\0';
 	return (new);
+}
+
+int	ft_atoi(char *str)
+{
+	long long	result;
+	int			sign;
+	int			i;
+
+	i = 0;
+	sign = 1;
+	result = 0;
+	while (str[i] == 32 || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '-')
+	{
+		sign *= -1;
+		i++;
+	}
+	else if (str[i] == '+')
+		i++;
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		result = result * 10 + str[i++] - '0';
+		if (result > 2147483647 && sign == 1)
+			return (-1);
+		if (result < -2147483647 && sign == -1)
+			return (0);
+	}
+	return (result * sign);
+}
+
+int	is_digit(char *str)
+{
+	int i;
+
+	i = 0;
+	if (str[i] == '+' || str[i] == '-')
+		i++;
+	while (str[i] && (str[i] >= '0' && str[i] <= '9'))
+		i++;
+	if (!str[i])
+		return (1);
+	return (0);
 }

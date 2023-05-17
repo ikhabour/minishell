@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/17 00:54:53 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/17 15:58:26 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,11 +69,11 @@ void	execute_echo(t_list *cmd)
 	}
 }
 
-void	execute_env(t_list *env)
+void	execute_env(t_list **env)
 {
 	t_list	*tmp;
 
-	tmp = env;
+	tmp = *env;
 	while (tmp)
 	{
 		printf("%s\n", tmp->content);
@@ -137,7 +137,7 @@ char	*remove_plus(char *string)
 	return (s);
 }
 
-void	execute_export(t_list *cmd, t_list *env)
+void	execute_export(t_list *cmd, t_list **env)
 {
 	t_cmds	*ptr;
 	int		i;
@@ -145,18 +145,18 @@ void	execute_export(t_list *cmd, t_list *env)
 
 	ptr = (t_cmds *)cmd->content;
 	i = 0;
-	tmp = env;
+	tmp = *env;
 	if (append_value(ptr->option[0]))
 	{
 		i = 0;
-		tmp = env;
+		tmp = *env;
 		while (ptr->option[0][i] != '=')
 			i++;
 		while (tmp && ft_strncmp(tmp->content, ptr->option[0], i - 2))
 			tmp = tmp->next;
 		if (!tmp)
 		{
-			ft_lstadd_back(&env, ft_lstnew(remove_plus(ptr->option[0])));
+			ft_lstadd_back(env, ft_lstnew(remove_plus(ptr->option[0])));
 			return ;
 
 		}
@@ -165,39 +165,77 @@ void	execute_export(t_list *cmd, t_list *env)
 	else if (change_value(ptr->option[0]))
 	{
 		i = 0;
-		tmp = env;
+		tmp = *env;
 		while (ptr->option[0][i] != '=')
 			i++;
 		while (tmp && ft_strncmp(tmp->content, ptr->option[0], i))
 			tmp = tmp->next;
 		if (!tmp)
 		{
-			ft_lstadd_back(&env, ft_lstnew(ptr->option[0]));
+			ft_lstadd_back(env, ft_lstnew(ptr->option[0]));
 			return ;
 		}
 		tmp->content = ptr->option[0];
 	}
 }
 
-void	execute_unset(t_list *cmd, t_list *env)
+void	execute_unset(t_list *cmd, t_list **env)
 {
 	t_list *curr;
 	t_list *prev;
 	t_cmds *ptr;
 
-	curr = env;
-	prev = NULL
+	curr = *env;
+	prev = NULL;
 	ptr = (t_cmds *)cmd->content;
-	while (curr && ft_strcmp(curr->content, ptr->option[0]))
+
+	if (curr && !ft_strncmp(curr->content, ptr->option[0], ft_strlenn(ptr->option[0])))
+	{
+		*env = curr->next;
+		free(curr);
+		return ;
+	}
+
+	while (curr && ft_strncmp(curr->content, ptr->option[0], ft_strlenn(ptr->option[0])))
 	{
 		prev = curr;
 		curr = curr->next;
 	}
-	
-	
+
+	if (curr == NULL)
+		return ;
+	prev->next = curr->next;
+	free (curr);
 }
 
-void	execute_builtins(t_list *cmd, t_list *env)
+void	execute_exit(t_list *cmd)
+{
+	t_cmds *ptr;
+	int exit_status;
+
+	ptr = (t_cmds *)cmd->content;
+	if (!is_digit(ptr->option[0]))
+	{
+		printf("exit: %s: numeric argument required\n", ptr->option[0]);
+		exit(255);
+	}
+	exit_status = ft_atoi(ptr->option[0]);
+	if (exit_status < 0)
+	{
+		exit_status += 255;
+		exit(exit_status);
+	}
+	else if (exit_status > 255)
+	{
+		exit_status -= 256;
+		exit(exit_status);
+	}
+	else
+		exit(exit_status);
+
+}
+
+void	execute_builtins(t_list *cmd, t_list **env)
 {
 	t_cmds	*tmp;
 
@@ -217,7 +255,10 @@ void	execute_builtins(t_list *cmd, t_list *env)
 		execute_export(cmd, env);
 	else if (!ft_strcmp(tmp->cmd_name, "unset"))
 		execute_unset(cmd, env);
-	// execute_env(env);
+	else if (!ft_strcmp(tmp->cmd_name, "exit"))
+		execute_exit(cmd);
+	execute_env(env);
+	system("leaks a.out");
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -236,6 +277,5 @@ int	main(int argc, char **argv, char **envp)
 	var.files.type = NULL;
 	head = ft_lstnew(&var);
 
-	execute_builtins(head, env);
-	// system("leaks a.out");
+	execute_builtins(head, &env);
 }
