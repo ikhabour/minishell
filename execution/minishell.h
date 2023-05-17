@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 15:27:28 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/17 15:44:07 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/17 20:51:14 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define MINISHELL_H
 
 # include <fcntl.h>
+# include <readline/history.h>
+# include <readline/readline.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
@@ -54,6 +56,7 @@ int					ft_strncmp(const char *s1, const char *s2, size_t n);
 char				*ft_strjoinn(char *s1, char *s2);
 int					ft_atoi(char *str);
 int					is_digit(char *str);
+char				**ft_split(const char *s, char c);
 
 //			Linked lists prototypes			//
 
@@ -62,5 +65,10 @@ int					ft_lstsize(t_list *lst);
 t_list				*ft_lstlast(t_list *lst);
 void				ft_lstadd_front(t_list **lst, t_list *new);
 void				ft_lstadd_back(t_list **lst, t_list *new);
+
+//				Temporary				//
+
+char				**dup_2d(char **str);
+int					count_2d_len(char **str);
 
 #endif

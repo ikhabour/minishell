@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 17:19:46 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/17 15:56:55 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/17 20:51:49 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,4 +132,36 @@ int	is_digit(char *str)
 	if (!str[i])
 		return (1);
 	return (0);
+}
+
+
+int	count_2d_len(char **str)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
+char	**dup_2d(char **str)
+{
+	char **dupp;
+	int		len;
+	int		i;
+
+	len = count_2d_len(str);
+	i = 0;
+	dupp = malloc(sizeof(char *) *(len + 1));
+	if (!dupp)
+		return (NULL);
+	while (str[i])
+	{
+		dupp[i] = ft_strdupp(str[i]);
+		i++;
+	}
+	dupp[i] = NULL;
+	return (dupp);
+	
 }
