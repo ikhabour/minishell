@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/18 17:00:14 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/18 20:39:39 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,27 +263,33 @@ void	execute_unset(t_list *cmd, t_list **env)
 	t_list	*curr;
 	t_list	*prev;
 	t_cmds	*ptr;
+	int i;
 
-	curr = *env;
-	prev = NULL;
 	ptr = (t_cmds *)cmd->content;
-	if (curr && !ft_strncmp(curr->content, ptr->option[0],
-			ft_strlenn(ptr->option[0])))
+	i = 0;
+	while (ptr->option[i])
 	{
-		*env = curr->next;
+		curr = *env;
+		prev = NULL;
+		if (curr && !ft_strncmp(curr->content, ptr->option[i],
+				ft_strlenn(ptr->option[i])))
+		{
+			*env = curr->next;
+			free(curr);
+			return ;
+		}
+		while (curr && ft_strncmp(curr->content, ptr->option[i],
+				ft_strlenn(ptr->option[i])))
+		{
+			prev = curr;
+			curr = curr->next;
+		}
+		if (curr == NULL)
+			return ;
+		prev->next = curr->next;
 		free(curr);
-		return ;
+		i++;
 	}
-	while (curr && ft_strncmp(curr->content, ptr->option[0],
-			ft_strlenn(ptr->option[0])))
-	{
-		prev = curr;
-		curr = curr->next;
-	}
-	if (curr == NULL)
-		return ;
-	prev->next = curr->next;
-	free(curr);
 }
 
 void	execute_exit(t_list *cmd)
@@ -375,7 +381,7 @@ int	main(int argc, char **argv, char **envp)
 	env = make_env(envp);
 	while (1)
 	{
-		s = readline("minishell>");
+		s = readline("minishell> ");
 		if (!s || !s[0])
 			break ;
 		split = ft_split(s, ' ');
@@ -388,7 +394,6 @@ int	main(int argc, char **argv, char **envp)
 		i = 0;
 		while (split[i])
 		{
-			// printf("split : %s\n", split[i]);
 			free(split[i]);
 			i++;
 		}
