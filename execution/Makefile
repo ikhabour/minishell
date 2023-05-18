@@ -11,7 +11,7 @@ OBJECTS = $(SRCS:.c=.o)
 all : $(NAME)
 
 $(NAME) : $(OBJECTS)
-	$(CC) $(CFLAGS) $(SRCS) -lreadline -o $(NAME) 
+	$(CC) $(CFLAGS) $(SRCS) -lreadline -o $(NAME)
 
 clean :
 	rm -rf $(OBJECTS)
