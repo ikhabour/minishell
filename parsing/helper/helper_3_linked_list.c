@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   helper_3_linked_list.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 01:38:21 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/17 16:42:31 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/20 16:01:34 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../minishell.h"
 
 t_env	*ft_lstnew(char *name, char *value, t_env *new)
 {

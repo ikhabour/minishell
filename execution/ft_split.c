@@ -6,11 +6,11 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 17:53:10 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/17 17:53:33 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/20 16:04:14 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 static	int	ft_len(const char *s, char c)
 {
@@ -82,7 +82,7 @@ static	void	ft_free(char **str, int j)
 	return ;
 }
 
-char	**ft_split(const char *s, char c)
+char	**ft_splitt(const char *s, char c)
 {
 	int		i;
 	int		j;

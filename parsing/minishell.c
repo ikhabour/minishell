@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/17 16:55:32 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/20 18:15:14 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 int	get_length(char *input)
 {
@@ -105,7 +105,6 @@ int	*array_tokens(char **cmd_array, int elements)
 	int	*cmd_token;
 	int	i;
 
-	// printf("this is the elements : %d\n", elements);
 	cmd_token = ft_calloc(sizeof (int) , elements + 1);
 	if (!cmd_token)
 		return (NULL);
@@ -114,6 +113,8 @@ int	*array_tokens(char **cmd_array, int elements)
 	{
 		if (ft_strcmp(cmd_array[i], "|") == 0)
 			cmd_token[i] = PIPE;
+		else if (cmd_array[i + 1] && (ft_strcmp(cmd_array[i], "<>") == 0))
+			cmd_token[i] = R_IN_OUT;
 		else if (ft_strcmp(cmd_array[i], "<") == 0)
 			cmd_token[i] = R_IN_SIG;
 		else if (ft_strcmp(cmd_array[i], ">") == 0)
@@ -142,17 +143,47 @@ int	*array_tokens(char **cmd_array, int elements)
 	return (cmd_token);
 }
 
-void	get_input(char *input, char **env)
+int	is_space(char *str)
+{
+	int i = 0;
+	while (str[i] == ' ' || str[i] == '\t')
+		i++;
+	if (!str[i])
+		return (1);
+	return (0);
+}
+
+void	free_2d(char **array)
+{
+	int i = 0;
+	while (array[i])
+		free(array[i++]);
+	free(array);
+}
+
+void	get_input(char *input, char **envp, t_list **env)
 {
 	int		len;
 	char	**cmd_array;
-	t_list	**commands;
+	t_list	*commands;
+	char	*history;
 	int		*arr;
+	(void) envp;
 	(void) env;
 
-	input = readline("Minishell: ");
-	if (ft_strcmp(input, "") == 0)
+	input = readline("Minishell$ ");
+	history = input;
+	if (!input || ft_strcmp(input, "") == 0)
+	{
+		free(input);
 		return ;
+	}
+	if (is_space(input))
+	{
+		add_history(input);
+		free(input);
+		return ;
+	}
 	len = get_length(input);
 	// printf("len is : %d\n", len);
 	check_line(input);
@@ -162,27 +193,39 @@ void	get_input(char *input, char **env)
 	cmd_array = ft_split(input, ' ');
 	// split_print(cmd_array);
 	arr = array_tokens(cmd_array, num_elemnts(cmd_array));
-	op_order(arr);
+	if (op_order(arr))
+	{
+		free(input);
+		free_2d(cmd_array);
+		return ;
+	}
 	cmd_array = quote_delete(cmd_array);
-	// expander(cmd_array, env);
-	// split_print(cmd_array);
-	// printf("======================\n");
-	// array_printer(arr);
 	commands = list_cmds(cmd_array, arr);
-	add_history(input);
+	// print_list(commands);
+	add_history(history);
+	if (execute_builtins(commands, env))
+	{
+		free(input);
+		free_2d(cmd_array);
+		return ;
+	}
+	execute_commands(commands, env, cmd_array);
+	free_2d(cmd_array);
 	free (input);
 }
 
-int main (int ac, char **av, char **env)
+int main (int ac, char **av, char **envp)
 {
 	
 	char    input;
+	t_list *env;
 	(void)  ac;
 	(void)  av;
-	// (void)  env;
+	// (void)  envp;
+	env = make_env(envp);
 	while (1)
 	{
-		get_input(&input, env);
+		get_input(&input, envp, &env);
 	}
-	get_env(env);
+	get_env(envp);
 }

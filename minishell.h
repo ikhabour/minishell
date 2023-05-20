@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/18 15:44:52 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/20 17:39:36 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,14 @@
 # include <fcntl.h>
 # include <sys/stat.h>
 
+
+typedef	struct s_vars
+{
+	int i;
+	int j;
+	int n;
+}	t_bvars;
+
 typedef struct t_env
 {
 	char			*env_name;
@@ -31,7 +39,7 @@ typedef struct t_env
 
 typedef struct s_filetype
 {
-	int				fd;
+	// int				fd;
 	char			*red;
     char            *type;
     char            *file_name;
@@ -64,6 +72,7 @@ typedef enum t_enum
 	HEREDOC_SIG,
 	HEREDOC_LIM,
 	EMPTY,
+	R_IN_OUT,
 } t_enum;
 
 char	*ft_strchr(const char *s, int c);
@@ -91,14 +100,56 @@ int 	check_line(char *input);
 char	*skip_spaces(char *input);
 int		check_quotes(char *input);
 int		check_outside(int count);
-void	op_order(int *token);
+int		op_order(int *token);
 int		is_outside(int flag, char c);
 char	**quote_delete(char **cmd);
 void	expander(char **cmd, char **env);
 int		ft_envcmp(char *s1, char *s2, int length);
-t_list	**list_cmds(char **cmd_array, int *arr);
+// t_list	**list_cmds(char **cmd_array, int *arr);
 t_list	*my_lstnew(void *content);
 void	my_lstadd_back(t_list **lst, t_list *new);
 void	split_print(char **input);
+void	print_list(t_list *list);
+t_list	*list_cmds(char **cmd_array, int *arr);
+
+
+
+
+//	################		execution prototypes 		##################	//
+
+
+
+
+//			String functions prototypes			//
+
+int					ft_strcmpp(char *s1, char *s2);
+char				*ft_strdupp(char *str);
+int					ft_strlenn(char *str);
+int					ft_strncmpp(const char *s1, const char *s2, size_t n);
+char				*ft_strjoinn(char *s1, char *s2);
+int					ft_atoi(char *str);
+int					is_digit(char *str);
+char				**ft_splitt(const char *s, char c);
+
+//			Linked lists prototypes			//
+
+t_list				*ft_lstneww(void *content);
+int					ft_lstsize(t_list *lst);
+t_list				*ft_lstlast(t_list *lst);
+void				ft_lstadd_front(t_list **lst, t_list *new);
+void				ft_lstadd_backk(t_list **lst, t_list *new);
+
+//				Temporary				//
+
+char				**dup_2d(char **str);
+int					count_2d_len(char **str);
+
+//				Minishell				//
+
+t_list	*make_env(char **envp);
+int	execute_builtins(t_list *cmd, t_list **env);
+void	execute_commands(t_list *cmd, t_list **env, char **args);
+
+
 
 #endif

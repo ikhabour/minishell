@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   list_commands.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/18 17:46:44 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/20 16:02:01 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 void	split_print(char **input)
 {
@@ -19,7 +19,7 @@ void	split_print(char **input)
 	i = 0;
 	while (input[i])
 	{
-		printf("the option is : %s\n", input[i]);
+		printf("the array contain this : %s\n", input[i]);
 		i++;
 	}
 }
@@ -30,6 +30,7 @@ void	print_list(t_list *list)
 
     while (tmp)
     {
+	printf("==================\n");
     	t_cmds *node = (t_cmds *)tmp->content;
 		// split_print(node->option);
 		printf("The type is : %s\n", node->files.type);
@@ -39,13 +40,12 @@ void	print_list(t_list *list)
 		// if (node->files.fd < 0)
 		// 		printf("Can not create fd.\n");
 		// else
-			printf("the fd is: %d\n", node->files.fd);
+			// printf("the fd is: %d\n", node->files.fd);
 		
 		for(int i = 0;(node->option) && (node->option)[i] ; i++)
 		{
 			printf("The option is : %s\n", (node->option)[i]);
 		}
-		printf("==================\n");
         tmp = tmp->next;
     }
 }
@@ -55,6 +55,7 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 	int	count;
 	int	j;
 	int	index = 0;
+	int	start;
 
 	t_cmds	*node;
 	count = 0;
@@ -80,6 +81,7 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 				if (arr[i] != CMD_ARG)
 				{
 					i++;
+					start = i;
 					break ;
 				}
 			}
@@ -89,12 +91,14 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 				node->option[count] = NULL;
 				while (index < count)
 				{
-					node->option[index] = ft_strdup(cmd_array[j]);
+					node->option[index] = ft_strdup(cmd_array[start]);
 					index++;
-					j--;
+					start++;
 				}
 			}
 		}
+		else if (arr[i] == R_IN_OUT)
+			node->files.red = ft_strdup(cmd_array[i]);
 		else if (arr[i] == R_IN_SIG)
 			node->files.red = ft_strdup(cmd_array[i]);
 		else if (arr[i] == R_OUT_SIG)
@@ -103,7 +107,7 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 		{
 			node->files.type = ft_strdup("Output");
 			node->files.file_name = ft_strdup(cmd_array[i]);
-			node->files.fd = open(node->files.file_name, O_CREAT, O_RDWR);
+			// node->files.fd = open(node->files.file_name, O_CREAT, O_RDWR);
 		}
 		else if (arr[i] == R_APP_SIG)
 			node->files.red = ft_strdup(cmd_array[i]);
@@ -111,13 +115,13 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 		{
 			node->files.type = ft_strdup("APP_file");
 			node->files.file_name = ft_strdup(cmd_array[i]);
-			node->files.fd = open(node->files.file_name, O_CREAT, O_RDWR);
+			// node->files.fd = open(node->files.file_name, O_CREAT, O_RDWR);
 		}
 		else if (arr[i] == R_IN_FILE)
 		{
 			node->files.type = ft_strdup("Input");
 			node->files.file_name = ft_strdup(cmd_array[i]);
-			node->files.fd = open(node->files.file_name, O_CREAT, O_RDONLY);
+			// node->files.fd = open(node->files.file_name, O_CREAT, O_RDONLY);
 		}
 		else if (arr[i] == HEREDOC_SIG)
 			node->files.red = ft_strdup(cmd_array[i]);
@@ -125,14 +129,14 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 		{
 			node->files.type = ft_strdup("HEREDOC_file");
 			node->files.file_name = ft_strdup(cmd_array[i]);
-			node->files.fd = open(node->files.file_name, O_CREAT, O_RDWR);
-
-		}		i--;
+			// node->files.fd = open(node->files.file_name, O_CREAT, O_RDWR);
+		}		
+		i--;
 	}
 	return (node);
 }
 
-t_list	**list_cmds(char **cmd_array, int *arr)
+t_list	*list_cmds(char **cmd_array, int *arr)
 {
 	int		i;
 	t_list *list = NULL;
@@ -146,16 +150,16 @@ t_list	**list_cmds(char **cmd_array, int *arr)
 		{
 			node = fill_node(cmd_array, arr, (i - 1));
 			my_lstadd_back(&list, my_lstnew(node));
-			node = NULL;
+			// node = NULL;
 		}
 		i++;
 		if (arr[i] == '\0')
 		{
 			node = fill_node(cmd_array, arr, (i - 1));
 			my_lstadd_back(&list, my_lstnew(node));
-			node = NULL;
+			// node = NULL;
 		}
 	}
 	// print_list(list);
-	return (NULL);
+	return (list);
 }

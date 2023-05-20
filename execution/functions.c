@@ -6,11 +6,11 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 17:19:46 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/17 20:51:49 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/20 16:04:21 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 int	ft_strlenn(char *str)
 {
@@ -22,7 +22,7 @@ int	ft_strlenn(char *str)
 	return (i);
 }
 
-int	ft_strcmp(char *s1, char *s2)
+int	ft_strcmpp(char *s1, char *s2)
 {
 	int	i;
 
@@ -50,7 +50,7 @@ char	*ft_strdupp(char *str)
 	return (string);
 }
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+int	ft_strncmpp(const char *s1, const char *s2, size_t n)
 {
 	size_t	i;
 

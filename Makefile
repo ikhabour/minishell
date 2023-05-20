@@ -3,22 +3,24 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+         #
+#    By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/12 21:30:08 by bhazzout          #+#    #+#              #
-#    Updated: 2023/05/14 14:46:43 by bhazzout         ###   ########.fr        #
+#    Updated: 2023/05/20 17:58:05 by ikhabour         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	minishell
 
-CFLAGS	=	-Wall -Wextra -Werror -fsanitize=address -g3
+CFLAGS	=	-Wall -Wextra -Werror #-fsanitize=address -g3
 
 RM		=	rm -rf
 
-SOURCES	=	minishell.c env_processor.c helper/helper_1.c helper/helper_2.c helper/helper_3_linked_list.c \
-			line_processor.c split.c checker/check_pipe.c checker/op_checker.c checker/special_char_check.c \
-			checker/quotes_check.c checker/order_checker.c quote_deleter.c expander.c list_commands.c\
+SOURCES	=	parsing/minishell.c parsing/env_processor.c parsing/helper/helper_1.c parsing/helper/helper_2.c parsing/helper/helper_3_linked_list.c \
+			parsing/line_processor.c parsing/split.c parsing/checker/check_pipe.c parsing/checker/op_checker.c parsing/checker/special_char_check.c \
+			parsing/checker/quotes_check.c parsing/checker/order_checker.c parsing/quote_deleter.c parsing/expander.c parsing/list_commands.c\
+			execution/builtins.c execution/ft_split.c execution/functions.c execution/linked_list_utils.c execution/commands.c\
+			
 
 OBJECTS	=	$(SOURCES:.c=.o)
 

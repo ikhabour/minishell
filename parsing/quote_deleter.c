@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   quote_deleter.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/30 10:38:19 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/05 14:09:53 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/20 16:02:01 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 int	sub_lenght(char *str, int i, char c)
 {

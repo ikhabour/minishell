@@ -6,11 +6,11 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/18 20:39:39 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/20 17:58:55 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 int	check_echo_option(char *str, t_bvars *var)
 {
@@ -43,6 +43,11 @@ void	execute_echo(t_list *cmd)
 	var.j = 0;
 	tmp = (t_cmds *)cmd->content;
 	var.i = 0;
+	if (!tmp->option)
+	{
+		printf(" \n");
+		return ;
+	}
 	while (tmp->option[var.j] && !check_echo_option(tmp->option[var.j], &var))
 		var.j++;
 	if (var.n)
@@ -79,7 +84,7 @@ t_list	*make_env(char **envp)
 	env = NULL;
 	i = 0;
 	while (envp[i])
-		ft_lstadd_back(&env, ft_lstnew(envp[i++]));
+		ft_lstadd_backk(&env, ft_lstneww(envp[i++]));
 	return (env);
 }
 
@@ -102,17 +107,17 @@ void	execute_env(t_list **env, t_list *cmd)
 
 	tmp = *env;
 	ptr = (t_cmds *)cmd->content;
-	if (ptr->option[0])
+	if (!ptr->option)
 	{
-		printf("env: %s: No such file or directory\n", ptr->option[0]);
-		exit(127);
+		while (tmp)
+		{
+			if (change_value(tmp->content))
+				printf("%s\n", tmp->content);
+			tmp = tmp->next;
+		}
+		return ;
 	}
-	while (tmp)
-	{
-		if (change_value(tmp->content))
-			printf("%s\n", tmp->content);
-		tmp = tmp->next;
-	}
+	printf("env: %s: No such file or directory\n", ptr->option[0]);
 }
 
 int	append_value(char *argument)
@@ -198,8 +203,11 @@ void	execute_export(t_list *cmd, t_list **env)
 	var.j = 0;
 	var.n = 0;
 	tmp = *env;
-	if (!ptr->option[0])
+	if (!ptr->option)
+	{
 		print_export(env);
+		return ;
+	}
 	while (ptr->option[var.j])
 	{
 		if (append_value(ptr->option[var.j]))
@@ -208,23 +216,23 @@ void	execute_export(t_list *cmd, t_list **env)
 			tmp = *env;
 			while (ptr->option[var.j][var.i] != '=')
 				var.i++;
-			while (tmp && ft_strncmp(tmp->content, ptr->option[var.j], var.i - 1))
+			while (tmp && ft_strncmpp(tmp->content, ptr->option[var.j], var.i - 1))
 				tmp = tmp->next;
 			if (!tmp)
 			{
-				ft_lstadd_back(env, ft_lstnew(remove_plus(ptr->option[var.j])));
+				ft_lstadd_backk(env, ft_lstneww(remove_plus(ptr->option[var.j])));
 				continue ;
 			}
 			if (!change_value(tmp->content))
 			{
-				temp = ft_strjoinn(tmp->content, ptr->option[var.j] + (var.i));
-				tmp->content = ft_strdupp(temp);
+				temp = tmp->content;
+				tmp->content = ft_strjoinn(temp, ptr->option[var.j] + (var.i));
 				free(temp);
 			}
 			else
 			{
-				temp = ft_strjoinn(tmp->content, ptr->option[var.j] + (var.i + 1));
-				tmp->content = ft_strdupp(temp);
+				temp = tmp->content;
+				tmp->content = ft_strjoinn(temp, ptr->option[var.j] + (var.i + 1));
 				free(temp);
 			}
 		}
@@ -234,11 +242,11 @@ void	execute_export(t_list *cmd, t_list **env)
 			tmp = *env;
 			while (ptr->option[var.j][var.i] != '=')
 				var.i++;
-			while (tmp && ft_strncmp(tmp->content, ptr->option[var.j], var.i))
+			while (tmp && ft_strncmpp(tmp->content, ptr->option[var.j], var.i))
 				tmp = tmp->next;
 			if (!tmp)
 			{
-				ft_lstadd_back(env, ft_lstnew(ptr->option[var.j]));
+				ft_lstadd_backk(env, ft_lstneww(ptr->option[var.j]));
 				continue ;
 			}
 			tmp->content = ptr->option[var.j];
@@ -249,10 +257,10 @@ void	execute_export(t_list *cmd, t_list **env)
 			while (ptr->option[var.j][var.i])
 				var.i++;
 			tmp = *env;
-			while (tmp && ft_strncmp(tmp->content, ptr->option[var.j], var.i))
+			while (tmp && ft_strncmpp(tmp->content, ptr->option[var.j], var.i))
 				tmp = tmp->next;
 			if (!tmp)
-				ft_lstadd_back(env, ft_lstnew(ptr->option[var.j]));
+				ft_lstadd_backk(env, ft_lstneww(ptr->option[var.j]));
 		}
 		var.j++;
 	}
@@ -267,18 +275,23 @@ void	execute_unset(t_list *cmd, t_list **env)
 
 	ptr = (t_cmds *)cmd->content;
 	i = 0;
+	if (!ptr->option)
+	{
+		printf("unset: not enough argumenets\n");
+		return ;
+	}
 	while (ptr->option[i])
 	{
 		curr = *env;
 		prev = NULL;
-		if (curr && !ft_strncmp(curr->content, ptr->option[i],
+		if (curr && !ft_strncmpp(curr->content, ptr->option[i],
 				ft_strlenn(ptr->option[i])))
 		{
 			*env = curr->next;
 			free(curr);
 			return ;
 		}
-		while (curr && ft_strncmp(curr->content, ptr->option[i],
+		while (curr && ft_strncmpp(curr->content, ptr->option[i],
 				ft_strlenn(ptr->option[i])))
 		{
 			prev = curr;
@@ -298,7 +311,7 @@ void	execute_exit(t_list *cmd)
 	int		exit_status;
 
 	ptr = (t_cmds *)cmd->content;
-	if (!ptr->option[0])
+	if (!ptr->option)
 		exit(0);
 	if (!is_digit(ptr->option[0]))
 	{
@@ -327,9 +340,9 @@ void	execute_cd(t_list *cmd, t_list **env)
 
 	ptr = (t_cmds *)cmd->content;
 	tmp = *env;
-	if (!ptr->option[0])
+	if (!ptr->option)
 	{
-		while (tmp->content && ft_strncmp(tmp->content, "HOME=", 5))
+		while (tmp->content && ft_strncmpp(tmp->content, "HOME=", 5))
 			tmp = tmp->next;
 		chdir(tmp->content + 5);
 	}
@@ -341,63 +354,46 @@ void	execute_cd(t_list *cmd, t_list **env)
 
 }
 
-void	execute_builtins(t_list *cmd, t_list **env)
+int	execute_builtins(t_list *cmd, t_list **env)
 {
 	t_cmds	*tmp;
 
 	tmp = (t_cmds *)cmd->content;
-	if (!ft_strcmp(tmp->cmd_name, "pwd"))
+	if (!ft_strcmpp(tmp->cmd_name, "pwd"))
 	{
 		tmp->cmd_name = getcwd(NULL, 0);
 		printf("%s\n", tmp->cmd_name);
+		return (1);
 	}
-	else if (!ft_strcmp(tmp->cmd_name, "echo"))
-		execute_echo(cmd);
-	else if (!ft_strcmp(tmp->cmd_name, "cd"))
-		execute_cd(cmd, env);
-	else if (!ft_strcmp(tmp->cmd_name, "env"))
-		execute_env(env, cmd);
-	else if (!ft_strcmp(tmp->cmd_name, "export"))
-		execute_export(cmd, env);
-	else if (!ft_strcmp(tmp->cmd_name, "unset"))
-		execute_unset(cmd, env);
-	else if (!ft_strcmp(tmp->cmd_name, "exit"))
-		execute_exit(cmd);
-	// execute_env(env);
-	// system("leaks minishell");
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	(void)argc;
-	(void)argv;
-	t_list *head;
-	t_cmds var;
-	t_list *env;
-	char *s;
-	char **split;
-	int i;
-
-	env = make_env(envp);
-	while (1)
+	else if (!ft_strcmpp(tmp->cmd_name, "echo"))
 	{
-		s = readline("minishell> ");
-		if (!s || !s[0])
-			break ;
-		split = ft_split(s, ' ');
-		var.cmd_name = ft_strdupp(split[0]);
-		var.option = dup_2d(split + 1);
-		var.files.file_name = NULL;
-		var.files.type = NULL;
-		head = ft_lstnew(&var);
-		execute_builtins(head, &env);
-		i = 0;
-		while (split[i])
-		{
-			free(split[i]);
-			i++;
-		}
-		free(split);
-		free(s);
+		execute_echo(cmd);
+		return (1);
 	}
+	else if (!ft_strcmpp(tmp->cmd_name, "cd"))
+	{
+		execute_cd(cmd, env);
+		return (1);
+	}
+	else if (!ft_strcmpp(tmp->cmd_name, "env"))
+	{
+		execute_env(env, cmd);
+		return (1);
+	}
+	else if (!ft_strcmpp(tmp->cmd_name, "export"))
+	{
+		execute_export(cmd, env);
+		return (1);
+	}
+	else if (!ft_strcmpp(tmp->cmd_name, "unset"))
+	{
+		execute_unset(cmd, env);
+		return (1);
+	}
+	else if (!ft_strcmpp(tmp->cmd_name, "exit"))
+	{
+		execute_exit(cmd);
+		return (1);
+	}
+	return (0);
 }

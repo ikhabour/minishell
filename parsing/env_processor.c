@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   env_processor.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 23:53:47 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/05 18:18:09 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/20 16:02:01 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 char	*get_env_name(char *env)
 {

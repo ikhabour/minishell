@@ -6,13 +6,13 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 17:14:44 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/04/13 20:11:45 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/20 16:05:09 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
-t_list	*ft_lstnew(void	*content)
+t_list	*ft_lstneww(void	*content)
 {
 	t_list	*first;
 
@@ -56,7 +56,7 @@ void	ft_lstadd_front(t_list **lst, t_list *new)
 	*lst = new;
 }
 
-void	ft_lstadd_back(t_list **lst, t_list *new)
+void	ft_lstadd_backk(t_list **lst, t_list *new)
 {
 	t_list	*newlst;
 

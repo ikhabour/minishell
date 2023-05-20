@@ -3,26 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   special_char_check.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 09:17:40 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/04/27 10:17:38 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/20 16:01:34 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../minishell.h"
 
 int check_line(char *input)
 {
+	int	i;
+	int	flag;
+
+	i = 0;
+	flag = 0;
 	input = skip_spaces(input);
-	if (ft_strchr(input, '\\') || ft_strchr(input, ';') || ft_strchr(input, '&')) //special characters
+	// printf("this is the input : %s\n", input);
+	while (input[i])
 	{
-		printf("Error, special character.\n");
-		return (1);
+		if (input[i] == '\'' || input[i] == '"')
+			flag = is_outside(flag, input[i]);
+		if ((input[i] == ';' || input[i] == '\\' || input[i] == '&') && flag == 0)
+		{
+			write(2, "Syntax error, unexpected token.\n", 32);
+			return (1);
+		}
+		i++;
 	}
 	if (check_quotes(input))// check if the command line contains an unclosed quote
 	{
-		// printf("Error, unclosed quote.\n");
 		return (1);
 	}
 	if (check_pipe(input))

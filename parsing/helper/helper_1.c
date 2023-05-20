@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   helper_1.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 23:56:49 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/04/27 10:27:34 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/20 16:01:34 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../minishell.h"
 
 int	ft_strlen(const char *str)
 {
