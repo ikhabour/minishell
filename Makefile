@@ -6,13 +6,13 @@
 #    By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/12 21:30:08 by bhazzout          #+#    #+#              #
-#    Updated: 2023/05/20 17:58:05 by ikhabour         ###   ########.fr        #
+#    Updated: 2023/05/20 23:25:43 by ikhabour         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	minishell
 
-CFLAGS	=	-Wall -Wextra -Werror #-fsanitize=address -g3
+CFLAGS	=	-Wall -Wextra -Werror -fsanitize=address -g3
 
 RM		=	rm -rf
 
