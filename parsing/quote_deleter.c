@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   quote_deleter.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/30 10:38:19 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/20 16:02:01 by ikhabour         ###   ########.fr       */
+/*   Created: 2023/05/21 15:32:20 by bhazzout          #+#    #+#             */
+/*   Updated: 2023/05/21 15:32:21 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 
 #include "../minishell.h"
 
