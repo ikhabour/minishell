@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 14:14:21 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/20 16:02:01 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/22 23:40:50 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,33 +180,53 @@ int	dollar_index(char *cmd)
 	return (count);
 }
 
+void	ft_expand(char *cmd, char **env, int i, int flag)
+{
+	int		limiter;
+	char	*str;
+	char	*value;
+	(void) env;
+	(void) flag;
+
+	limiter = i;
+	while (cmd[limiter] && ft_isalnum(cmd[limiter]))
+	{
+		// *i++;
+		limiter++;
+	}
+	str = ft_substr(cmd, i, limiter - i);
+	value = env_value(str, env);
+	printf("this is the str: %s\n", str);
+	// return(NULL);
+}
+
 void	expand_processor(char *cmd, char **env)
 {
 	int	i;
-	// int	index;
-	char	*str;
-	char	*str2;
-	// char	*path;
+	// char	*str;
+	// char	*str2;
+	int		flag;
 	// (void) env;
 
 	i = 0;
+	flag = 0;
 	while (cmd[i])
 	{
-		// index = dollar_index(cmd);
-		// str = ft_substr(cmd, 0, index);
-		if (cmd[i] == '$')
+		flag = is_outside(flag, cmd[i]);
+		if (cmd[i] == '$' && flag != 1 && (cmd[i + 1] == '?' || cmd[i + 1] == '\0'))
 		{
-			str = ft_substr(cmd, 0, i);
-			str2 = ft_substr(cmd, i, 1000);
-			str = get_value(++str, env);
-			printf("str: %s\n", str);
-			printf("str2: %s\n", str2);
+			i++;
+			continue;
+		}
+		else if (cmd[i] == '$' && flag != 1)
+		{
+			ft_expand(cmd, env, i + 1, flag);
 		}
 		i++;
 	}
 }
 
-void	expander(char **cmd, char **env)
+void	expander(char **cmd, t_env *env)
 {
 	int	i;
 

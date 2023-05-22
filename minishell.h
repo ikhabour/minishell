@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/20 17:39:36 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/22 23:46:37 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	*ft_calloc(size_t count, size_t size);
 void	ft_bzero(void *s, size_t n);
 int		ft_strlen(const char *str);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
-void	get_env(char **env);
+t_env	*get_env(char **env);
 t_env	*ft_lstnew(char *name, char *value, t_env *new);
 void	ft_lstadd_back(t_env **lst, t_env *new);
 char	*add_spaces(char *input);

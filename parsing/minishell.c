@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/20 18:15:14 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/22 23:48:13 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,10 +165,10 @@ void	get_input(char *input, char **envp, t_list **env)
 {
 	int		len;
 	char	**cmd_array;
-	t_list	*commands;
+	// t_list	*commands;
 	char	*history;
 	int		*arr;
-	(void) envp;
+	// (void) envp;
 	(void) env;
 
 	input = readline("Minishell$ ");
@@ -199,17 +199,18 @@ void	get_input(char *input, char **envp, t_list **env)
 		free_2d(cmd_array);
 		return ;
 	}
-	cmd_array = quote_delete(cmd_array);
-	commands = list_cmds(cmd_array, arr);
+	expander(cmd_array, env);
+	// cmd_array = quote_delete(cmd_array);
+	// commands = list_cmds(cmd_array, arr);
 	// print_list(commands);
 	add_history(history);
-	if (execute_builtins(commands, env))
-	{
-		free(input);
-		free_2d(cmd_array);
-		return ;
-	}
-	execute_commands(commands, env, cmd_array);
+	// if (execute_builtins(commands, env))
+	// {
+	// 	free(input);
+	// 	free_2d(cmd_array);
+	// 	return ;
+	// }
+	// execute_commands(commands, env, cmd_array);
 	free_2d(cmd_array);
 	free (input);
 }
@@ -219,13 +220,16 @@ int main (int ac, char **av, char **envp)
 	
 	char    input;
 	t_list *env;
+	t_env	*env_list;
+	// t_env	*list
 	(void)  ac;
 	(void)  av;
 	// (void)  envp;
 	env = make_env(envp);
+	env_list = get_env(envp);
+	
 	while (1)
 	{
 		get_input(&input, envp, &env);
 	}
-	get_env(envp);
 }
