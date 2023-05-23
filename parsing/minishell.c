@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2023/05/23 23:20:25 by bhazzout         ###   ########.fr       */
+=======
+/*   Updated: 2023/05/23 20:34:17 by ikhabour         ###   ########.fr       */
+>>>>>>> 1a43891636042cc959c971e5888b6f8a9a18a901
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,17 +166,31 @@ void	free_2d(char **array)
 	free(array);
 }
 
+<<<<<<< HEAD
 void	get_input(char *input, t_env *env_list, t_list **env)
+=======
+void	free_all(char *input, char **array)
+{
+	free(input);
+	free_2d(array);
+}
+
+void	get_input(char *input, char **envp, t_list **env)
+>>>>>>> 1a43891636042cc959c971e5888b6f8a9a18a901
 {
 	int		len;
 	char	**cmd_array;
 	t_list	*commands;
 	char	*history;
 	int		*arr;
+<<<<<<< HEAD
 	(void) env_list;
+=======
+	(void) envp;
+>>>>>>> 1a43891636042cc959c971e5888b6f8a9a18a901
 	(void) env;
 
-	input = readline("Minishell$ ");
+	input = readline("Minishell> ");
 	history = input;
 	if (!input || ft_strcmp(input, "") == 0)
 	{
@@ -196,6 +214,7 @@ void	get_input(char *input, t_env *env_list, t_list **env)
 	arr = array_tokens(cmd_array, num_elemnts(cmd_array));
 	if (op_order(arr))
 	{
+<<<<<<< HEAD
 		free(input);
 		// free_2d(cmd_array);
 		return ;
@@ -213,6 +232,28 @@ void	get_input(char *input, t_env *env_list, t_list **env)
 	// }
 	// execute_commands(commands, env, cmd_array);
 	// free_2d(cmd_array);
+=======
+		free_all(input, cmd_array);
+		return ;
+	}
+	cmd_array = quote_delete(cmd_array);
+	commands = list_cmds(cmd_array, arr);
+	// print_list(commands);
+	add_history(history);
+	if (ft_lstsize(commands) > 1)
+		execute_pipe_commands(commands, env_to_array(env), cmd_array);
+	if (execute_builtins(commands, env))
+	{
+		free_all(input, cmd_array);
+		return ;
+	}
+	if (execute_commands(commands, env, cmd_array))
+	{
+		free_all(input, cmd_array);
+		return ;
+	}
+	free_2d(cmd_array);
+>>>>>>> 1a43891636042cc959c971e5888b6f8a9a18a901
 	free (input);
 }
 
@@ -221,14 +262,21 @@ int main (int ac, char **av, char **envp)
 	
 	char    input;
 	t_list *env;
+<<<<<<< HEAD
 	t_env	*env_list;
+=======
+>>>>>>> 1a43891636042cc959c971e5888b6f8a9a18a901
 	(void)  ac;
 	(void)  av;
 	// (void)  envp;
 	env = make_env(envp);
+<<<<<<< HEAD
 	env_list = get_env(envp);
+=======
+>>>>>>> 1a43891636042cc959c971e5888b6f8a9a18a901
 	while (1)
 	{
 		get_input(&input, env_list, &env);
 	}
+	get_env(envp);
 }

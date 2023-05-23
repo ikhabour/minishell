@@ -6,57 +6,65 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2023/05/23 00:02:59 by bhazzout         ###   ########.fr       */
+=======
+<<<<<<< HEAD
+/*   Updated: 2023/05/23 20:31:25 by ikhabour         ###   ########.fr       */
+=======
+/*   Updated: 2023/05/22 23:46:37 by bhazzout         ###   ########.fr       */
+>>>>>>> 664cd14b765080ea9136066dd805b0e084832b4d
+>>>>>>> 1a43891636042cc959c971e5888b6f8a9a18a901
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include <stdio.h>
-# include <string.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include <readline/readline.h>
-# include <readline/history.h>
 # include <fcntl.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
 # include <sys/stat.h>
+# include <unistd.h>
+# include <sys/errno.h>
 
-
-typedef	struct s_vars
+typedef struct s_vars
 {
-	int i;
-	int j;
-	int n;
-}	t_bvars;
+	int				i;
+	int				j;
+	int				n;
+}					t_bvars;
 
 typedef struct t_env
 {
 	char			*env_name;
 	char			*env_value;
 	struct t_env	*next;
-} 					t_env;
+}					t_env;
 
 typedef struct s_filetype
 {
 	// int				fd;
 	char			*red;
-    char            *type;
-    char            *file_name;
-}                    t_filetype;
+	char			*type;
+	char			*file_name;
+}					t_filetype;
 
 typedef struct s_cmds
 {
-    char            *cmd_name;
-    char            **option;
-    t_filetype        files;
-}                    t_cmds;
+	char			*cmd_name;
+	char			**option;
+	t_filetype		files;
+}					t_cmds;
 
 typedef struct s_list1
 {
-   	void			*content;
-    struct s_list1    *next;
-}                    t_list;
+	void			*content;
+	struct s_list1	*next;
+}					t_list;
 
 typedef enum t_enum
 {
@@ -115,12 +123,7 @@ void	print_list(t_list *list);
 t_list	*list_cmds(char **cmd_array, int *arr);
 
 
-
-
 //	################		execution prototypes 		##################	//
-
-
-
 
 //			String functions prototypes			//
 
@@ -146,12 +149,26 @@ void				ft_lstadd_backk(t_list **lst, t_list *new);
 char				**dup_2d(char **str);
 int					count_2d_len(char **str);
 
+
+//				Pipex Prototypes		//
+
+# define CMD_NOT_FOUND "command not found : "
+# define FILE_ERROR "Error opening file : "
+
+char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
+char	*ft_strjoin(const char *s1, const char *s2);
+void	ft_wait(int pid1, int *fd, int pid);
+char	*bring_path(char *cmd, char **envp);
+
+void	execute_pipe_commands(t_list *commands, char **envp, char **argv);
+
+
 //				Minishell				//
 
-t_list	*make_env(char **envp);
-int	execute_builtins(t_list *cmd, t_list **env);
-void	execute_commands(t_list *cmd, t_list **env, char **args);
-
-
+t_list				*make_env(char **envp);
+int					execute_builtins(t_list *cmd, t_list **env);
+int				execute_commands(t_list *cmd, t_list **env, char **args);
+void				msg_exit(char *msg, char *msg1, int status);
+char	**env_to_array(t_list **env);
 
 #endif

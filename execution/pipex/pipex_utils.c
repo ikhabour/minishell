@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 15:59:11 by ikhabour          #+#    #+#             */
-/*   Updated: 2022/12/21 23:36:42 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/23 18:43:46 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../../minishell.h"
 
-char	*bring_path(char **cmd, char **envp)
+char	*bring_path(char *cmd, char **envp)
 {
 	char	**paths;
 	int		i;
@@ -29,10 +29,10 @@ char	*bring_path(char **cmd, char **envp)
 	}
 	i = 0;
 	paths = ft_split(save, ':');
-	cmd1 = ft_strjoin("/", cmd[0]);
+	cmd1 = ft_strjoinn("/", cmd);
 	while (paths[i])
 	{
-		f_path = ft_strjoin(paths[i], cmd1);
+		f_path = ft_strjoinn(paths[i], cmd1);
 		if (access(f_path, X_OK) == 0)
 			break ;
 		free(f_path);
@@ -51,16 +51,6 @@ void	ft_wait(int pid, int *fd, int pid1)
 	waitpid(pid1, &status, 0);
 	if (WIFEXITED(status))
 		exit(WEXITSTATUS(status));
-}
-
-size_t	ft_strlen(const char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] != '\0')
-		i++;
-	return (i);
 }
 
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
@@ -87,27 +77,27 @@ char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 	return (0);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	int		i;
-	char	*new;
-	int		j;
+// char	*ft_strjoinn(char *s1, char *s2)
+// {
+// 	int		i;
+// 	char	*new;
+// 	int		j;
 
-	if (!s1 || !s2)
-		return (0);
-	i = 0;
-	j = ft_strlen(s1);
-	new = malloc(ft_strlen(s1) + ft_strlen(s2) * sizeof(char) + 1);
-	if (new == NULL)
-		return (NULL);
-	while (s1[i])
-	{
-		new[i] = s1[i];
-		i++;
-	}
-	i = 0;
-	while (s2[i])
-		new[j++] = s2[i++];
-	new[j] = '\0';
-	return (new);
-}
+// 	if (!s1 || !s2)
+// 		return (0);
+// 	i = 0;
+// 	j = ft_strlen(s1);
+// 	new = malloc(ft_strlen(s1) + ft_strlen(s2) * sizeof(char) + 1);
+// 	if (new == NULL)
+// 		return (NULL);
+// 	while (s1[i])
+// 	{
+// 		new[i] = s1[i];
+// 		i++;
+// 	}
+// 	i = 0;
+// 	while (s2[i])
+// 		new[j++] = s2[i++];
+// 	new[j] = '\0';
+// 	return (new);
+// }
