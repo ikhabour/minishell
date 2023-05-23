@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/22 23:48:13 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/23 23:20:25 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ int	*array_tokens(char **cmd_array, int elements)
 	i = 0;
 	while (cmd_array[i])
 	{
+		
 		if (ft_strcmp(cmd_array[i], "|") == 0)
 			cmd_token[i] = PIPE;
 		else if (cmd_array[i + 1] && (ft_strcmp(cmd_array[i], "<>") == 0))
@@ -161,14 +162,14 @@ void	free_2d(char **array)
 	free(array);
 }
 
-void	get_input(char *input, char **envp, t_list **env)
+void	get_input(char *input, t_env *env_list, t_list **env)
 {
 	int		len;
 	char	**cmd_array;
-	// t_list	*commands;
+	t_list	*commands;
 	char	*history;
 	int		*arr;
-	// (void) envp;
+	(void) env_list;
 	(void) env;
 
 	input = readline("Minishell$ ");
@@ -196,13 +197,13 @@ void	get_input(char *input, char **envp, t_list **env)
 	if (op_order(arr))
 	{
 		free(input);
-		free_2d(cmd_array);
+		// free_2d(cmd_array);
 		return ;
 	}
-	expander(cmd_array, env);
-	// cmd_array = quote_delete(cmd_array);
-	// commands = list_cmds(cmd_array, arr);
-	// print_list(commands);
+	expander(cmd_array, env_list);
+	cmd_array = quote_delete(cmd_array);
+	commands = list_cmds(cmd_array, arr);
+	print_list(commands);
 	add_history(history);
 	// if (execute_builtins(commands, env))
 	// {
@@ -211,7 +212,7 @@ void	get_input(char *input, char **envp, t_list **env)
 	// 	return ;
 	// }
 	// execute_commands(commands, env, cmd_array);
-	free_2d(cmd_array);
+	// free_2d(cmd_array);
 	free (input);
 }
 
@@ -221,15 +222,13 @@ int main (int ac, char **av, char **envp)
 	char    input;
 	t_list *env;
 	t_env	*env_list;
-	// t_env	*list
 	(void)  ac;
 	(void)  av;
 	// (void)  envp;
 	env = make_env(envp);
 	env_list = get_env(envp);
-	
 	while (1)
 	{
-		get_input(&input, envp, &env);
+		get_input(&input, env_list, &env);
 	}
 }

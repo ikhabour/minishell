@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/22 23:46:37 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/23 00:02:59 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ void	ft_bzero(void *s, size_t n);
 int		ft_strlen(const char *str);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
 t_env	*get_env(char **env);
+char	*get_env_value(char *env);
+char	*get_env_name(char *env);
 t_env	*ft_lstnew(char *name, char *value, t_env *new);
 void	ft_lstadd_back(t_env **lst, t_env *new);
 char	*add_spaces(char *input);
@@ -103,7 +105,7 @@ int		check_outside(int count);
 int		op_order(int *token);
 int		is_outside(int flag, char c);
 char	**quote_delete(char **cmd);
-void	expander(char **cmd, char **env);
+void	expander(char **cmd, t_env *env);
 int		ft_envcmp(char *s1, char *s2, int length);
 // t_list	**list_cmds(char **cmd_array, int *arr);
 t_list	*my_lstnew(void *content);
