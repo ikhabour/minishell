@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/13 10:58:23 by ikhabour          #+#    #+#             */
-/*   Updated: 2022/12/20 16:58:07 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/23 16:28:53 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../../minishell.h"
 
 static int	ft_len(const char *s, char c)
 {

@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/20 17:58:55 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/23 17:54:02 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -357,6 +357,7 @@ void	execute_cd(t_list *cmd, t_list **env)
 int	execute_builtins(t_list *cmd, t_list **env)
 {
 	t_cmds	*tmp;
+	t_list *temp;
 
 	tmp = (t_cmds *)cmd->content;
 	if (!ft_strcmpp(tmp->cmd_name, "pwd"))
@@ -377,6 +378,11 @@ int	execute_builtins(t_list *cmd, t_list **env)
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "env"))
 	{
+		temp = *env;
+		while (temp && ft_strncmpp(temp->content, "PATH=", 5))
+			temp = temp->next;
+		if (!temp)
+			msg_exit(tmp->cmd_name, ": No such file or directory\n", 127);
 		execute_env(env, cmd);
 		return (1);
 	}

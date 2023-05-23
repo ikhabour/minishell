@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/21 15:12:13 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/23 19:55:46 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	msg_exit(char *msg, char *msg1, int status)
 	exit(status);
 }
 
-void	execute_commands(t_list *cmd, t_list **env, char **args)
+int	execute_commands(t_list *cmd, t_list **env, char **args)
 {
 	char **envp;
 	char **paths;
@@ -111,7 +111,10 @@ void	execute_commands(t_list *cmd, t_list **env, char **args)
 		paths = get_path(envp);
 		i = 0;
 		if (!paths)
+		{
+			printf("yeah\n");
 			msg_exit(ptr->cmd_name, ": No such file or directory\n", 127);
+		}
 		while (paths[i])
 		{
 			f_path = paths[i];
@@ -125,9 +128,10 @@ void	execute_commands(t_list *cmd, t_list **env, char **args)
 		if (exec == -1)
 		{
 			printf("Minishell: %s: command not found\n", ptr->cmd_name);
-			exit(127);
+			return (0);
 		}
 	}
 	else
 		waitpid(pid, &i, 0);
+	return (1);
 }

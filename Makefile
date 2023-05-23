@@ -6,7 +6,7 @@
 #    By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/12 21:30:08 by bhazzout          #+#    #+#              #
-#    Updated: 2023/05/20 23:25:43 by ikhabour         ###   ########.fr        #
+#    Updated: 2023/05/23 17:19:54 by ikhabour         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ SOURCES	=	parsing/minishell.c parsing/env_processor.c parsing/helper/helper_1.c 
 			parsing/line_processor.c parsing/split.c parsing/checker/check_pipe.c parsing/checker/op_checker.c parsing/checker/special_char_check.c \
 			parsing/checker/quotes_check.c parsing/checker/order_checker.c parsing/quote_deleter.c parsing/expander.c parsing/list_commands.c\
 			execution/builtins.c execution/ft_split.c execution/functions.c execution/linked_list_utils.c execution/commands.c\
+			execution/pipex/pipex_utils.c execution/pipex/pipex.c\
 			
 
 OBJECTS	=	$(SOURCES:.c=.o)

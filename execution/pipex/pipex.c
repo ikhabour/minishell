@@ -3,116 +3,116 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 15:41:55 by ikhabour          #+#    #+#             */
-/*   Updated: 2022/12/21 23:32:12 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/23 20:29:37 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../../minishell.h"
 
-void	fd_redirect(int file, int *fd, int op)
+
+int	count_size(t_list *commands)
 {
-	if (op == 0)
+	int size = 1;
+	int i = 0;
+	t_cmds *ptr;
+
+	ptr = (t_cmds *)commands->content;
+	if (!ptr->option)
+		return (size);
+	else
 	{
-		dup2(file, 0);
-		dup2(fd[1], 1);
-		close(fd[0]);
+		while (ptr->option[i])
+		{
+			i++;
+			size++;
+		}
 	}
-	if (op == 1)
-	{
-		dup2(file, 1);
-		dup2(fd[0], 0);
-		close(fd[1]);
-	}
+	return (size);
 }
 
-int	open_file(char *filename, int op)
+char	**change_args(t_list *commands)
 {
-	int	fd;
+	t_cmds *ptr;
+	int i = 0;
+	char **new_args;
+	int j = 1;
 
-	fd = -1;
-	if (op == 0)
-		fd = open(filename, O_RDWR);
-	if (op == 1)
-		fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, 0644);
-	if (fd == -1)
+	ptr = (t_cmds *)commands->content;
+	i = count_size(commands);
+	new_args = malloc(sizeof(char *) * (i + 1));
+	new_args[i] = NULL;
+	new_args[0] = ptr->cmd_name;
+	if (i == 1)
+		return (new_args);
+	i = 0;
+	while (ptr->option[i])
 	{
-		write(2, FILE_ERROR, ft_strlen(FILE_ERROR));
-		write(2, filename, ft_strlen(filename));
-		write(2, "\n", 1);
-		exit(9);
+		new_args[j++] = ptr->option[i++];
 	}
-	return (fd);
+	return (new_args);
 }
 
-void	exec_cmd1(char **argv, int *fd, char **envp)
+
+void	exec_cmd1(t_list *commands, int *fd, char **envp, char **argv)
 {
-	int		file;
-	char	**cmd;
+	t_cmds *ptr;
 	int		exec;
+	int i;
 
-	file = open_file(argv[1], 0);
-	cmd = ft_split(argv[2], ' ');
-	fd_redirect(file, fd, 0);
-	if (access(cmd[0], X_OK) == 0)
-		execve(cmd[0], cmd, envp);
-	exec = execve(bring_path(cmd, envp), cmd, envp);
+	i = 0;
+
+	argv = change_args(commands);
+	ptr = (t_cmds *)commands->content;
+	dup2(fd[1], 1);
+	close(fd[0]);
+	if (access(ptr->cmd_name, X_OK) == 0)
+		execve(ptr->cmd_name, argv, envp);
+	exec = execve(bring_path(ptr->cmd_name, envp), argv, envp);
 	if (exec == -1)
-	{
-		write(2, CMD_NOT_FOUND, ft_strlen(CMD_NOT_FOUND));
-		write(2, argv[2], ft_strlen(argv[2]));
-		write(2, "\n", 1);
-		exit(127);
-	}
+		msg_exit(ptr->cmd_name, ": command not found\n", 127);
 }
 
-void	exec_cmd2(char **argv, int *fd, char **envp)
+void	exec_cmd2(t_list *commands, int *fd, char **envp, char **argv)
 {
-	int		file;
-	char	**cmd;
+	t_cmds *ptr;
 	int		exec;
+	int i;
 
-	file = open_file(argv[4], 1);
-	cmd = ft_split(argv[3], ' ');
-	fd_redirect(file, fd, 1);
-	if (access(cmd[0], X_OK) == 0)
-		execve(cmd[0], cmd, envp);
-	exec = execve(bring_path(cmd, envp), cmd, envp);
+	i = 0;
+	argv = change_args(commands);
+	ptr = (t_cmds *)commands->content;
+	dup2(fd[0], 0);
+	close(fd[1]);
+	if (access(ptr->cmd_name, X_OK) == 0)
+		execve(ptr->cmd_name, argv, envp);
+	exec = execve(bring_path(ptr->cmd_name, envp), argv, envp);
 	if (exec == -1)
-	{
-		write(2, CMD_NOT_FOUND, ft_strlen(CMD_NOT_FOUND));
-		write(2, argv[3], ft_strlen(argv[3]));
-		write(2, "\n", 1);
-		exit(127);
-	}
+		msg_exit(ptr->cmd_name, ": command not found\n", 127);
 }
 
-int	main(int argc, char **argv, char **envp)
+void	execute_pipe_commands(t_list *commands, char **envp, char **argv)
 {
 	int	fd[2];
 	int	pid[2];
 
-	if (argc != 5)
-	{
-		write(2, ARGUMENTS_ERROR, ft_strlen(ARGUMENTS_ERROR));
-		exit(22);
-	}
 	if (pipe(fd) == -1)
 		perror("Pipe failed!");
 	pid[0] = fork();
 	if (pid[0] == -1)
 		perror("Fork failed!");
 	if (pid[0] == 0)
-		exec_cmd1(argv, fd, envp);
+		exec_cmd1(commands, fd, envp, argv);
 	else
 	{
+		commands = commands->next;
 		pid[1] = fork();
 		if (pid[1] == -1)
 			perror("Fork failed!");
 		if (pid[1] == 0)
-			exec_cmd2(argv, fd, envp);
+			exec_cmd2(commands, fd, envp, argv);
 		else
 			ft_wait(pid[0], fd, pid[1]);
 	}
