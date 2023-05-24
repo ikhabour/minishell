@@ -3,16 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+         #
+#    By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/12 21:30:08 by bhazzout          #+#    #+#              #
-#    Updated: 2023/05/23 17:19:54 by ikhabour         ###   ########.fr        #
+#    Updated: 2023/05/24 18:32:21 by bhazzout         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	minishell
 
-CFLAGS	=	-Wall -Wextra -Werror -fsanitize=address -g3
+CFLAGS	=	-Wall -Wextra -Werror -fsanitize=address -g3 #-fno-omit-frame-pointer
+ 
 
 RM		=	rm -rf
 
