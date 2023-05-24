@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:32:20 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/24 23:11:41 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/24 23:37:11 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,31 +109,36 @@ char	*quote_processor(char *str)
 		return (NULL);
 	while (str[i])
 	{
-		if ((str[i] == '\''|| str[i] == '"') && flag == 0)
+		if (str[i] == '\'' && flag == 0)
 		{
-			flag = is_outside(flag, str[i]);
+			printf("haaaa\n");
 			i++;
-		}	
-		// else if ((str[i] == '\''|| str[i] == '"') && is_outside(flag, str[i]) == 0)
-		// 	i++;
+			flag = 1;
+		}
 		if (flag == 1 && str[i] == '\'')
 		{
-			flag = 0;
+			printf("haaaa\n");
 			i++;
+			flag = 0;
 		}
-		else if (flag == 2 && str[i] == '"')
+		if (str[i] == '"' && flag == 0)
 		{
-			flag = 0;
+			printf("haaaa\n");
 			i++;
+			flag = 2;
 		}
-		if (flag != 0)
+		if (flag == 2 && str[i] == '"')
+		{
+			printf("haaaa\n");
+			i++;
+			flag = 0;
+		}
+		if (str[i])
 		{
 			cmd[j] = str[i];
-			printf("%d == (%c)\n", j, cmd[j]);
 			j++;
 			i++;
 		}
-		i++;
 	}
 	cmd[j] = '\0';
 	printf("this is the str: (%s)\n", cmd);
