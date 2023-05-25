@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 14:14:21 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/23 23:20:58 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/25 18:29:23 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,7 @@ char	*env_value(char *str, t_env *env)
 	return (NULL);
 }
 
-static char	*ft_expand(char *cmd, t_env *env, int *i, int flag)
+static char	*ft_expand(char *cmd, t_env *env, int *i)
 {
 	int		limiter;
 	static char *full_str;
@@ -208,7 +208,7 @@ static char	*ft_expand(char *cmd, t_env *env, int *i, int flag)
 	char	*str;
 	char	*value;
 	(void) env;
-	(void) flag;
+	// (void) flag;
 
 	limiter = *i + 1;
 	while (cmd[limiter] && ft_isalnum(cmd[limiter]))
@@ -237,7 +237,10 @@ static char	*ft_expand(char *cmd, t_env *env, int *i, int flag)
 	free(full_str);
 	free(lineup);
 	free(str);
-	
+	if (cmd[*i] == '$' || cmd[*i] == '"' || cmd[*i] == '\'')
+            *i -= 1;
+    else if (!cmd[*i])
+            *i = -2;
 	return(cmd);
 }
 
@@ -247,21 +250,27 @@ char	*expand_processor(char *cmd, t_env *env)
 	// char	*str;
 	// char	*str2;
 	int		flag;
-	// (void) env;
+	(void) env;
 
 	i = 0;
 	flag = 0;
+	printf("(%s)\n", cmd);
 	while (cmd[i])
 	{
-		flag = is_outside(flag, cmd[i]);
+		if (cmd[i] == '\'' || cmd[i] == '"')
+		{
+			// printf("haaa\n");
+			flag = is_outside(flag, cmd[i]);
+		}
 		if (cmd[i] == '$' && flag != 1 && (cmd[i + 1] == '?' || cmd[i + 1] == '\0'))
 		{
 			i++;
 			continue;
 		}
-		else if (cmd[i] == '$' && flag != 1)
+		// printf("(%c)===(%d)\n", cmd[i], flag);
+		if (cmd[i] == '$' && flag != 1)
 		{
-			cmd = ft_expand(cmd, env, (&i), flag);
+			cmd = ft_expand(cmd, env, (&i));
 		}
 		i++;
 	}
@@ -271,14 +280,24 @@ char	*expand_processor(char *cmd, t_env *env)
 void	expander(char **cmd, t_env *env)
 {
 	int	i;
+	int	j;
 
 	i = 0;
+	j = 0;
 	while (cmd[i])
 	{
 		if (ft_strchr(cmd[i], '$'))
 		{
 			cmd[i] = expand_processor(cmd[i], env);
+			printf("expanded : %s\n", cmd[i]);
 		}
+		// j = 0;
+		// while (cmd[i][j])
+		// {
+		// 	if (cmd[i][j] == ' ' || (cmd[i][j] >= 9 && cmd[i][j] <= 13))
+		// 		break;
+		// 	j++;
+		// }
 		i++;
 	}
 }
