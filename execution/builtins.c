@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/23 17:54:02 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/25 17:31:01 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,7 @@ void	print_string(char *str)
 	int i;
 
 	i = 0;
+	write(1, "declare -x ", 11);
 	if (change_value(str))
 	{
 		while (str[i] && str[i] != '=')
@@ -191,6 +192,18 @@ void	print_export(t_list **env)
 	}
 }
 
+int	var_exists(char *var, t_list **env)
+{
+	t_list *tmp;
+
+	tmp = *env;
+	while (ft_strncmp(tmp->content, var, ft_strlenn(var)))
+		tmp = tmp->next;
+	if (!tmp)
+		return (0);
+	return (1);
+}
+
 void	execute_export(t_list *cmd, t_list **env)
 {
 	t_cmds	*ptr;
@@ -203,6 +216,7 @@ void	execute_export(t_list *cmd, t_list **env)
 	var.j = 0;
 	var.n = 0;
 	tmp = *env;
+	
 	if (!ptr->option)
 	{
 		print_export(env);
@@ -221,20 +235,22 @@ void	execute_export(t_list *cmd, t_list **env)
 			if (!tmp)
 			{
 				ft_lstadd_backk(env, ft_lstneww(remove_plus(ptr->option[var.j])));
-				continue ;
-			}
-			if (!change_value(tmp->content))
-			{
-				temp = tmp->content;
-				tmp->content = ft_strjoinn(temp, ptr->option[var.j] + (var.i));
-				free(temp);
 			}
 			else
 			{
-				temp = tmp->content;
-				tmp->content = ft_strjoinn(temp, ptr->option[var.j] + (var.i + 1));
-				free(temp);
-			}
+				if (!change_value(tmp->content))
+				{
+					temp = tmp->content;
+					tmp->content = ft_strjoinn(temp, ptr->option[var.j] + (var.i));
+					free(temp);
+				}
+				else
+				{
+					temp = tmp->content;
+					tmp->content = ft_strjoinn(temp, ptr->option[var.j] + (var.i + 1));
+					free(temp);
+				}
+			} 
 		}
 		else if (change_value(ptr->option[var.j]))
 		{
@@ -357,7 +373,6 @@ void	execute_cd(t_list *cmd, t_list **env)
 int	execute_builtins(t_list *cmd, t_list **env)
 {
 	t_cmds	*tmp;
-	t_list *temp;
 
 	tmp = (t_cmds *)cmd->content;
 	if (!ft_strcmpp(tmp->cmd_name, "pwd"))
@@ -378,11 +393,6 @@ int	execute_builtins(t_list *cmd, t_list **env)
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "env"))
 	{
-		temp = *env;
-		while (temp && ft_strncmpp(temp->content, "PATH=", 5))
-			temp = temp->next;
-		if (!temp)
-			msg_exit(tmp->cmd_name, ": No such file or directory\n", 127);
 		execute_env(env, cmd);
 		return (1);
 	}

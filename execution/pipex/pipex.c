@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 15:41:55 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/25 15:35:18 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/25 15:48:18 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,7 @@ t_list *array_to_list(char **envp)
 	i = 0;
 	env = NULL;
 	while (envp[i])
-	{
-		ft_lstadd_backk(&env, ft_lstneww(envp[i]));
-		i++;
-	}
+		ft_lstadd_backk(&env, ft_lstneww(envp[i++]));
 	return (env);
 }
 

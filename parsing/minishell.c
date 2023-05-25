@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/25 15:13:43 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/25 17:14:59 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,7 +206,7 @@ void	get_input(char *input, t_env *env_list, t_list **env)
 		// free_2d(cmd_array);
 		return ;
 	}
-	// expander(cmd_array, env_list);
+	expander(cmd_array, env_list);
 	cmd_array = quote_delete(cmd_array);
 	commands = list_cmds(cmd_array, arr);
 	// print_list(commands);

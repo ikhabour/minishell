@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/23 19:55:46 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/25 16:50:56 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,10 +111,7 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 		paths = get_path(envp);
 		i = 0;
 		if (!paths)
-		{
-			printf("yeah\n");
 			msg_exit(ptr->cmd_name, ": No such file or directory\n", 127);
-		}
 		while (paths[i])
 		{
 			f_path = paths[i];
