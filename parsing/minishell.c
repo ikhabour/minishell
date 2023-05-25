@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/24 18:35:38 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/25 15:13:43 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,11 +162,17 @@ void	free_2d(char **array)
 	free(array);
 }
 
+void	free_all(char *input, char **array)
+{
+	free(input);
+	free_2d(array);
+}
+
 void	get_input(char *input, t_env *env_list, t_list **env)
 {
 	int		len;
 	char	**cmd_array;
-	// t_list	*commands;
+	t_list	*commands;
 	char	*history;
 	int		*arr;
 	(void) env_list;
@@ -200,20 +206,26 @@ void	get_input(char *input, t_env *env_list, t_list **env)
 		// free_2d(cmd_array);
 		return ;
 	}
-	expander(cmd_array, env_list);
+	// expander(cmd_array, env_list);
 	cmd_array = quote_delete(cmd_array);
-	// commands = list_cmds(cmd_array, arr);
+	commands = list_cmds(cmd_array, arr);
 	// print_list(commands);
 	add_history(history);
-	// if (execute_builtins(commands, env))
-	// {
-	// 	free(input);
-	// 	free_2d(cmd_array);
-	// 	return ;
-	// }
-	// execute_commands(commands, env, cmd_array);
-	// free_2d(cmd_array);
-	free (input);
+	if (ft_lstsize(commands) > 1)
+	{
+		execute_pipe_commands(commands, env_to_array(env), cmd_array);
+		free_all(input, cmd_array);
+		return ;
+	}
+	if (execute_builtins(commands, env))
+	{
+		free(input);
+		free_2d(cmd_array);
+		return ;
+	}
+	execute_commands(commands, env, cmd_array);
+	free_2d(cmd_array);
+	free(input);
 }
 
 int main (int ac, char **av, char **envp)

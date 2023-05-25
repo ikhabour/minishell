@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   helper_2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 01:09:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/22 22:10:11 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/25 14:42:32 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 	unsigned char	*dest1;
 	unsigned char	*src1;
 	size_t			i;
-
+	
 	dest1 = (unsigned char *)dest;
 	src1 = (unsigned char *)src;
 	if (src1 == dest)

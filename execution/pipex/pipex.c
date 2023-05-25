@@ -6,12 +6,26 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 15:41:55 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/23 20:29:37 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/25 15:35:18 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
+t_list *array_to_list(char **envp)
+{
+	t_list *env;
+	int i;
+
+	i = 0;
+	env = NULL;
+	while (envp[i])
+	{
+		ft_lstadd_backk(&env, ft_lstneww(envp[i]));
+		i++;
+	}
+	return (env);
+}
 
 int	count_size(t_list *commands)
 {
@@ -60,14 +74,18 @@ void	exec_cmd1(t_list *commands, int *fd, char **envp, char **argv)
 {
 	t_cmds *ptr;
 	int		exec;
+	t_list *env;
 	int i;
 
 	i = 0;
 
 	argv = change_args(commands);
+	env = array_to_list(envp);
 	ptr = (t_cmds *)commands->content;
 	dup2(fd[1], 1);
 	close(fd[0]);
+	if (execute_builtins(commands, &env))
+		exit(0);
 	if (access(ptr->cmd_name, X_OK) == 0)
 		execve(ptr->cmd_name, argv, envp);
 	exec = execve(bring_path(ptr->cmd_name, envp), argv, envp);
@@ -79,13 +97,17 @@ void	exec_cmd2(t_list *commands, int *fd, char **envp, char **argv)
 {
 	t_cmds *ptr;
 	int		exec;
+	t_list *env;
 	int i;
 
 	i = 0;
 	argv = change_args(commands);
+	env = array_to_list(envp);
 	ptr = (t_cmds *)commands->content;
 	dup2(fd[0], 0);
 	close(fd[1]);
+	if (execute_builtins(commands, &env))
+		exit(0);
 	if (access(ptr->cmd_name, X_OK) == 0)
 		execve(ptr->cmd_name, argv, envp);
 	exec = execve(bring_path(ptr->cmd_name, envp), argv, envp);

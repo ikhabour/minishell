@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quote_deleter.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:32:20 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/24 23:37:11 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/25 15:13:28 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,25 +111,21 @@ char	*quote_processor(char *str)
 	{
 		if (str[i] == '\'' && flag == 0)
 		{
-			printf("haaaa\n");
 			i++;
 			flag = 1;
 		}
 		if (flag == 1 && str[i] == '\'')
 		{
-			printf("haaaa\n");
 			i++;
 			flag = 0;
 		}
 		if (str[i] == '"' && flag == 0)
 		{
-			printf("haaaa\n");
 			i++;
 			flag = 2;
 		}
 		if (flag == 2 && str[i] == '"')
 		{
-			printf("haaaa\n");
 			i++;
 			flag = 0;
 		}
@@ -141,8 +137,7 @@ char	*quote_processor(char *str)
 		}
 	}
 	cmd[j] = '\0';
-	printf("this is the str: (%s)\n", cmd);
-	return (NULL);
+	return (cmd);
 }
 
 char	**quote_delete(char **cmd)

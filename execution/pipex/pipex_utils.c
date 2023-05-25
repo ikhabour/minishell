@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 15:59:11 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/23 18:43:46 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/25 15:36:08 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ void	ft_wait(int pid, int *fd, int pid1)
 	close(fd[1]);
 	waitpid(pid, NULL, 0);
 	waitpid(pid1, &status, 0);
-	if (WIFEXITED(status))
-		exit(WEXITSTATUS(status));
+	// if (WIFEXITED(status))
+	// 	exit(WEXITSTATUS(status));
 }
 
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
