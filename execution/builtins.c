@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/25 17:31:01 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/25 20:38:31 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,7 +265,7 @@ void	execute_export(t_list *cmd, t_list **env)
 				ft_lstadd_backk(env, ft_lstneww(ptr->option[var.j]));
 				continue ;
 			}
-			tmp->content = ptr->option[var.j];
+			tmp->content = ft_strdup(ptr->option[var.j]);
 		}
 		else
 		{
@@ -325,14 +325,23 @@ void	execute_exit(t_list *cmd)
 {
 	t_cmds	*ptr;
 	int		exit_status;
+	int i;
 
+	i = 0;
 	ptr = (t_cmds *)cmd->content;
 	if (!ptr->option)
 		exit(0);
+	while (ptr->option[i])
+		i++;
+	if (i > 0)
+	{
+		write(2, "exit: too many arguments\n", 25);
+		return ;
+	}
 	if (!is_digit(ptr->option[0]))
 	{
-		printf("exit: %s: numeric argument required\n", ptr->option[0]);
-		exit(255);
+		write(2, "exit: ", 6);
+		msg_exit(ptr->option[0], ": numeric argument required\n", 255);
 	}
 	exit_status = ft_atoi(ptr->option[0]);
 	if (exit_status < 0)
@@ -349,25 +358,61 @@ void	execute_exit(t_list *cmd)
 		exit(exit_status);
 }
 
+void	exportt(char *value, char *var, t_list **env)
+{
+	t_cmds ptr;
+	t_list cmd;
+	char *option[2];
+	int i;
+
+	i = 0;
+
+	option[0] = ft_strjoinn(var, value);
+	option[1] = NULL;
+	ptr.cmd_name = "export";
+	ptr.option = option;
+	ptr.files.file_name = NULL;
+	ptr.files.type = NULL;
+	ptr.files.red = NULL;
+	cmd.content = &ptr;
+	execute_export(&cmd, env);
+	free(option[0]);
+}
+
 void	execute_cd(t_list *cmd, t_list **env)
 {
 	t_cmds *ptr;
-	t_list *tmp;
+	t_list *tmp; 
+	char *dir;
 
 	ptr = (t_cmds *)cmd->content;
 	tmp = *env;
+
+	dir = getcwd(NULL, 0);
+	exportt(dir, "OLDPWD=", env);
 	if (!ptr->option)
 	{
-		while (tmp->content && ft_strncmpp(tmp->content, "HOME=", 5))
+		while (tmp && ft_strncmpp(tmp->content, "HOME=", 5))
 			tmp = tmp->next;
+		if (!tmp)
+		{
+			write(2, "cd: HOME not set\n", 17);
+			return ;
+		}
 		chdir(tmp->content + 5);
+		return ;
 	}
-	else
+	if (access(ptr->option[0], F_OK))
 	{
-		if (chdir(ptr->option[0]) == -1)
-			printf("cd: no such file or directory: %s\n", ptr->option[0]);
+		write(2, "Minishell: cd: No such file or directory\n", 41);
+		return ;
 	}
-
+	else if (access(ptr->option[0], X_OK))
+	{
+		write(2, "Minishell: cd: Permission Denied!\n", 21);
+		return ;
+	}
+	chdir(ptr->option[0]);
 }
 
 int	execute_builtins(t_list *cmd, t_list **env)
