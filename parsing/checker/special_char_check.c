@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   special_char_check.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 09:17:40 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/27 00:48:32 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/27 17:17:49 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int check_line(char *input)
 		if ((input[i] == ';' || input[i] == '\\' || input[i] == '&') && flag == 0)
 		{
 			write(2, "Syntax error, unexpected token.\n", 32);
-			EXIT_S 1;
+			// EXIT_S 1;
 			return (1);
 		}
 		i++;

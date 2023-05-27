@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/27 00:36:20 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/27 17:19:05 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,14 +209,14 @@ void	get_input(char *input, t_env *env_list, t_list **env)
 	expander(cmd_array, env_list);
 	cmd_array = quote_delete(cmd_array);
 	commands = list_cmds(cmd_array, arr);
-	print_list(commands);
+	// print_list(commands);
 	add_history(history);
-	// if (ft_lstsize(commands) > 1)
-	// {
-	// 	execute_pipe_commands(commands, env_to_array(env), cmd_array);
-	// 	free_all(input, cmd_array);
-	// 	return ;
-	// }
+	if (ft_lstsize(commands) > 1)
+	{
+		execute_pipe_commands(commands, env_to_array(env), cmd_array);
+		free_all(input, cmd_array);
+		return ;
+	}
 	// if (execute_builtins(commands, env))
 	// {
 	// 	free(input);
