@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   line_processor.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/16 00:27:03 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/20 16:02:01 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/27 18:02:47 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ int	full_length(char *input)
 	count = 0;
 	while (input[i])
 	{
-		printf("this is the elmnt %c and the count-->%d\n", input[i], count);
 		flag = 0;
 		if (input[i] == '|' || input[i] == '>' || input[i] == '<')
 		{
@@ -57,7 +56,6 @@ int	full_length(char *input)
 		count++;
 		i++;
 	}
-	printf("the count is %d\n", count);
 	return (count);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quotes_check.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 09:36:19 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/20 16:01:34 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/27 17:41:10 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,12 @@ int	check_quotes(char *input)
 	}
 	if (s_count % 2 != 0)
 	{
-		printf("there is unclosed single quote.\n");
+		exit_s = 1;
 		return (1);
 	}
 	if (d_count % 2 != 0)
 	{
-		printf("there is unclosed double quote.\n");
+		exit_s = 1;
 		return (1);
 	}
 	return (0);

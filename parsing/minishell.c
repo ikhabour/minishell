@@ -6,11 +6,13 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/27 00:36:20 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/27 18:18:44 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+int	exit_s = 0;
 
 int	get_length(char *input)
 {
@@ -168,15 +170,14 @@ void	free_all(char *input, char **array)
 	free_2d(array);
 }
 
-void	get_input(char *input, t_env *env_list, t_list **env)
+void	get_input(char *input, t_list **env)
 {
 	int		len;
 	char	**cmd_array;
 	t_list	*commands;
 	char	*history;
 	int		*arr;
-	(void) env_list;
-	(void) env;
+	// (void) env;
 
 	input = readline("Minishell> ");
 	history = input;
@@ -206,7 +207,7 @@ void	get_input(char *input, t_env *env_list, t_list **env)
 		// free_2d(cmd_array);
 		return ;
 	}
-	expander(cmd_array, env_list);
+	expander(cmd_array, *env);
 	cmd_array = quote_delete(cmd_array);
 	commands = list_cmds(cmd_array, arr);
 	print_list(commands);
@@ -236,12 +237,13 @@ int main (int ac, char **av, char **envp)
 	t_env	*env_list;
 	(void)  ac;
 	(void)  av;
+
 	// (void)  envp;
 	env = make_env(envp);
 	env_list = get_env(envp);
 	while (1)
 	{
-		get_input(&input, env_list, &env);
+		get_input(&input, &env);
 	}
 	get_env(envp);
 }

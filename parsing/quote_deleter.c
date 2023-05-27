@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:32:20 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/25 21:50:10 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/27 18:36:03 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ char	**quote_delete(char **cmd)
 	while (cmd[i])
 	{
 		cmd[i] = quote_processor(cmd[i]);
-		printf("this is the finale result: (%s)\n", cmd[i]);
 		i++;
 	}
 	return (cmd);

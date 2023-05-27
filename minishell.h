@@ -6,16 +6,17 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/27 00:47:26 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/27 18:19:08 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-#ifndef	EXIT_S
-# define EXIT_S	0
-#endif
+// int	EXIT_S = 0;
+// #define EXIT_S 0
+
+extern int exit_s;
 
 # include <fcntl.h>
 # include <readline/history.h>
@@ -109,7 +110,7 @@ int		check_outside(int count);
 int		op_order(int *token);
 int		is_outside(int flag, char c);
 char	**quote_delete(char **cmd);
-void	expander(char **cmd, t_env *env);
+void	expander(char **cmd, t_list *env);
 int		ft_envcmp(char *s1, char *s2, int length);
 // t_list	**list_cmds(char **cmd_array, int *arr);
 t_list	*my_lstnew(void *content);
