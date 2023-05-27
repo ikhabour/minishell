@@ -6,12 +6,16 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/23 23:35:14 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/27 00:47:26 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+#ifndef	EXIT_S
+# define EXIT_S	0
+#endif
 
 # include <fcntl.h>
 # include <readline/history.h>
