@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/27 18:19:08 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/05/28 18:53:25 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,6 +158,7 @@ void	ft_wait(int pid1, int *fd, int pid);
 char	*bring_path(char *cmd, char **envp);
 
 void	execute_pipe_commands(t_list *commands, char **envp, char **argv);
+void	multiple_pipes(t_list *commands, t_list **env);
 
 
 //				Minishell				//
@@ -168,4 +169,7 @@ int				execute_commands(t_list *cmd, t_list **env, char **args);
 void				msg_exit(char *msg, char *msg1, int status);
 char	**env_to_array(t_list **env);
 
+
+
+char	**make_argv(t_list *commands);
 #endif
