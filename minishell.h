@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/28 18:53:25 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/29 21:48:13 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,7 @@ char	*bring_path(char *cmd, char **envp);
 
 void	execute_pipe_commands(t_list *commands, char **envp, char **argv);
 void	multiple_pipes(t_list *commands, t_list **env);
+char **get_path(char **envp);
 
 
 //				Minishell				//
