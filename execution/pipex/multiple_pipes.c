@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 15:40:24 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/30 16:36:04 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/30 22:44:08 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ char	**make_argv(t_list *commands)
 	return (argv);
 }
 
-void	first_command(t_list *commands, t_list **env, int fd)
+void	first_command(t_list *commands, t_list **env, int *fd)
 {
 	char **argv;
 	char **paths;
@@ -65,7 +65,8 @@ void	first_command(t_list *commands, t_list **env, int fd)
 	ptr = (t_cmds *)commands->content;
 	envp = env_to_array(env);
 	argv = make_argv(commands);
-	dup2(fd, 1);
+	dup2(fd[1], 1);
+	close(fd[0]);
 	if (execute_builtins(commands, env))
 		exit(0);
 	if (access(ptr->cmd_name, X_OK) == 0)
@@ -82,12 +83,11 @@ void	first_command(t_list *commands, t_list **env, int fd)
 			break ;
 		i++;
 	}
-	close(fd);
 	execve(paths[i], argv, envp);
 	msg_exit(ptr->cmd_name, ": command not found\n", 127);
 }
 
-void	last_command(t_list *commands, t_list **env, int fd)
+void	last_command(t_list *commands, t_list **env, int *fd)
 {
 	char **argv;
 	char **paths;
@@ -100,7 +100,8 @@ void	last_command(t_list *commands, t_list **env, int fd)
 	ptr = (t_cmds *)commands->content;
 	envp = env_to_array(env);
 	argv = make_argv(commands);
-	dup2(fd, 0);
+	dup2(fd[0], 0);
+	close(fd[1]);
 	if (execute_builtins(commands, env))
 		exit(0);
 	if (access(ptr->cmd_name, X_OK) == 0)
@@ -117,12 +118,11 @@ void	last_command(t_list *commands, t_list **env, int fd)
 			break ;
 		i++;
 	}
-	close(fd);
 	execve(paths[i], argv, envp);
 	msg_exit(ptr->cmd_name, ": command not found\n", 127);
 }
 	
-void	middle_command(t_list *commands, t_list **env, int fdin, int fdout)
+void	middle_command(t_list *commands, t_list **env, int *fdin, int *fdout)
 {
 	char **argv;
 	char **paths;
@@ -135,8 +135,10 @@ void	middle_command(t_list *commands, t_list **env, int fdin, int fdout)
 	ptr = (t_cmds *)commands->content;
 	envp = env_to_array(env);
 	argv = make_argv(commands);	
-	dup2(fdout, 1);
-	dup2(fdin, 0);
+	dup2(fdout[1], 1);
+	dup2(fdin[0], 0);
+	close(fdout[0]);
+	close(fdin[1]);
 	if (execute_builtins(commands, env))
 		exit(0);
 	if (access(ptr->cmd_name, X_OK) == 0)
@@ -164,7 +166,7 @@ void	multiple_pipes(t_list *commands, t_list **env)
 	int pipes = count_pipes(commands);
 	int **fd;
 	int *pids;
-	// int status = 0;
+	int status = 0;
 
 	fd = malloc(sizeof(int *) *(pipes + 1));
 	pids = malloc(sizeof(int) * (pipes + 1));
@@ -179,26 +181,16 @@ void	multiple_pipes(t_list *commands, t_list **env)
 	while (i < pipes + 1)
 	{
 		if (i < pipes && pipe(fd[i]) < 0)
-	 		return ;
+			return ;
 		pids[i] = fork();
 		if (pids[i] == 0)
 		{
 			if (i == 0)
-			{
-				first_command(commands, env, fd[i][1]);
-				close(fd[i][0]);
-			}
+				first_command(commands, env, fd[i]);
 			else if (i == pipes)
-			{
-				last_command(commands, env, fd[i - 1][0]);
-				close(fd[i - 1][1]);
-			}
+				last_command(commands, env, fd[i - 1]);
 			else
-			{
-				middle_command(commands, env, fd[i - 1][0], fd[i][1]);
-				close(fd[i - 1][1]);
-				close(fd[i][0]);
-			}
+				middle_command(commands, env, fd[i - 1], fd[i]);
 		}
 		if (i != 0)
 		{
@@ -213,8 +205,9 @@ void	multiple_pipes(t_list *commands, t_list **env)
 	{
 		close(fd[j][0]);
 		close(fd[j][1]);
-		waitpid(pids[j], &status, 0);
 		j++;
 	}
-	waitpid(pids[j], &status, 0);
+	j = 0;
+	while (j < pipes + 1)
+		waitpid(pids[j++], &status, 0);
 }

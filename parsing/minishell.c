@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/30 15:36:40 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/30 17:30:24 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,13 +235,11 @@ int main (int ac, char **av, char **envp)
 	
 	char    input;
 	t_list *env;
-	t_env	*env_list;
 	(void)  ac;
 	(void)  av;
 
 	// (void)  envp;
 	env = make_env(envp);
-	env_list = get_env(envp);
 	while (1)
 	{
 		get_input(&input, &env);
