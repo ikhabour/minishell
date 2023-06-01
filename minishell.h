@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/29 21:48:13 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/01 17:07:51 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,19 @@ typedef struct t_env
 
 typedef struct s_filetype
 {
-	// int				fd;
+	int				fd;
 	char			*red;
 	char			*type;
 	char			*file_name;
+	// void			*content;
+	struct s_filetype *next;
 }					t_filetype;
 
 typedef struct s_cmds
 {
 	char			*cmd_name;
 	char			**option;
-	t_filetype		files;
+	t_filetype		*files;
 }					t_cmds;
 
 typedef struct s_list1

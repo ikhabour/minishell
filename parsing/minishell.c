@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/30 17:30:24 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/31 22:41:58 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int	get_length(char *input)
 		i--;
 		len--;
 	}
+	printf("this is the length : %d\n", len);
 	return (len);
 }
 
@@ -177,7 +178,7 @@ void	get_input(char *input, t_list **env)
 	t_list	*commands;
 	char	*history;
 	int		*arr;
-	// (void) env;
+	(void) env;
 
 	input = readline("Minishell> ");
 	history = input;
@@ -196,11 +197,12 @@ void	get_input(char *input, t_list **env)
 	// printf("len is : %d\n", len);
 	check_line(input);
 	input = fill_line(input, len);
-	// printf("this is the line : %s\n", input);
 	input = add_spaces(input);
+	printf("this is the line : %s\n", input);
 	cmd_array = ft_split(input, ' ');
-	// split_print(cmd_array);
+	split_print(cmd_array);
 	arr = array_tokens(cmd_array, num_elemnts(cmd_array));
+	array_printer(arr);
 	if (op_order(arr))
 	{
 		free(input);
@@ -211,10 +213,13 @@ void	get_input(char *input, t_list **env)
 	cmd_array = quote_delete(cmd_array);
 	commands = list_cmds(cmd_array, arr);
 	// print_list(commands);
-	add_history(history);
+	// add_history(history);
 	// if (ft_lstsize(commands) > 1)
 	// {
-	// 	execute_pipe_commands(commands, env_to_array(env), cmd_array);
+	// 	if (ft_lstsize(commands) == 2)
+	// 		execute_pipe_commands(commands, env_to_array(env), cmd_array);
+	// 	else
+	// 		multiple_pipes(commands, env);
 	// 	free_all(input, cmd_array);
 	// 	return ;
 	// }
@@ -226,7 +231,6 @@ void	get_input(char *input, t_list **env)
 	// }
 	// execute_commands(commands, env, cmd_array);
 	// free_2d(cmd_array);
-	multiple_pipes(commands, env);
 	free(input);
 }
 

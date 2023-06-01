@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 15:40:24 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/30 22:44:08 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/31 17:14:55 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,12 +162,13 @@ void	middle_command(t_list *commands, t_list **env, int *fdin, int *fdout)
 void	multiple_pipes(t_list *commands, t_list **env)
 {
 	int i;
-	i = 0;
-	int pipes = count_pipes(commands);
+	int pipes;
 	int **fd;
 	int *pids;
-	int status = 0;
+	int status;
 
+	i = 0;
+	pipes = count_pipes(commands);
 	fd = malloc(sizeof(int *) *(pipes + 1));
 	pids = malloc(sizeof(int) * (pipes + 1));
 	while (i < pipes)

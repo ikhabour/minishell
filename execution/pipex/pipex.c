@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 15:41:55 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/30 15:36:03 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/05/31 17:11:33 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ char	**change_args(t_list *commands)
 void	exec_cmd1(t_list *commands, int *fd, char **envp, char **argv)
 {
 	t_cmds *ptr;
-	int		exec;
 	t_list *env;
 	int i;
 
@@ -85,15 +84,13 @@ void	exec_cmd1(t_list *commands, int *fd, char **envp, char **argv)
 		exit(0);
 	if (access(ptr->cmd_name, X_OK) == 0)
 		execve(ptr->cmd_name, argv, envp);
-	exec = execve(bring_path(ptr->cmd_name, envp), argv, envp);
-	if (exec == -1)
-		msg_exit(ptr->cmd_name, ": command not found\n", 127);
+	execve(bring_path(ptr->cmd_name, envp), argv, envp);
+	msg_exit(ptr->cmd_name, ": command not found\n", 127);
 }
 
 void	exec_cmd2(t_list *commands, int *fd, char **envp, char **argv)
 {
 	t_cmds *ptr;
-	int		exec;
 	t_list *env;
 	int i;
 
@@ -107,9 +104,8 @@ void	exec_cmd2(t_list *commands, int *fd, char **envp, char **argv)
 		exit(0);
 	if (access(ptr->cmd_name, X_OK) == 0)
 		execve(ptr->cmd_name, argv, envp);
-	exec = execve(bring_path(ptr->cmd_name, envp), argv, envp);
-	if (exec == -1)
-		msg_exit(ptr->cmd_name, ": command not found\n", 127);
+	execve(bring_path(ptr->cmd_name, envp), argv, envp);
+	msg_exit(ptr->cmd_name, ": command not found\n", 127);
 }
 
 void	execute_pipe_commands(t_list *commands, char **envp, char **argv)

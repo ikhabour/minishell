@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/25 16:50:56 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/01 17:12:48 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,13 +89,34 @@ void	msg_exit(char *msg, char *msg1, int status)
 	exit(status);
 }
 
+int	open_files(t_list *commands)
+{
+	int fd;
+	t_cmds *ptr;
+
+	ptr = (t_cmds *)commands->content;
+	if (!ptr->files->file_name)
+		return (-1);
+	if (!ft_strcmp(ptr->files->type, "APPEND"))
+	{
+		fd = open(ptr->files->file_name, O_CREAT | O_TRUNC, 0644);
+		return (fd);
+	}
+	else if (!ft_strcmp(ptr->files->type, "INPUT"))
+	{
+		fd = open(ptr->files->file_name, O_CREAT | O_RDONLY, 0644);
+		return (fd);
+	}
+	fd = open(ptr->files->file_name, O_CREAT | O_RDWR, 0644);
+	return (fd);
+}
+
 int	execute_commands(t_list *cmd, t_list **env, char **args)
 {
 	char **envp;
 	char **paths;
 	char *f_path;
 	int pid;
-	int exec;
 	int i;
 	t_cmds *ptr;
 
@@ -106,6 +127,8 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 		(write(2, "Fork Failed\n", 12), exit(1));
 	else if (pid == 0)
 	{
+		// ptr->files.fd = open_files(cmd);
+		// fd_redirect(ptr->files.fd);
 		if (access(ptr->cmd_name, X_OK) == 0)
 			execve(ptr->cmd_name, args, envp);
 		paths = get_path(envp);
@@ -121,12 +144,8 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 				break ;	
 			i++;
 		}
-		exec = execve(paths[i], args, envp);
-		if (exec == -1)
-		{
-			printf("Minishell: %s: command not found\n", ptr->cmd_name);
-			return (0);
-		}
+		execve(paths[i], args, envp);
+		msg_exit(ptr->cmd_name, ": command not found\n", 127);
 	}
 	else
 		waitpid(pid, &i, 0);

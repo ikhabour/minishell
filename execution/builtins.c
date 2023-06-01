@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/25 20:38:31 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/01 17:12:30 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -371,9 +371,9 @@ void	exportt(char *value, char *var, t_list **env)
 	option[1] = NULL;
 	ptr.cmd_name = "export";
 	ptr.option = option;
-	ptr.files.file_name = NULL;
-	ptr.files.type = NULL;
-	ptr.files.red = NULL;
+	ptr.files->file_name = NULL;
+	ptr.files->type = NULL;
+	// ptr.files.red = NULL;
 	cmd.content = &ptr;
 	execute_export(&cmd, env);
 	free(option[0]);
