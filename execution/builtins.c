@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/01 17:12:30 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/01 23:17:01 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -363,17 +363,19 @@ void	exportt(char *value, char *var, t_list **env)
 	t_cmds ptr;
 	t_list cmd;
 	char *option[2];
+	t_filetype *pnt;
 	int i;
 
 	i = 0;
-
+	pnt = (t_filetype *)ptr.files->content;
 	option[0] = ft_strjoinn(var, value);
 	option[1] = NULL;
 	ptr.cmd_name = "export";
 	ptr.option = option;
-	ptr.files->file_name = NULL;
-	ptr.files->type = NULL;
-	// ptr.files.red = NULL;
+	pnt->file_name = NULL;
+	pnt->type = NULL;
+	pnt->red = NULL;
+	pnt->fd = -1;
 	cmd.content = &ptr;
 	execute_export(&cmd, env);
 	free(option[0]);

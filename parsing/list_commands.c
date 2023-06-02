@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list_commands.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/01 19:05:11 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/02 21:05:01 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,24 +27,29 @@ void	split_print(char **input)
 void	print_list(t_list *list)
 {
 	t_list *tmp = list;
+	// t_filetype *lst = 
 	// t_filetype *file_node = NULL;
 
     while (tmp)
     {
 		printf("==================\n");
     	t_cmds *node = (t_cmds *)tmp->content;
+    	t_filetype *file_node = (t_filetype *)node->files->content;
+		// t_filetype *file_node = node->files;
         printf("the command name is: %s\n", node->cmd_name);
 		// if (node->files.fd < 0)
 		// 		printf("Can not create fd.\n");
 		// else
 			// printf("the fd is: %d\n", node->files.fd);
-		t_filetype *file_node = (t_filetype *)node->files;
-		for (int i = 0; (node->files); i++)
+		for (int i = 0; (node->files != NULL); i++)
 		{
-			printf("the red : %s\n", file_node->red);
+			// printf("the red : %s\n", file_node->red);
 			printf("the type : %s\n", file_node->type);
+			printf("the red : %s\n", file_node->red);
 			printf("the file name : %s\n", file_node->file_name);
-			file_node = file_node->next;
+			node->files = node->files->next;
+			if (node->files)
+    			file_node = (t_filetype *)node->files->content;
 		}
 		for(int i = 0; (node->option) && (node->option)[i] ; i++)
 		{
@@ -63,67 +68,67 @@ t_filetype	*fill_file(char **cmd_array, int *arr, int i)
 	file_node->type = NULL;
 	file_node->file_name = NULL;
 	if (arr[i] == R_IN_OUT)
+	{
+		file_node->type = ft_strdup("OUTPUT");
 		file_node->red = ft_strdup(cmd_array[i]);
-	else if (arr[i] == R_IN_SIG)
-		file_node->red = ft_strdup(cmd_array[i]);
-	else if (arr[i] == R_OUT_SIG)
-		file_node->red = ft_strdup(cmd_array[i]);
+		file_node->file_name = ft_strdup(cmd_array[i + 1]);
+	}
+	// else if (arr[i] == R_IN_SIG)
+	// 	file_node->red = ft_strdup(cmd_array[i]);
+	// else if (arr[i] == R_OUT_SIG)
+	// 		file_node->red = ft_strdup(cmd_array[i]);
 	else if (arr[i] == R_OUT_FILE)
 	{
 		file_node->type = ft_strdup("OUTPUT");
 		file_node->file_name = ft_strdup(cmd_array[i]);
+		file_node->red = ft_strdup(cmd_array[i - 1]);
 		// file_node->fd = open(file_node->file_name, O_CREAT, O_RDWR);
 	}
-	else if (arr[i] == R_APP_SIG)
-		file_node->red = ft_strdup(cmd_array[i]);
+	// else if (arr[i] == R_APP_SIG)
+	// 	file_node->red = ft_strdup(cmd_array[i]);
 	else if (arr[i] == R_APP_FILE)
 	{
 		file_node->type = ft_strdup("APPEND");
 		file_node->file_name = ft_strdup(cmd_array[i]);
+		file_node->red = ft_strdup(cmd_array[i - 1]);
 		// file_node->fd = open(file_node->file_name, O_CREAT, O_RDWR);
 	}
 	else if (arr[i] == R_IN_FILE)
 	{
 		file_node->type = ft_strdup("INPUT");
 		file_node->file_name = ft_strdup(cmd_array[i]);
+		file_node->red = ft_strdup(cmd_array[i - 1]);
 		// file_node->fd = open(file_node->file_name, O_CREAT, O_RDONLY);
 	}
-	else if (arr[i] == HEREDOC_SIG)
-		file_node->red = ft_strdup(cmd_array[i]);
+	// else if (arr[i] == HEREDOC_SIG)
+	// 	file_node->red = ft_strdup(cmd_array[i]);
 	else if (arr[i] == HEREDOC_LIM)
 	{
+		printf("haaaa\n");
 		file_node->type = ft_strdup("DELIMITER");
 		file_node->file_name = ft_strdup(cmd_array[i]);
+		file_node->red = ft_strdup(cmd_array[i - 1]);
 		// node->files.fd = open(node->files.file_name, O_CREAT, O_RDWR);
 	}
 	return (file_node);
 }
 
-// void	node_printer(t_filetype *file_node)
-// {
-// 	t_list *tmp = file_node;
-
-//     while (tmp)
-//     {
-// 		printf("==================\n");
-//     	t_cmds *node = (t_cmds *)tmp->content;
-// 		// // split_print(node->option);
-// 		// printf("The type is : %s\n", node->files->type);
-// 		// printf("The red is : %s\n", node->files->red);
-// 		// printf("The file_name is : %s\n", node->files->file_name);
-//         printf("the command name is: %s\n", node->cmd_name);
-// 		// if (node->files.fd < 0)
-// 		// 		printf("Can not create fd.\n");
-// 		// else
-// 			// printf("the fd is: %d\n", node->files.fd);
-		
-// 		for(int i = 0;(node->option) && (node->option)[i] ; i++)
-// 		{
-// 			printf("The option is : %s\n", (node->option)[i]);
-// 		}
-//         tmp = tmp->next;
-//     }
-// }
+void	node_printer(t_list *file_node)
+{
+	t_list *tmp = file_node;
+	
+	while (tmp)
+	{
+		t_filetype *file = (t_filetype *)tmp->content;
+		// for (int i = 0; file; i++)
+		// {
+			printf("this is the content (%s)\n", file->file_name);
+			// file = file->next;
+		// }
+		// printf("haaaa\n");
+		tmp = tmp->next;
+	}
+}
 
 t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 {
@@ -134,18 +139,12 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 
 	t_cmds		*node;
 	t_list		*file = NULL;
-	t_filetype	*file_node;
+	t_filetype	*file_node = NULL;
 
 	count = 0;
 	node = malloc (sizeof (t_cmds));
-	// file_node = malloc (sizeof(t_filetype));
-	file_node = NULL;
-	file_node->red = NULL;
-	file_node->type = NULL;
-	file_node->file_name = NULL;
 	node->cmd_name = NULL;
 	node->option = NULL;
-	// node->files->fd = -1;
 
 	while (i >= 0 && arr[i] != PIPE)
 	{
@@ -180,17 +179,15 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 				}
 			}
 		}
-		else
+		else if (arr[i] == R_IN_FILE || arr[i] == R_OUT_FILE || arr[i] == R_APP_FILE
+				|| arr[i] == R_IN_OUT || arr[i] == HEREDOC_LIM)
 		{
-			// printf("haaaaaa\n");
 			file_node = fill_file(cmd_array, arr, i);
-			// printf("====(%s)===\n", file_node->file_name);
 			my_lstadd_back(&file, my_lstnew(file_node));
 		}
 		i--;
 	}
-	// node_printer(file_node);
-	node->files = (t_filetype *)file;
+	node->files = file;
 	return (node);
 }
 
@@ -214,7 +211,6 @@ t_list	*list_cmds(char **cmd_array, int *arr)
 		i++;
 		if (arr[i] == '\0')
 		{
-			printf("(%d)\n", arr[i - 1]);
 			node = fill_node(cmd_array, arr, (i - 1));
 			my_lstadd_back(&list, my_lstnew(node));
 			node = NULL;

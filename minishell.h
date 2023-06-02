@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/01 17:07:51 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/02 21:05:56 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,22 +48,20 @@ typedef struct s_filetype
 	char			*red;
 	char			*type;
 	char			*file_name;
-	// void			*content;
-	struct s_filetype *next;
 }					t_filetype;
-
-typedef struct s_cmds
-{
-	char			*cmd_name;
-	char			**option;
-	t_filetype		*files;
-}					t_cmds;
 
 typedef struct s_list1
 {
 	void			*content;
 	struct s_list1	*next;
 }					t_list;
+
+typedef struct s_cmds
+{
+	char			*cmd_name;
+	char			**option;
+	t_list			*files;
+}					t_cmds;
 
 typedef enum t_enum
 {

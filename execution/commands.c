@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/01 17:12:48 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/01 23:18:46 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,21 +93,23 @@ int	open_files(t_list *commands)
 {
 	int fd;
 	t_cmds *ptr;
+	t_filetype *p;
 
 	ptr = (t_cmds *)commands->content;
-	if (!ptr->files->file_name)
+	p = (t_filetype *)ptr->files->content;
+	if (!p->file_name)
 		return (-1);
-	if (!ft_strcmp(ptr->files->type, "APPEND"))
+	if (!ft_strcmp(p->type, "APPEND"))
 	{
-		fd = open(ptr->files->file_name, O_CREAT | O_TRUNC, 0644);
+		fd = open(p->file_name, O_CREAT | O_TRUNC, 0644);
 		return (fd);
 	}
-	else if (!ft_strcmp(ptr->files->type, "INPUT"))
+	else if (!ft_strcmp(p->type, "INPUT"))
 	{
-		fd = open(ptr->files->file_name, O_CREAT | O_RDONLY, 0644);
+		fd = open(p->file_name, O_CREAT | O_RDONLY, 0644);
 		return (fd);
 	}
-	fd = open(ptr->files->file_name, O_CREAT | O_RDWR, 0644);
+	fd = open(p->file_name, O_CREAT | O_RDWR, 0644);
 	return (fd);
 }
 
