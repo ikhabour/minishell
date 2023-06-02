@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/02 21:26:39 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/02 22:43:57 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,8 @@ int	*array_tokens(char **cmd_array, int elements)
 		else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], ">>") == 0))
 			cmd_token[i] = R_APP_FILE;
 		else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], ">") == 0))
+			cmd_token[i] = R_OUT_FILE;
+		else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], "<>") == 0))
 			cmd_token[i] = R_OUT_FILE;
 		else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], "<") == 0))
 			cmd_token[i] = R_IN_FILE;
