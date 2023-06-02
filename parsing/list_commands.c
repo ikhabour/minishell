@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/02 21:05:01 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/02 21:47:25 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 				|| arr[i] == R_IN_OUT || arr[i] == HEREDOC_LIM)
 		{
 			file_node = fill_file(cmd_array, arr, i);
-			my_lstadd_back(&file, my_lstnew(file_node));
+			ft_lstadd_front(&file, my_lstnew(file_node));
 		}
 		i--;
 	}

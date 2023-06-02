@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/02 18:39:03 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/02 21:26:39 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	get_length(char *input)
 		i--;
 		len--;
 	}
-	printf("this is the length : %d\n", len);
+	// printf("this is the length : %d\n", len);
 	return (len);
 }
 
@@ -195,14 +195,15 @@ void	get_input(char *input, t_list **env)
 	}
 	len = get_length(input);
 	// printf("len is : %d\n", len);
-	check_line(input);
+	if (check_line(input))
+		return ;
 	input = fill_line(input, len);
 	input = add_spaces(input);
 	// printf("this is the line : %s\n", input);
 	cmd_array = ft_split(input, ' ');
 	// split_print(cmd_array);
 	arr = array_tokens(cmd_array, num_elemnts(cmd_array));
-	// array_printer(arr);
+	array_printer(arr);
 	if (op_order(arr))
 	{
 		free(input);
