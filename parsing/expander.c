@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 14:14:21 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/03 23:28:34 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/04 00:12:55 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,18 +261,23 @@ static char	*ft_expand_exit(char *cmd, t_list *env, int *i)
 	char	*full_str;
 
 	limiter = *(i) + 2;
-	str = ft_substr(cmd, limiter, 1000);
+	if (cmd[limiter])
+		str = ft_substr(cmd, limiter, 1000);
+	else
+	{
+		limiter -= 1;
+		str = ft_strdup(" ");
+	}
 	value = ft_itoa(exit_s);
 	lineup = ft_substr(cmd, 0, *i);
 	full_str = ft_strjoin(lineup, value);
-	printf("before : (%s) value : (%s) after : (%s)\n", lineup, value, str);
 	free(lineup);
 	free(cmd);
 	cmd = ft_strjoin(full_str, str);
-	*i = ft_strlen(full_str);
-	printf("this is the full_str : (%s)\n", full_str);
 	free(full_str);
 	free(value);
+	if (cmd[*i] == '$' || cmd[*i] == '"' || cmd[*i] == '\'')
+            *i -= 1;
 	return (cmd);
 }
 
@@ -290,20 +295,16 @@ char	*expand_processor(char *cmd, t_list *env)
 	{
 		if (cmd[i] == '\'' || cmd[i] == '"')
 		{
-			// printf("haaa\n");
 			flag = is_outside(flag, cmd[i]);
 		}
 		if (cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] == '?' && flag != 1)
 		{
 			cmd = ft_expand_exit(cmd, env, (&i));
-			printf("str: ====(%s)\n", cmd);
 		}
-		// printf("(%c)===(%d)\n", cmd[i], flag);
 		if (cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] != '?' && flag != 1)
 		{
 			cmd = ft_expand(cmd, env, (&i));
 		}
-		if (cmd[i])
 			i++;
 	}
 	return (cmd);
@@ -322,13 +323,6 @@ void	expander(char **cmd, t_list *env)
 		{
 			cmd[i] = expand_processor(cmd[i], env);
 		}
-		// j = 0;
-		// while (cmd[i][j])
-		// {
-		// 	if (cmd[i][j] == ' ' || (cmd[i][j] >= 9 && cmd[i][j] <= 13))
-		// 		break;
-		// 	j++;
-		// }
 		i++;
 	}
 }
