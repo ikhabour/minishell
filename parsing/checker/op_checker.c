@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 09:16:16 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/27 18:01:10 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/03 14:48:11 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,18 @@ int	check_redirec_op(char *input)
 	i--;
 	if (input[i] == '>' || input[i] == '<')
 	{
-		write (2, "syntax error near unexpected token `newline'\n", 46);
-		exit_s = 258;
-		return (1);
+		if (input[i] == '<')
+		{
+			write (2, "syntax error near unexpected token `<'\n", 39);
+			exit_s = 258;
+			return (1);
+		}
+		else
+		{
+			write (2, "syntax error near unexpected token `newline'\n", 46);
+			exit_s = 258;
+			return (1);
+		}
 	}
 	return (0);
 }
