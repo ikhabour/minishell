@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/03 22:39:08 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/03 23:22:36 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,8 @@ void				my_lstadd_back(t_list **lst, t_list *new);
 void				split_print(char **input);
 void				print_list(t_list *list);
 t_list				*list_cmds(char **cmd_array, int *arr);
+int					n_calculator(int num);
+char				*ft_itoa(int num);
 
 //	################		execution prototypes 		##################	//
 

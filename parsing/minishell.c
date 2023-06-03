@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/03 17:01:40 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/03 22:24:49 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,6 @@ void	get_input(char *input, t_list **env)
 	cmd_array = ft_split(input, ' ');
 	// split_print(cmd_array);
 	arr = array_tokens(cmd_array, num_elemnts(cmd_array));
-	// array_printer(arr);
 	if (op_order(arr))
 	{
 		free(input);
@@ -216,21 +215,24 @@ void	get_input(char *input, t_list **env)
 	cmd_array = quote_delete(cmd_array);
 	commands = list_cmds(cmd_array, arr);
 	// print_list(commands);
-	add_history(history);
-	if (ft_lstsize(commands) > 1)
-	{
-		multiple_pipes(commands, env);
-		free_all(input, cmd_array);
-		return ;
-	}
-	if (execute_builtins(commands, env))
-	{
-		free(input);
-		free_2d(cmd_array);
-		return ;
-	}
-	execute_commands(commands, env, cmd_array);
-	free_2d(cmd_array);
+	// add_history(history);
+	// if (ft_lstsize(commands) > 1)
+	// {
+	// 	if (ft_lstsize(commands) == 2)
+	// 		execute_pipe_commands(commands, env_to_array(env), cmd_array);
+	// 	else
+	// 		multiple_pipes(commands, env);
+	// 	free_all(input, cmd_array);
+	// 	return ;
+	// }
+	// if (execute_builtins(commands, env))
+	// {
+	// 	free(input);
+	// 	free_2d(cmd_array);
+	// 	return ;
+	// }
+	// execute_commands(commands, env, cmd_array);
+	// free_2d(cmd_array);
 	free(input);
 }
 

@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   list_commands.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/03 17:01:48 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/03 15:23:16 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
 
 void	split_print(char **input)
 {
@@ -27,29 +28,23 @@ void	split_print(char **input)
 void	print_list(t_list *list)
 {
 	t_list *tmp = list;
-	// t_filetype *lst = 
-	// t_filetype *file_node = NULL;
 
     while (tmp)
     {
 		printf("==================\n");
     	t_cmds *node = (t_cmds *)tmp->content;
     	t_filetype *file_node = (t_filetype *)node->files->content;
-		// t_filetype *file_node = node->files;
         printf("the command name is: %s\n", node->cmd_name);
-		// if (node->files.fd < 0)
-		// 		printf("Can not create fd.\n");
-		// else
-			// printf("the fd is: %d\n", node->files.fd);
-		for (int i = 0; (node->files != NULL); i++)
+		for (int i = 0; (node->files); i++)
 		{
-			// printf("the red : %s\n", file_node->red);
 			printf("the type : %s\n", file_node->type);
 			printf("the red : %s\n", file_node->red);
 			printf("the file name : %s\n", file_node->file_name);
 			node->files = node->files->next;
 			if (node->files)
+			{
     			file_node = (t_filetype *)node->files->content;
+			}
 		}
 		for(int i = 0; (node->option) && (node->option)[i] ; i++)
 		{
