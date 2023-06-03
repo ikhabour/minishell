@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/03 16:53:07 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/03 18:08:50 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,11 +92,11 @@ void	msg_exit(char *msg, char *msg1, int status)
 void	open_file_type(t_filetype *files)
 {
 	if (!ft_strcmp(files->type, "INPUT"))
-		files->fd = open(files->file_name, O_CREAT | O_RDONLY, 0644);
+		files->fd = open(files->file_name, O_RDONLY, 0644);
 	else if (!ft_strcmp(files->type, "OUTPUT"))
-		files->fd = open(files->file_name, O_CREAT | O_RDWR, 0644);
+		files->fd = open(files->file_name, O_CREAT | O_TRUNC | O_RDWR, 0644);
 	else if (!ft_strcmp(files->type, "APPEND"))
-		files->fd = open(files->file_name, O_CREAT | O_APPEND, 0644);
+		files->fd = open(files->file_name, O_CREAT | O_APPEND | O_RDWR, 0644);
 	else
 		files->fd = -1;
 		
@@ -133,7 +133,7 @@ void	dup_fds(t_cmds *ptr)
 	tmp = ptr->files;
 	while (tmp)
 	{
-		if (!ft_strcmp(files->type, "OUTPUT"))
+		if (!ft_strcmp(files->type, "OUTPUT") || !ft_strcmp(files->type, "APPEND"))
 			dup2(files->fd, 1);
 		else if(!ft_strcmp(files->type, "INPUT"))
 			dup2(files->fd, 0);
