@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/02 21:05:56 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/03 17:00:55 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 // int	EXIT_S = 0;
 // #define EXIT_S 0
 
-extern int exit_s;
+extern int			exit_s;
 
 # include <fcntl.h>
 # include <readline/history.h>
@@ -24,9 +24,9 @@ extern int exit_s;
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <sys/errno.h>
 # include <sys/stat.h>
 # include <unistd.h>
-# include <sys/errno.h>
 
 typedef struct s_vars
 {
@@ -78,47 +78,46 @@ typedef enum t_enum
 	HEREDOC_LIM,
 	EMPTY,
 	R_IN_OUT,
-} t_enum;
+}					t_enum;
 
-char	*ft_strchr(const char *s, int c);
-char	*ft_strdup(const char *s1);
-void	*ft_calloc(size_t count, size_t size);
-void	ft_bzero(void *s, size_t n);
-int		ft_strlen(const char *str);
-void	*ft_memcpy(void *dest, const void *src, size_t n);
-t_env	*get_env(char **env);
-char	*get_env_value(char *env);
-char	*get_env_name(char *env);
-t_env	*ft_lstnew(char *name, char *value, t_env *new);
-void	ft_lstadd_back(t_env **lst, t_env *new);
-char	*add_spaces(char *input);
-char	*ft_substr(char const *s, int start, int len);
-char	*ft_strjoin(const char *s1, const char *s2);
-int		calc_words(char *s, char c);
-int		ft_wordlen(char *s, int i, char c);
-char	*ft_charge(char *s, int i, char c, int flag);
-void	*freeini(char **string, int len);
-char	**ft_split(char *s, char sep);
-int		ft_strncmp(const char *s1, const char *s2, int n);
-int		ft_strcmp(char *s1, char *s2);
-int 	check_pipe(char *input);
-int		check_redirec_op(char *input);
-int 	check_line(char *input);
-char	*skip_spaces(char *input);
-int		check_quotes(char *input);
-int		check_outside(int count);
-int		op_order(int *token);
-int		is_outside(int flag, char c);
-char	**quote_delete(char **cmd);
-void	expander(char **cmd, t_list *env);
-int		ft_envcmp(char *s1, char *s2, int length);
+char				*ft_strchr(const char *s, int c);
+char				*ft_strdup(const char *s1);
+void				*ft_calloc(size_t count, size_t size);
+void				ft_bzero(void *s, size_t n);
+int					ft_strlen(const char *str);
+void				*ft_memcpy(void *dest, const void *src, size_t n);
+t_env				*get_env(char **env);
+char				*get_env_value(char *env);
+char				*get_env_name(char *env);
+t_env				*ft_lstnew(char *name, char *value, t_env *new);
+void				ft_lstadd_back(t_env **lst, t_env *new);
+char				*add_spaces(char *input);
+char				*ft_substr(char const *s, int start, int len);
+char				*ft_strjoin(const char *s1, const char *s2);
+int					calc_words(char *s, char c);
+int					ft_wordlen(char *s, int i, char c);
+char				*ft_charge(char *s, int i, char c, int flag);
+void				*freeini(char **string, int len);
+char				**ft_split(char *s, char sep);
+int					ft_strncmp(const char *s1, const char *s2, int n);
+int					ft_strcmp(char *s1, char *s2);
+int					check_pipe(char *input);
+int					check_redirec_op(char *input);
+int					check_line(char *input);
+char				*skip_spaces(char *input);
+int					check_quotes(char *input);
+int					check_outside(int count);
+int					op_order(int *token);
+int					is_outside(int flag, char c);
+char				**quote_delete(char **cmd);
+void				expander(char **cmd, t_list *env);
+int					ft_envcmp(char *s1, char *s2, int length);
 // t_list	**list_cmds(char **cmd_array, int *arr);
-t_list	*my_lstnew(void *content);
-void	my_lstadd_back(t_list **lst, t_list *new);
-void	split_print(char **input);
-void	print_list(t_list *list);
-t_list	*list_cmds(char **cmd_array, int *arr);
-
+t_list				*my_lstnew(void *content);
+void				my_lstadd_back(t_list **lst, t_list *new);
+void				split_print(char **input);
+void				print_list(t_list *list);
+t_list				*list_cmds(char **cmd_array, int *arr);
 
 //	################		execution prototypes 		##################	//
 
@@ -146,31 +145,21 @@ void				ft_lstadd_backk(t_list **lst, t_list *new);
 char				**dup_2d(char **str);
 int					count_2d_len(char **str);
 
-
 //				Pipex Prototypes		//
 
-# define CMD_NOT_FOUND "command not found : "
-# define FILE_ERROR "Error opening file : "
-
-char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
-char	*ft_strjoin(const char *s1, const char *s2);
-void	ft_wait(int pid1, int *fd, int pid);
-char	*bring_path(char *cmd, char **envp);
-
-void	execute_pipe_commands(t_list *commands, char **envp, char **argv);
-void	multiple_pipes(t_list *commands, t_list **env);
-char **get_path(char **envp);
-
+void				multiple_pipes(t_list *commands, t_list **env);
+char				**get_path(char **envp);
 
 //				Minishell				//
 
 t_list				*make_env(char **envp);
 int					execute_builtins(t_list *cmd, t_list **env);
-int				execute_commands(t_list *cmd, t_list **env, char **args);
+int					execute_commands(t_list *cmd, t_list **env, char **args);
 void				msg_exit(char *msg, char *msg1, int status);
-char	**env_to_array(t_list **env);
+char				**env_to_array(t_list **env);
 
+char				**make_argv(t_list *commands);
 
-
-char	**make_argv(t_list *commands);
+void				open_file_type(t_filetype *files);
+void				open_files(t_cmds *ptr);
 #endif

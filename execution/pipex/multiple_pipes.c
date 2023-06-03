@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 15:40:24 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/31 17:14:55 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/03 16:53:52 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,84 @@ char	**make_argv(t_list *commands)
 	return (argv);
 }
 
+int	input_file(t_cmds *ptr)
+{
+	t_list *tmp;
+	t_filetype *files;
+
+	if (!ptr->files)
+		return (0);
+	tmp = ptr->files;
+	files = (t_filetype *)tmp->content;
+	while (tmp)
+	{
+		if (!ft_strcmp(files->type, "INPUT"))
+			return (1);
+		tmp = tmp->next;
+		if (tmp)
+			files = (t_filetype *)tmp->content;
+	}
+	return (0);
+}
+
+void	dup_input_file(t_cmds *ptr)
+{
+	t_filetype *files;
+	t_list *tmp;
+
+	if (!ptr->files)
+		return ;
+	tmp = ptr->files;
+	files = (t_filetype *)tmp->content;
+	while (tmp)
+	{
+		if (!ft_strcmp(files->type, "INPUT"))
+			dup2(files->fd, 0);
+		tmp = tmp->next;
+		if (tmp)
+			files = (t_filetype *)tmp->content;
+	}
+}
+
+int	output_file(t_cmds *ptr)
+{
+	t_list *tmp;
+	t_filetype *files;
+
+	if (!ptr->files)
+		return (0);
+	tmp = ptr->files;
+	files = (t_filetype *)tmp->content;
+	while (tmp)
+	{
+		if (!ft_strcmp(files->type, "OUTPUT"))
+			return (1);
+		tmp = tmp->next;
+		if (tmp)
+			files = (t_filetype *)tmp->content;
+	}
+	return (0);
+}
+
+void	dup_output_file(t_cmds *ptr)
+{
+	t_filetype *files;
+	t_list *tmp;
+
+	if (!ptr->files)
+		return ;
+	tmp = ptr->files;
+	files = (t_filetype *)tmp->content;
+	while (tmp)
+	{
+		if (!ft_strcmp(files->type, "OUTPUT"))
+			dup2(files->fd, 1);
+		tmp = tmp->next;
+		if (tmp)
+			files = (t_filetype *)tmp->content;
+	}
+}
+
 void	first_command(t_list *commands, t_list **env, int *fd)
 {
 	char **argv;
@@ -65,7 +143,13 @@ void	first_command(t_list *commands, t_list **env, int *fd)
 	ptr = (t_cmds *)commands->content;
 	envp = env_to_array(env);
 	argv = make_argv(commands);
-	dup2(fd[1], 1);
+	open_files(ptr);
+	if (input_file(ptr))
+		dup_input_file(ptr);
+	if (output_file(ptr))
+		dup_output_file(ptr);
+	else
+		dup2(fd[1], 1);
 	close(fd[0]);
 	if (execute_builtins(commands, env))
 		exit(0);
@@ -100,7 +184,13 @@ void	last_command(t_list *commands, t_list **env, int *fd)
 	ptr = (t_cmds *)commands->content;
 	envp = env_to_array(env);
 	argv = make_argv(commands);
-	dup2(fd[0], 0);
+	open_files(ptr);
+	if (output_file(ptr))
+		dup_output_file(ptr);
+	if (input_file(ptr))
+		dup_input_file(ptr);
+	else
+		dup2(fd[0], 0);
 	close(fd[1]);
 	if (execute_builtins(commands, env))
 		exit(0);
@@ -135,8 +225,15 @@ void	middle_command(t_list *commands, t_list **env, int *fdin, int *fdout)
 	ptr = (t_cmds *)commands->content;
 	envp = env_to_array(env);
 	argv = make_argv(commands);	
-	dup2(fdout[1], 1);
-	dup2(fdin[0], 0);
+	open_files(ptr);
+	if (output_file(ptr))
+		dup_output_file(ptr);
+	else
+		dup2(fdout[1], 1);
+	if (input_file(ptr))
+		dup_input_file(ptr);
+	else
+		dup2(fdin[0], 0);
 	close(fdout[0]);
 	close(fdin[1]);
 	if (execute_builtins(commands, env))

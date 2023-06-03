@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/01 23:18:46 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/03 16:53:07 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,28 +89,73 @@ void	msg_exit(char *msg, char *msg1, int status)
 	exit(status);
 }
 
-int	open_files(t_list *commands)
+void	open_file_type(t_filetype *files)
 {
-	int fd;
-	t_cmds *ptr;
-	t_filetype *p;
+	if (!ft_strcmp(files->type, "INPUT"))
+		files->fd = open(files->file_name, O_CREAT | O_RDONLY, 0644);
+	else if (!ft_strcmp(files->type, "OUTPUT"))
+		files->fd = open(files->file_name, O_CREAT | O_RDWR, 0644);
+	else if (!ft_strcmp(files->type, "APPEND"))
+		files->fd = open(files->file_name, O_CREAT | O_APPEND, 0644);
+	else
+		files->fd = -1;
+		
+}
 
-	ptr = (t_cmds *)commands->content;
-	p = (t_filetype *)ptr->files->content;
-	if (!p->file_name)
-		return (-1);
-	if (!ft_strcmp(p->type, "APPEND"))
+void	open_files(t_cmds *ptr)
+{
+	t_filetype *files;
+	t_list *tmp;
+
+	if (!ptr->files)
+		return ;
+	tmp = ptr->files;
+	files = (t_filetype *)ptr->files->content;
+	while (tmp)
 	{
-		fd = open(p->file_name, O_CREAT | O_TRUNC, 0644);
-		return (fd);
+		open_file_type(files);
+		tmp = tmp->next;
+		if (tmp)
+			files = (t_filetype *)tmp->content;
 	}
-	else if (!ft_strcmp(p->type, "INPUT"))
+
+}
+
+void	dup_fds(t_cmds *ptr)
+{
+	t_filetype *files;
+
+	t_list *tmp;
+
+	if (!ptr->files)
+		return ;
+	files = (t_filetype *)ptr->files->content;
+	tmp = ptr->files;
+	while (tmp)
 	{
-		fd = open(p->file_name, O_CREAT | O_RDONLY, 0644);
-		return (fd);
+		if (!ft_strcmp(files->type, "OUTPUT"))
+			dup2(files->fd, 1);
+		else if(!ft_strcmp(files->type, "INPUT"))
+			dup2(files->fd, 0);
+		tmp = tmp->next;
+		if (tmp)
+			files = (t_filetype *)tmp->content;
 	}
-	fd = open(p->file_name, O_CREAT | O_RDWR, 0644);
-	return (fd);
+	
+}
+
+int	has_redirection(char **args)
+{
+	int i;
+
+	i = 0;
+	while (args[i])
+	{
+		if (args[i][0] == '<' || args[i][0] == '>')
+			return (1);
+		i++;
+	}
+	return (0);
 }
 
 int	execute_commands(t_list *cmd, t_list **env, char **args)
@@ -125,12 +170,14 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 	ptr = (t_cmds *)cmd->content;
 	envp = env_to_array(env);
 	pid = fork();
+	if (has_redirection(args))
+		args = make_argv(cmd);
 	if (pid == -1)
 		(write(2, "Fork Failed\n", 12), exit(1));
 	else if (pid == 0)
 	{
-		// ptr->files.fd = open_files(cmd);
-		// fd_redirect(ptr->files.fd);
+		open_files(ptr);
+		dup_fds(ptr);
 		if (access(ptr->cmd_name, X_OK) == 0)
 			execve(ptr->cmd_name, args, envp);
 		paths = get_path(envp);

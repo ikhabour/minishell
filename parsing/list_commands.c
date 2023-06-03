@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list_commands.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/02 22:44:57 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/03 17:01:48 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,6 +216,6 @@ t_list	*list_cmds(char **cmd_array, int *arr)
 			node = NULL;
 		}
 	}
-	print_list(list);
+	// print_list(list);
 	return (list);
 }
