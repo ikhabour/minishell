@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/05 22:04:10 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/05 23:16:51 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ void	get_input(char *input, t_list **env)
 {
 	int		len;
 	char	**cmd_array;
-	// t_list	*commands;
+	t_list	*commands;
 	char	*history;
 	int		*arr;
 	(void) env;
@@ -217,16 +217,16 @@ void	get_input(char *input, t_list **env)
 	// split_print(cmd_array);
 	arr = array_tokens(cmd_array, num_elemnts(cmd_array));
 	array_printer(arr);
-	// if (op_order(arr))
-	// {
-	// 	free(input);
-	// 	// free_2d(cmd_array);
-	// 	return ;
-	// }
-	// expander(cmd_array, *env);
-	// cmd_array = quote_delete(cmd_array);
-	// commands = list_cmds(cmd_array, arr);
-	// print_list(commands);
+	if (op_order(arr))
+	{
+		free(input);
+		// free_2d(cmd_array);
+		return ;
+	}
+	expander(cmd_array, *env);
+	cmd_array = quote_delete(cmd_array);
+	commands = list_cmds(cmd_array, arr);
+	print_list(commands);
 	// add_history(history);
 	// if (ft_lstsize(commands) > 1)
 	// {

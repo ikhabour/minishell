@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/05 22:02:39 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/05 23:32:29 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,9 +128,8 @@ void	node_printer(t_list *file_node)
 t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 {
 	int	count;
-	int	j;
-	int	index = 0;
-	int	start;
+	int	arg_counter = 0;
+	int	index = i;
 
 	t_cmds		*node;
 	t_list		*file = NULL;
@@ -141,6 +140,17 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 	node->cmd_name = NULL;
 	node->option = NULL;
 
+	while (index >= 0 && arr[index] != PIPE)
+	{
+		if (arr[index] == CMD_ARG)
+			arg_counter++;
+		index--;
+	}
+	if (arg_counter > 0)
+	{
+		node->option = malloc ((arg_counter + 1) * sizeof(char *));
+		node->option[arg_counter] = NULL;
+	}
 	while (i >= 0 && arr[i] != PIPE)
 	{
 		if (arr[i] == CMD_NAME)
@@ -149,31 +159,8 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 		}	
 		else if (arr[i] == CMD_ARG)
 		{
-			count = 0;
-			j = i;
-			while (i > 0 && arr[i] == CMD_ARG)
-			{
-				i--;
-				count++;
-				if (arr[i] != CMD_ARG)
-				{
-					i++;
-					start = i;
-					break ;
-				}
-			}
-			if (count > 0)
-			{
-				node->option = malloc ((count + 1) * sizeof(char *));
-				node->option[count] = NULL;
-				while (index < count)
-				{
-					// printf("option array : %s\n", cmd_array[start]);
-					node->option[index] = ft_strdup(cmd_array[start]);
-					index++;
-					start++;
-				}
-			}
+			node->option[arg_counter - 1] = ft_strdup(cmd_array[i]);
+			arg_counter--;
 		}
 		else if (arr[i] == R_IN_FILE || arr[i] == R_OUT_FILE || arr[i] == R_APP_FILE
 				|| arr[i] == HEREDOC_LIM)
