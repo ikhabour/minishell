@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/04 00:13:54 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/05 22:04:10 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ int	*array_tokens(char **cmd_array, int elements)
 {
 	int	*cmd_token;
 	int	i;
+	int	flag = 0;
 
 	cmd_token = ft_calloc(sizeof (int) , elements + 1);
 	if (!cmd_token)
@@ -138,12 +139,20 @@ int	*array_tokens(char **cmd_array, int elements)
 		else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], "<") == 0))
 			cmd_token[i] = R_IN_FILE;
 		else
+		{
 			cmd_token[i] = CMD_NAME;
-		if ((i > 0) && (cmd_token[i - 1] == CMD_NAME || cmd_token[i - 1] == CMD_ARG) && 
-			ft_strcmp(cmd_array[i], ">") && ft_strcmp(cmd_array[i], "<") && 
-			ft_strcmp(cmd_array[i], ">>") && ft_strcmp(cmd_array[i], "<<") && 
-			ft_strcmp(cmd_array[i], "|"))
-			cmd_token[i] = CMD_ARG;
+			if ((i > 0) && (cmd_token[i - 1] == CMD_NAME || cmd_token[i - 1] == CMD_ARG) && 
+				ft_strcmp(cmd_array[i], ">") && ft_strcmp(cmd_array[i], "<") && 
+				ft_strcmp(cmd_array[i], ">>") && ft_strcmp(cmd_array[i], "<<") && 
+				ft_strcmp(cmd_array[i], "|"))
+				cmd_token[i] = CMD_ARG;
+			else if ((i > 0) && flag == 1 && (cmd_token[i - 1] == R_OUT_FILE ||
+					cmd_token[i - 1] == CMD_ARG) && ft_strcmp(cmd_array[i], ">") && ft_strcmp(cmd_array[i], "<") && 
+					ft_strcmp(cmd_array[i], ">>") && ft_strcmp(cmd_array[i], "<<") && 
+					ft_strcmp(cmd_array[i], "|"))
+				cmd_token[i] = CMD_ARG;
+				flag = 1;
+		}
 		i++;
 	}
 	return (cmd_token);
@@ -177,7 +186,7 @@ void	get_input(char *input, t_list **env)
 {
 	int		len;
 	char	**cmd_array;
-	t_list	*commands;
+	// t_list	*commands;
 	char	*history;
 	int		*arr;
 	(void) env;
@@ -186,6 +195,8 @@ void	get_input(char *input, t_list **env)
 	history = input;
 	if (!input || ft_strcmp(input, "") == 0)
 	{
+		if (!input)
+			exit(0);
 		free(input);
 		return ;
 	}
@@ -205,17 +216,18 @@ void	get_input(char *input, t_list **env)
 	cmd_array = ft_split(input, ' ');
 	// split_print(cmd_array);
 	arr = array_tokens(cmd_array, num_elemnts(cmd_array));
-	if (op_order(arr))
-	{
-		free(input);
-		// free_2d(cmd_array);
-		return ;
-	}
-	expander(cmd_array, *env);
-	cmd_array = quote_delete(cmd_array);
-	commands = list_cmds(cmd_array, arr);
-	print_list(commands);
-	add_history(history);
+	array_printer(arr);
+	// if (op_order(arr))
+	// {
+	// 	free(input);
+	// 	// free_2d(cmd_array);
+	// 	return ;
+	// }
+	// expander(cmd_array, *env);
+	// cmd_array = quote_delete(cmd_array);
+	// commands = list_cmds(cmd_array, arr);
+	// print_list(commands);
+	// add_history(history);
 	// if (ft_lstsize(commands) > 1)
 	// {
 	// 	if (ft_lstsize(commands) == 2)

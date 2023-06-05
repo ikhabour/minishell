@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/03 15:23:16 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/05 22:02:39 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,6 +168,7 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 				node->option[count] = NULL;
 				while (index < count)
 				{
+					// printf("option array : %s\n", cmd_array[start]);
 					node->option[index] = ft_strdup(cmd_array[start]);
 					index++;
 					start++;
