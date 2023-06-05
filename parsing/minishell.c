@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/05 23:16:51 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/06 00:15:16 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ int	*array_tokens(char **cmd_array, int elements)
 				ft_strcmp(cmd_array[i], ">>") && ft_strcmp(cmd_array[i], "<<") && 
 				ft_strcmp(cmd_array[i], "|"))
 				cmd_token[i] = CMD_ARG;
-			else if ((i > 0) && flag == 1 && (cmd_token[i - 1] == R_OUT_FILE ||
+			else if ((i > 0) && flag == 1 && (cmd_token[i - 1] == R_OUT_FILE || cmd_token[i - 1] == R_IN_FILE || cmd_token[i - 1] == R_APP_FILE ||
 					cmd_token[i - 1] == CMD_ARG) && ft_strcmp(cmd_array[i], ">") && ft_strcmp(cmd_array[i], "<") && 
 					ft_strcmp(cmd_array[i], ">>") && ft_strcmp(cmd_array[i], "<<") && 
 					ft_strcmp(cmd_array[i], "|"))

@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/05 23:32:29 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/06 00:31:09 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,21 @@ void	print_list(t_list *list)
     {
 		printf("==================\n");
     	t_cmds *node = (t_cmds *)tmp->content;
-    	t_filetype *file_node = (t_filetype *)node->files->content;
         printf("the command name is: %s\n", node->cmd_name);
-		for (int i = 0; (node->files); i++)
+		if (node->files)
 		{
-			printf("the type : %s\n", file_node->type);
-			printf("the red : %s\n", file_node->red);
-			printf("the file name : %s\n", file_node->file_name);
-			node->files = node->files->next;
-			if (node->files)
+    		t_filetype *file_node = (t_filetype *)node->files->content;
+			for (int i = 0; (node->files); i++)
 			{
-    			file_node = (t_filetype *)node->files->content;
+				printf("haaaaaa\n");
+				printf("the type : %s\n", file_node->type);
+				printf("the red : %s\n", file_node->red);
+				printf("the file name : %s\n", file_node->file_name);
+				node->files = node->files->next;
+			if (node->files)
+				{
+				file_node = (t_filetype *)node->files->content;
+				}
 			}
 		}
 		for(int i = 0; (node->option) && (node->option)[i] ; i++)
@@ -146,11 +150,11 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 			arg_counter++;
 		index--;
 	}
-	if (arg_counter > 0)
-	{
+	// if (arg_counter > 0)
+	// {
 		node->option = malloc ((arg_counter + 1) * sizeof(char *));
 		node->option[arg_counter] = NULL;
-	}
+	// }
 	while (i >= 0 && arr[i] != PIPE)
 	{
 		if (arr[i] == CMD_NAME)
