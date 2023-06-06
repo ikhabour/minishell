@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/16 00:27:03 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/27 18:02:47 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/06 15:15:19 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ void	*add_space_before(char *input, int i)
 	str = ft_substr(input, 0, i);
 	str1 = ft_substr(input, i, 1000);
 	str2 = ft_strjoin(str, " ");
+	free(input);
 	input = ft_strjoin(str2, str1);
 	free(str);
 	free(str1);
@@ -87,6 +88,7 @@ void	*add_space_after(char *input, int i)
 	// printf("this is the str: %s\n", str);
 	// printf("this is the str1: %s\n", str1);
 	str2 = ft_strjoin(str, " ");
+	free(input);
 	input = ft_strjoin(str2, str1);
 	free(str);
 	free(str1);

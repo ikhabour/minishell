@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/06 00:15:16 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/06 17:30:35 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ char	*fill_line(char *input, int len)//get the line each of it's word separated 
 		i++;
 	}
 	line[j] = '\0';
+	free(input);
 	// printf("this is the line-->%s\n", line);
 	return (line);
 }
@@ -168,6 +169,49 @@ int	is_space(char *str)
 	return (0);
 }
 
+
+void	free_files(t_list *files)
+{
+	t_filetype *file;
+	t_list *tmp;
+
+	file = (t_filetype *)files->content;
+	while (files)
+	{
+		free(file->file_name);
+		free(file->type);
+		free(file->red);
+		tmp = files;
+		files = files->next;
+		free(tmp);
+		free(file);
+		if (files)
+			file = (t_filetype *)files->content;
+	}
+}
+
+void	my_free(t_list *commands)
+{
+	t_cmds *ptr;
+	t_list *tmp;
+
+	ptr = (t_cmds *)commands->content;
+	while (commands)
+	{
+		free(ptr->cmd_name);
+		if (ptr->option)
+			free_2d(ptr->option);
+		if (ptr->files)
+			free_files(ptr->files);
+		tmp = commands;
+		commands = commands->next;
+		free(tmp);
+		free(ptr);
+		if (commands)
+			ptr = (t_cmds *)commands->content;
+	}
+}
+
 void	free_2d(char **array)
 {
 	int i = 0;
@@ -187,12 +231,10 @@ void	get_input(char *input, t_list **env)
 	int		len;
 	char	**cmd_array;
 	t_list	*commands;
-	char	*history;
 	int		*arr;
 	(void) env;
 
 	input = readline("Minishell> ");
-	history = input;
 	if (!input || ft_strcmp(input, "") == 0)
 	{
 		if (!input)
@@ -214,20 +256,21 @@ void	get_input(char *input, t_list **env)
 	input = add_spaces(input);
 	// printf("this is the line : %s\n", input);
 	cmd_array = ft_split(input, ' ');
-	// split_print(cmd_array);
+	// // split_print(cmd_array);
 	arr = array_tokens(cmd_array, num_elemnts(cmd_array));
-	array_printer(arr);
+	// array_printer(arr);
 	if (op_order(arr))
 	{
 		free(input);
-		// free_2d(cmd_array);
+		free_2d(cmd_array);
 		return ;
 	}
 	expander(cmd_array, *env);
 	cmd_array = quote_delete(cmd_array);
+
 	commands = list_cmds(cmd_array, arr);
-	print_list(commands);
-	// add_history(history);
+	// print_list(commands);
+	// add_history(input);
 	// if (ft_lstsize(commands) > 1)
 	// {
 	// 	if (ft_lstsize(commands) == 2)
@@ -244,7 +287,9 @@ void	get_input(char *input, t_list **env)
 	// 	return ;
 	// }
 	// execute_commands(commands, env, cmd_array);
-	// free_2d(cmd_array);
+	my_free(commands);
+	free(arr);
+	free_2d(cmd_array);
 	free(input);
 }
 
@@ -262,5 +307,5 @@ int main (int ac, char **av, char **envp)
 	{
 		get_input(&input, &env);
 	}
-	get_env(envp);
+	// get_env(envp);
 }

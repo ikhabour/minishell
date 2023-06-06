@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/03 23:22:36 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/06 16:11:48 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,5 +165,7 @@ char				**make_argv(t_list *commands);
 void				open_file_type(t_filetype *files);
 void				open_files(t_cmds *ptr);
 void		dup_fds(t_cmds *ptr);
+void	free_2d(char **array);
+void	free_files(t_list *files);
 
 #endif

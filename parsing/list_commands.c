@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/06 00:31:09 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/06 17:30:28 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 	t_filetype	*file_node = NULL;
 
 	count = 0;
-	node = malloc (sizeof (t_cmds));
+	node = malloc (sizeof(t_cmds));
 	node->cmd_name = NULL;
 	node->option = NULL;
 
@@ -193,14 +193,12 @@ t_list	*list_cmds(char **cmd_array, int *arr)
 		{
 			node = fill_node(cmd_array, arr, (i - 1));
 			my_lstadd_back(&list, my_lstnew(node));
-			node = NULL;
 		}
 		i++;
 		if (arr[i] == '\0')
 		{
 			node = fill_node(cmd_array, arr, (i - 1));
 			my_lstadd_back(&list, my_lstnew(node));
-			node = NULL;
 		}
 	}
 	// print_list(list);

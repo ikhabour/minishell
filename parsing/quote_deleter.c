@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:32:20 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/27 18:36:03 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/06 17:30:41 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ char	*quote_processor(char *str)
 		}
 		i++;
 	}
+	free(str);
 	cmd[j] = '\0';
 	return (cmd);
 }
