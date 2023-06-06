@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 15:40:24 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/06 18:29:32 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/06 21:16:16 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -326,6 +326,7 @@ void	multiple_pipes(t_list *commands, t_list **env)
 	j = 0;
 	while (j < pipes + 1)
 		waitpid(pids[j++], &status, 0);
+	exit_s = WEXITSTATUS(status);
 	free(pids);
 	free_int_arr(fd, pipes);
 }

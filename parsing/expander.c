@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 14:14:21 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/04 00:12:55 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/06 22:43:28 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,7 +224,7 @@ static char	*ft_expand(char *cmd, t_list *env, int *i)
 	}
 	str = ft_substr(cmd, (*i + 1), limiter - (*i + 1));
 	value = env_value(str, env);
-	printf("this is the value: (%s)\n", value);
+	// printf("this is the value: (%s)\n", value);
 	lineup = ft_substr(cmd, 0, (*i));
 	if (value)
 		full_str = ft_strjoin(lineup, value);
@@ -239,15 +239,25 @@ static char	*ft_expand(char *cmd, t_list *env, int *i)
 		lineup = ft_strdup(" ");
 	}
 	free(cmd);
-	cmd = ft_strjoin(full_str, lineup);
+	if (ft_strcmp(lineup, " ") == 0)
+	{
+		cmd = ft_strdup(full_str);
+		printf("full str: (%s)\n", cmd);
+		// cmd = full_str;
+	}
+	else
+	{
+		printf("fker badr\n");
+		cmd = ft_strjoin(full_str, lineup);
+	}
 	*i = ft_strlen(full_str);
 	free(full_str);
 	free(lineup);
 	free(str);
-	if (cmd[*i] == '$' || cmd[*i] == '"' || cmd[*i] == '\'')
+	if (cmd[*i] && (cmd[*i] == '$' || cmd[*i] == '"' || cmd[*i] == '\''))
             *i -= 1;
-    else if (!cmd[*i])
-            *i = -2;
+    // else if (!cmd[*i])
+    //         *i = -2;
 	return(cmd);
 }
 
@@ -304,8 +314,9 @@ char	*expand_processor(char *cmd, t_list *env)
 		if (cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] != '?' && flag != 1)
 		{
 			cmd = ft_expand(cmd, env, (&i));
+			printf("haaaaaaaa(%d)\n", i);
 		}
-			i++;
+		i++;
 	}
 	return (cmd);
 }

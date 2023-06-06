@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/06 18:12:25 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/06 22:09:11 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,6 +188,7 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 		{
 			f_path = paths[i];
 			paths[i] = ft_strjoinn(f_path, ptr->cmd_name);
+			printf("path : (%s)\n", paths[i]);
 			free(f_path);
 			if (access(paths[i], X_OK) == 0)
 				break ;	
@@ -197,7 +198,10 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 		msg_exit(ptr->cmd_name, ": command not found\n", 127);
 	}
 	else
+	{
 		waitpid(pid, &i, 0);
+		exit_s = WEXITSTATUS(i);
+	}
 	free_2d(envp);
 	return (1);
 }

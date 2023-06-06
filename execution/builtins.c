@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/06 20:04:49 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/06 22:00:22 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,6 +213,18 @@ void	print_string(char *str)
 		printf("%s", str); 
 }
 
+void	print_env(t_list **env)
+{
+	t_list *tmp;
+	
+	tmp = *env;
+	while (tmp)
+	{
+		printf("%s\n", tmp->content);
+		tmp = tmp->next;
+	}
+}
+
 void	print_export(t_list **env)
 {
 	t_list *tmp;
@@ -317,7 +329,9 @@ void	execute_export(t_list *cmd, t_list **env)
 			while (tmp && ft_strncmpp(tmp->content, ptr->option[var.j], var.i))
 				tmp = tmp->next;
 			if (!tmp)
-				ft_lstadd_backk(env, ft_lstneww(ptr->option[var.j]));
+			{
+				ft_lstadd_backk(env, ft_lstneww(ft_strdup(ptr->option[var.j])));
+			}
 		}
 		var.j++;
 	}
