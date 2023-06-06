@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 15:40:24 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/03 16:53:52 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/06 18:29:32 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,7 @@ void	first_command(t_list *commands, t_list **env, int *fd)
 			break ;
 		i++;
 	}
+	my_free(commands);
 	execve(paths[i], argv, envp);
 	msg_exit(ptr->cmd_name, ": command not found\n", 127);
 }
@@ -208,6 +209,7 @@ void	last_command(t_list *commands, t_list **env, int *fd)
 			break ;
 		i++;
 	}
+	my_free(commands);
 	execve(paths[i], argv, envp);
 	msg_exit(ptr->cmd_name, ": command not found\n", 127);
 }
@@ -252,8 +254,22 @@ void	middle_command(t_list *commands, t_list **env, int *fdin, int *fdout)
 			break ;
 		i++;
 	}
+	my_free(commands);
 	execve(paths[i], argv, envp);
 	msg_exit(ptr->cmd_name, ": command not found\n", 127);
+}
+
+void	free_int_arr(int **arr, int size)
+{
+	int i;
+
+	i = 0;
+	while (i < size)
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
 }
 
 void	multiple_pipes(t_list *commands, t_list **env)
@@ -263,8 +279,10 @@ void	multiple_pipes(t_list *commands, t_list **env)
 	int **fd;
 	int *pids;
 	int status;
+	t_list *tmp;
 
 	i = 0;
+	tmp = commands;
 	pipes = count_pipes(commands);
 	fd = malloc(sizeof(int *) *(pipes + 1));
 	pids = malloc(sizeof(int) * (pipes + 1));
@@ -284,11 +302,11 @@ void	multiple_pipes(t_list *commands, t_list **env)
 		if (pids[i] == 0)
 		{
 			if (i == 0)
-				first_command(commands, env, fd[i]);
+				first_command(tmp, env, fd[i]);
 			else if (i == pipes)
-				last_command(commands, env, fd[i - 1]);
+				last_command(tmp, env, fd[i - 1]);
 			else
-				middle_command(commands, env, fd[i - 1], fd[i]);
+				middle_command(tmp, env, fd[i - 1], fd[i]);
 		}
 		if (i != 0)
 		{
@@ -296,7 +314,7 @@ void	multiple_pipes(t_list *commands, t_list **env)
 			close(fd[i - 1][1]);
 		}
 		i++;
-		commands = commands->next;
+		tmp = tmp->next;
 	}
 	j = 0;
 	while (j < pipes)
@@ -308,4 +326,6 @@ void	multiple_pipes(t_list *commands, t_list **env)
 	j = 0;
 	while (j < pipes + 1)
 		waitpid(pids[j++], &status, 0);
+	free(pids);
+	free_int_arr(fd, pipes);
 }

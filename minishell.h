@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/06 16:11:48 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/06 18:20:09 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,5 +167,6 @@ void				open_files(t_cmds *ptr);
 void		dup_fds(t_cmds *ptr);
 void	free_2d(char **array);
 void	free_files(t_list *files);
+void	my_free(t_list *commands);
 
 #endif

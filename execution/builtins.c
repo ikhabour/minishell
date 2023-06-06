@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/03 23:17:14 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/06 20:04:49 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ void	execute_env(t_list **env, t_list *cmd)
 		open_files(ptr);
 		dup_fds(ptr);
 	}
-	if (!ptr->option)
+	if (!ptr->option[0])
 	{
 		while (tmp)
 		{
@@ -258,7 +258,7 @@ void	execute_export(t_list *cmd, t_list **env)
 		open_files(ptr);
 		dup_fds(ptr);
 	}
-	if (!ptr->option)
+	if (!ptr->option[0])
 	{
 		(print_export(env), dup2(fd, 1));
 		return ;
@@ -393,7 +393,7 @@ void	execute_exit(t_list *cmd)
 		exit(0);
 	while (ptr->option[i])
 		i++;
-	if (i > 0)
+	if (i > 1)
 	{
 		(write(2, "exit: too many arguments\n", 25), dup2(fd, 1));
 		return ;
@@ -421,26 +421,17 @@ void	execute_exit(t_list *cmd)
 
 void	exportt(char *value, char *var, t_list **env)
 {
-	t_cmds ptr;
-	t_list cmd;
-	char *option[2];
-	// t_filetype *pnt;
-	int i;
+	t_list *tmp;
+	static int i;
 
-	i = 0;
-	// printf("segfault here\n");
-	// pnt = (t_filetype *)ptr.files->content;
-	option[0] = ft_strjoinn(var, value);
-	option[1] = NULL;
-	ptr.cmd_name = "export";
-	ptr.option = option;
-	// pnt->file_name = NULL;
-	// pnt->type = NULL;
-	// pnt->red = NULL;
-	// pnt->fd = -1;
-	cmd.content = &ptr;
-	execute_export(&cmd, env);
-	free(option[0]);
+	tmp = *env;
+	while (ft_strncmpp(tmp->content, var, ft_strlenn(var)))
+		tmp = tmp->next;
+	if (i > 0)
+		free(tmp->content);
+	tmp->content = ft_strjoinn(var, value);
+	free(value);
+	i++;
 }
 
 void	execute_cd(t_list *cmd, t_list **env)
@@ -460,7 +451,7 @@ void	execute_cd(t_list *cmd, t_list **env)
 		open_files(ptr);
 		dup_fds(ptr);
 	}
-	if (!ptr->option)
+	if (!ptr->option[0])
 	{
 		while (tmp && ft_strncmpp(tmp->content, "HOME=", 5))
 			tmp = tmp->next;
@@ -499,6 +490,7 @@ int	execute_builtins(t_list *cmd, t_list **env)
 			open_files(tmp);
 			dup_fds(tmp);
 		}
+		free(tmp->cmd_name);
 		tmp->cmd_name = getcwd(NULL, 0);
 		(printf("%s\n", tmp->cmd_name), dup2(fd, 1));
 		return (1);

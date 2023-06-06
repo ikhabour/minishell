@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/06 17:30:35 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/06 20:08:08 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,26 +267,25 @@ void	get_input(char *input, t_list **env)
 	}
 	expander(cmd_array, *env);
 	cmd_array = quote_delete(cmd_array);
-
 	commands = list_cmds(cmd_array, arr);
 	// print_list(commands);
-	// add_history(input);
-	// if (ft_lstsize(commands) > 1)
-	// {
-	// 	if (ft_lstsize(commands) == 2)
-	// 		execute_pipe_commands(commands, env_to_array(env), cmd_array);
-	// 	else
-	// 		multiple_pipes(commands, env);
-	// 	free_all(input, cmd_array);
-	// 	return ;
-	// }
-	// if (execute_builtins(commands, env))
-	// {
-	// 	free(input);
-	// 	free_2d(cmd_array);
-	// 	return ;
-	// }
-	// execute_commands(commands, env, cmd_array);
+	add_history(input);
+	if (ft_lstsize(commands) > 1)
+	{
+		multiple_pipes(commands, env);
+		free_all(input, cmd_array);
+		free(arr);
+		my_free(commands);
+		return ;
+	}
+	if (execute_builtins(commands, env))
+	{
+		my_free(commands);
+		free_all(input, cmd_array);
+		free(arr);
+		return ;
+	}
+	execute_commands(commands, env, cmd_array);
 	my_free(commands);
 	free(arr);
 	free_2d(cmd_array);

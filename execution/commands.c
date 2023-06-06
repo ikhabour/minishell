@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/03 18:08:50 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/06 18:12:25 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,5 +198,6 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 	}
 	else
 		waitpid(pid, &i, 0);
+	free_2d(envp);
 	return (1);
 }
