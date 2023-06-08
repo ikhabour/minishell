@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/06 22:00:22 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/08 16:11:20 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,9 +106,15 @@ t_list	*make_env(char **envp)
 {
 	t_list	*env;
 	int		i;
+	// char *usr;
 
 	env = NULL;
 	i = 0;
+	// usr = ft_strdup("_=/usr/bin/env");
+	// if (!*envp)
+	// {
+		
+	// }
 	while (envp[i])
 		ft_lstadd_backk(&env, ft_lstneww(envp[i++]));
 	return (env);
@@ -250,6 +256,41 @@ int	var_exists(char *var, t_list **env)
 	return (1);
 }
 
+int	valid_identifier(char **str)
+{
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	while (str[i])
+	{
+		while (str[i][j])
+		{
+			if ((str[i][j] >= 'a' && str[i][j] <= 'z') || str[i][j] == '_')
+				j++;
+			while (str[i][j])
+			{
+				if ((str[i][j] >= 'a' && str[i][j] <= 'z') || str[i][j] == '_')
+					j++;
+				else
+				{
+					write(2, "bash: export: \'", 15);
+					write(2, str[i], ft_strlenn(str[i]));
+					write(2, "\'", 1);
+					return (0);
+				}
+			}
+			if (!str[i][j])
+				continue;
+		}
+		i++;
+	}
+	if (!str[i])
+		return (1);
+	return (0);
+}
+
 void	execute_export(t_list *cmd, t_list **env)
 {
 	t_cmds	*ptr;
@@ -273,6 +314,12 @@ void	execute_export(t_list *cmd, t_list **env)
 	if (!ptr->option[0])
 	{
 		(print_export(env), dup2(fd, 1));
+		return ;
+	}
+	if (!valid_identifier(ptr->option))
+	{
+		write(2, ": not a valid identifier\n", 25);
+		exit_s = 1;
 		return ;
 	}
 	while (ptr->option[var.j])
