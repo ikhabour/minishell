@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/08 17:51:54 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/09 00:47:11 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,8 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 		(write(2, "Fork Failed\n", 12), exit(1));
 	else if (pid == 0)
 	{
+		if (ptr->cmd_name[0] == '.' && access(ptr->cmd_name, X_OK))
+			msg_exit(ptr->cmd_name, ": No such file or directory\n", 127);
 		open_files(ptr);
 		dup_fds(ptr);
 		if (access(ptr->cmd_name, X_OK) == 0)

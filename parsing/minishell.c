@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/08 23:52:31 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/09 00:47:20 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +237,7 @@ void	get_input(char *input, t_list **env)
 	(void) env;
 
 	sig_handler();
-	rl_catch_sigint = 0;
+	// rl_catch_sigint = 0;
 	input = readline("Minishell> ");
 	if (!input || ft_strcmp(input, "") == 0)
 	{
