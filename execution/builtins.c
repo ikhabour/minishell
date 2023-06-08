@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/08 16:11:20 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/08 17:38:18 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,15 +106,22 @@ t_list	*make_env(char **envp)
 {
 	t_list	*env;
 	int		i;
-	// char *usr;
+	static int j;
+	char *pwd;
 
 	env = NULL;
 	i = 0;
-	// usr = ft_strdup("_=/usr/bin/env");
-	// if (!*envp)
-	// {
-		
-	// }
+	if (!*envp)
+	{
+		pwd = getcwd(NULL, 0);
+		pwd = ft_strjoinn("PWD=", pwd);
+		ft_lstadd_backk(&env, ft_lstneww("OLDPWD"));
+		ft_lstadd_backk(&env, ft_lstneww(pwd));
+		ft_lstadd_backk(&env, ft_lstneww("SHLVL=1"));
+		ft_lstadd_backk(&env, ft_lstneww("_=/usr/bin/env"));
+		j++;
+		return (env);
+	}
 	while (envp[i])
 		ft_lstadd_backk(&env, ft_lstneww(envp[i++]));
 	return (env);
@@ -435,7 +442,7 @@ void	execute_unset(t_list *cmd, t_list **env)
 	dup2(fd, 1);
 }
 
-void	execute_exit(t_list *cmd)
+void	execute_exit(t_list *cmd, t_list **env)
 {
 	t_cmds	*ptr;
 	int		exit_status;
@@ -450,33 +457,43 @@ void	execute_exit(t_list *cmd)
 		open_files(ptr);
 		dup_fds(ptr);
 	}
-	if (!ptr->option)
+	if (!ptr->option[0])
+	{
 		exit(0);
+		shlvl_edit(env, 1);
+	}
 	while (ptr->option[i])
 		i++;
 	if (i > 1)
 	{
 		(write(2, "exit: too many arguments\n", 25), dup2(fd, 1));
+		return_val = 1;
 		return ;
 	}
 	if (!is_digit(ptr->option[0]))
 	{
 		write(2, "exit: ", 6);
+		shlvl_edit(env, 1);
 		msg_exit(ptr->option[0], ": numeric argument required\n", 255);
 	}
 	exit_status = ft_atoi(ptr->option[0]);
 	if (exit_status < 0)
 	{
 		exit_status += 255;
+		shlvl_edit(env, 1);
 		exit(exit_status);
 	}
 	else if (exit_status > 255)
 	{
 		exit_status -= 256;
+		shlvl_edit(env, 1);
 		exit(exit_status);
 	}
 	else
+	{
+		shlvl_edit(env, 1);
 		exit(exit_status);
+	}
 	dup2(fd, 1);
 }
 
@@ -486,8 +503,10 @@ void	exportt(char *value, char *var, t_list **env)
 	static int i;
 
 	tmp = *env;
-	while (ft_strncmpp(tmp->content, var, ft_strlenn(var)))
+	while (tmp && ft_strncmpp(tmp->content, var, ft_strlenn(var)))
 		tmp = tmp->next;
+	if (!tmp)
+		return ;
 	if (i > 0)
 		free(tmp->content);
 	tmp->content = ft_strjoinn(var, value);
@@ -519,6 +538,7 @@ void	execute_cd(t_list *cmd, t_list **env)
 		if (!tmp)
 		{
 			(write(2, "cd: HOME not set\n", 17), dup2(fd, 1));
+			return_val = 1;
 			return ;
 		}
 		(chdir(tmp->content + 5), dup2(fd, 1));
@@ -554,11 +574,13 @@ int	execute_builtins(t_list *cmd, t_list **env)
 		free(tmp->cmd_name);
 		tmp->cmd_name = getcwd(NULL, 0);
 		(printf("%s\n", tmp->cmd_name), dup2(fd, 1));
+		return_val = 0;
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "echo"))
 	{
 		execute_echo(cmd);
+		return_val = 0;
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "cd"))
@@ -569,21 +591,24 @@ int	execute_builtins(t_list *cmd, t_list **env)
 	else if (!ft_strcmpp(tmp->cmd_name, "env"))
 	{
 		execute_env(env, cmd);
+		return_val = 0;
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "export"))
 	{
 		execute_export(cmd, env);
+		return_val = 0;
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "unset"))
 	{
 		execute_unset(cmd, env);
+		return_val = 0;
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "exit"))
 	{
-		execute_exit(cmd);
+		execute_exit(cmd, env);
 		return (1);
 	}
 	return (0);

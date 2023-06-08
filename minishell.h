@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/06 18:20:09 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/08 17:38:32 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 // #define EXIT_S 0
 
 extern int			exit_s;
+extern int			return_val;
 
 # include <fcntl.h>
 # include <readline/history.h>
@@ -168,5 +169,6 @@ void		dup_fds(t_cmds *ptr);
 void	free_2d(char **array);
 void	free_files(t_list *files);
 void	my_free(t_list *commands);
+void	shlvl_edit(t_list **env, int op);
 
 #endif

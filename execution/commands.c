@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/06 22:09:11 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/08 16:51:03 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,6 @@ void	dup_fds(t_cmds *ptr)
 		if (tmp)
 			files = (t_filetype *)tmp->content;
 	}
-	
 }
 
 int	has_redirection(char **args)

@@ -6,13 +6,14 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/08 15:44:50 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/08 17:37:48 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 int	exit_s = 0;
+int return_val = 0;
 
 int	get_length(char *input)
 {
@@ -284,6 +285,11 @@ void	get_input(char *input, t_list **env)
 		my_free(commands);
 		free_all(input, cmd_array);
 		free(arr);
+		if (return_val != 0)
+		{
+			exit_s = return_val;
+			return ;
+		}
 		exit_s = 0;
 		return ;
 	}
@@ -294,19 +300,54 @@ void	get_input(char *input, t_list **env)
 	free(input);
 }
 
+void	shlvl_edit(t_list **env, int op)
+{
+	char *shlvl;
+	t_list *tmp;
+	int num;
+
+	tmp = *env;
+	while (tmp && ft_strncmpp(tmp->content, "SHLVL=", 5))
+		tmp = tmp->next;
+	shlvl = ft_strdup(tmp->content + 6);
+	num = ft_atoi(shlvl);
+	if (op == 0)
+		num++;
+	else
+		num--;
+	free(shlvl);
+	shlvl = ft_itoa(num);
+	// free(tmp->content);
+	if (op == 0)
+	{
+		tmp->content = ft_strjoinn("SHLVL=", shlvl);
+		free(shlvl);
+		return ;
+	}
+	else
+	{
+		tmp->content = ft_strjoinn("SHLVL=", shlvl);
+		free(shlvl);
+		return ;
+	}
+
+}
+
 int main (int ac, char **av, char **envp)
 {
 	
 	char    input;
 	t_list *env;
-	(void)  ac;
-	(void)  av;
-
-	// (void)  envp;
-	env = make_env(envp);
-	while (1)
+	
+	if (ac > 1)
 	{
-		get_input(&input, &env);
+		write(2, "bash : ", 6);;
+		write(2, av[1], ft_strlenn(av[1]));
+		write(2, ": No such file or directory\n", 28);
+		exit(127);
 	}
-	// get_env(envp);
+	env = make_env(envp);
+	shlvl_edit(&env, 0);
+	while (1)
+		get_input(&input, &env);
 }
