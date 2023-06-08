@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/08 17:38:32 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/08 23:51:50 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,15 @@ extern int			exit_s;
 extern int			return_val;
 
 # include <fcntl.h>
-# include <readline/history.h>
 # include <readline/readline.h>
+# include <readline/history.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/errno.h>
 # include <sys/stat.h>
 # include <unistd.h>
+# include <signal.h>
 
 typedef struct s_vars
 {
@@ -121,6 +122,8 @@ void				print_list(t_list *list);
 t_list				*list_cmds(char **cmd_array, int *arr);
 int					n_calculator(int num);
 char				*ft_itoa(int num);
+void				sig_handler();
+void				handler(int sig);
 
 //	################		execution prototypes 		##################	//
 
