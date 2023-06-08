@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/08 17:37:48 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/08 18:16:01 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,6 +232,7 @@ void	get_input(char *input, t_list **env)
 	int		len;
 	char	**cmd_array;
 	t_list	*commands;
+	// t_cmds *ptr;
 	int		*arr;
 	(void) env;
 
@@ -270,6 +271,14 @@ void	get_input(char *input, t_list **env)
 	expander(cmd_array, *env);
 	cmd_array = quote_delete(cmd_array);
 	commands = list_cmds(cmd_array, arr);
+	// ptr = (t_cmds *)commands;
+	// if (ptr->cmd_name[0] == 112)
+	// {
+	// 	free_all(input, cmd_array);
+	// 	free(arr);
+	// 	my_free(commands);
+	// 	return ;
+	// }
 	// print_list(commands);
 	add_history(input);
 	if (ft_lstsize(commands) > 1)

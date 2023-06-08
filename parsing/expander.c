@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 14:14:21 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/07 14:02:55 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/08 18:05:22 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,7 +224,6 @@ static char	*ft_expand(char *cmd, t_list *env, int *i)
 	}
 	str = ft_substr(cmd, (*i + 1), limiter - (*i + 1));
 	value = env_value(str, env);
-	printf("this is the value: (%s)\n", value);
 	lineup = ft_substr(cmd, 0, (*i));
 	if (value)
 		full_str = ft_strjoin(lineup, value);
@@ -242,7 +241,6 @@ static char	*ft_expand(char *cmd, t_list *env, int *i)
 	{
 		free(cmd);
 		cmd = ft_strdup(full_str);
-		printf("full_str : %s\n", cmd);
 	}
 	*i = ft_strlen(full_str);
 	free(full_str);
@@ -308,7 +306,6 @@ char	*expand_processor(char *cmd, t_list *env)
 		if (cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] != '?' && flag != 1)
 		{
 			cmd = ft_expand(cmd, env, (&i));
-			printf("this is cmd (%s)====(%d)\n", cmd, i);
 		}
 		if (cmd[i])
 			i++;
@@ -328,7 +325,6 @@ void	expander(char **cmd, t_list *env)
 		if (ft_strchr(cmd[i], '$'))
 		{
 			cmd[i] = expand_processor(cmd[i], env);
-			printf("this is the line expanded : (%s)\n", cmd[i]);
 		}
 		i++;
 	}

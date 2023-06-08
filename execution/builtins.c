@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/08 17:38:18 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/08 18:18:43 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ t_list	*make_env(char **envp)
 		pwd = ft_strjoinn("PWD=", pwd);
 		ft_lstadd_backk(&env, ft_lstneww("OLDPWD"));
 		ft_lstadd_backk(&env, ft_lstneww(pwd));
-		ft_lstadd_backk(&env, ft_lstneww("SHLVL=1"));
+		ft_lstadd_backk(&env, ft_lstneww("SHLVL=0"));
 		ft_lstadd_backk(&env, ft_lstneww("_=/usr/bin/env"));
 		j++;
 		return (env);

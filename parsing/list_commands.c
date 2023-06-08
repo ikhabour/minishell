@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list_commands.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/06 17:30:28 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/08 18:07:35 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	print_list(t_list *list)
     {
 		printf("==================\n");
     	t_cmds *node = (t_cmds *)tmp->content;
-        printf("the command name is: %s\n", node->cmd_name);
+        printf("the command name is: (%s)\n", node->cmd_name);
 		if (node->files)
 		{
     		t_filetype *file_node = (t_filetype *)node->files->content;
