@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+         #
+#    By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/12 21:30:08 by bhazzout          #+#    #+#              #
-#    Updated: 2023/06/08 23:27:58 by bhazzout         ###   ########.fr        #
+#    Updated: 2023/06/11 18:09:09 by ikhabour         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ SOURCES	=	parsing/minishell.c parsing/env_processor.c parsing/helper/helper_1.c 
 			parsing/line_processor.c parsing/split.c parsing/checker/check_pipe.c parsing/checker/op_checker.c parsing/checker/special_char_check.c \
 			parsing/checker/quotes_check.c parsing/checker/order_checker.c parsing/quote_deleter.c parsing/expander.c parsing/list_commands.c\
 			execution/builtins.c execution/ft_split.c execution/functions.c execution/linked_list_utils.c execution/commands.c\
-			execution/pipex/multiple_pipes.c parsing/signals.c\
+			execution/pipex/multiple_pipes.c parsing/signals.c execution/here_docc.c\
 			
 
 OBJECTS	=	$(SOURCES:.c=.o)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/08 23:51:50 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/11 19:12:28 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ extern int			return_val;
 # include <sys/stat.h>
 # include <unistd.h>
 # include <signal.h>
+# include <termios.h>
 
 typedef struct s_vars
 {
@@ -173,5 +174,6 @@ void	free_2d(char **array);
 void	free_files(t_list *files);
 void	my_free(t_list *commands);
 void	shlvl_edit(t_list **env, int op);
+int	here_docc(t_list *commands);
 
 #endif

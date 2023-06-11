@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/08 18:07:35 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/11 18:13:07 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,6 @@ t_filetype	*fill_file(char **cmd_array, int *arr, int i)
 	// 	file_node->red = ft_strdup(cmd_array[i]);
 	else if (arr[i] == HEREDOC_LIM)
 	{
-		printf("haaaa\n");
 		file_node->type = ft_strdup("DELIMITER");
 		file_node->file_name = ft_strdup(cmd_array[i]);
 		file_node->red = ft_strdup(cmd_array[i - 1]);

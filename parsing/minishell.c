@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/09 00:47:20 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/11 19:22:06 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,10 +232,10 @@ void	get_input(char *input, t_list **env)
 	int		len;
 	char	**cmd_array;
 	t_list	*commands;
+	t_list *tmp;
 	// t_cmds *ptr;
 	int		*arr;
 	(void) env;
-
 	sig_handler();
 	// rl_catch_sigint = 0;
 	input = readline("Minishell> ");
@@ -273,6 +273,7 @@ void	get_input(char *input, t_list **env)
 	expander(cmd_array, *env);
 	cmd_array = quote_delete(cmd_array);
 	commands = list_cmds(cmd_array, arr);
+	tmp = commands;
 	// ptr = (t_cmds *)commands;
 	// if (ptr->cmd_name[0] == 112)
 	// {
@@ -283,6 +284,11 @@ void	get_input(char *input, t_list **env)
 	// }
 	// print_list(commands);
 	add_history(input);
+	while (tmp)
+	{
+		here_docc(tmp);
+		tmp = tmp->next;
+	}
 	if (ft_lstsize(commands) > 1)
 	{
 		multiple_pipes(commands, env);
@@ -349,18 +355,22 @@ int main (int ac, char **av, char **envp)
 	
 	char    input;
 	t_list *env;
-	
+	struct termios term;
+
 	if (ac > 1)
 	{
-		write(2, "bash : ", 6);;
+		write(2, "minishell : ", 12);;
 		write(2, av[1], ft_strlenn(av[1]));
-		write(2, ": No such file or directory\n", 28);
+		write(2, " : No such file or directory\n", 29);
 		exit(127);
 	}
 	env = make_env(envp);
 	shlvl_edit(&env, 0);
 	while (1)
 	{
+		tcgetattr(0, &term);
+		term.c_lflag &= ~(ECHOCTL);
+		tcsetattr(0, TCSANOW, &term);
 		// signal(SIGINT, handler);
 		get_input(&input, &env);
 	}

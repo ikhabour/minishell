@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/08 18:18:43 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/11 17:38:39 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,7 +278,7 @@ int	valid_identifier(char **str)
 				j++;
 			while (str[i][j])
 			{
-				if ((str[i][j] >= 'a' && str[i][j] <= 'z') || str[i][j] == '_')
+				if ((str[i][j] >= 'a' && str[i][j] <= 'z') || str[i][j] == '_' || str[i][j] == '=' || str[i][j] == '+')
 					j++;
 				else
 				{
@@ -514,6 +514,23 @@ void	exportt(char *value, char *var, t_list **env)
 	i++;
 }
 
+void	setpwd(t_list **env)
+{
+	char *pwd;
+	t_list *tmp;
+	static int i;
+
+	pwd = getcwd(NULL, 0);
+	tmp = *env;
+	while (tmp && ft_strncmpp(tmp->content, "PWD=", 4))
+		tmp = tmp->next;
+	if (i > 0)
+		free(tmp->content);
+	free(pwd);
+	tmp->content = ft_strjoinn("PWD=", pwd);
+	i++;
+}
+
 void	execute_cd(t_list *cmd, t_list **env)
 {
 	t_cmds *ptr;
@@ -542,6 +559,7 @@ void	execute_cd(t_list *cmd, t_list **env)
 			return ;
 		}
 		(chdir(tmp->content + 5), dup2(fd, 1));
+		setpwd(env);
 		return ;
 	}
 	if (access(ptr->option[0], F_OK))
@@ -555,6 +573,7 @@ void	execute_cd(t_list *cmd, t_list **env)
 		return ;
 	}
 	(chdir(ptr->option[0]), dup2(fd, 1));
+	setpwd(env);
 }
 
 int	execute_builtins(t_list *cmd, t_list **env)
@@ -564,6 +583,8 @@ int	execute_builtins(t_list *cmd, t_list **env)
 
 	tmp = (t_cmds *)cmd->content;
 	fd = dup(1);
+	if (!tmp->cmd_name)
+		return (0);
 	if (!ft_strcmpp(tmp->cmd_name, "pwd"))
 	{
 		if (tmp->files)

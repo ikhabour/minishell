@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/09 00:47:11 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/11 18:53:18 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,8 @@ void	open_file_type(t_filetype *files)
 		files->fd = open(files->file_name, O_CREAT | O_TRUNC | O_RDWR, 0644);
 	else if (!ft_strcmp(files->type, "APPEND"))
 		files->fd = open(files->file_name, O_CREAT | O_APPEND | O_RDWR, 0644);
+	else if (!ft_strcmp(files->type, "DELIMITER"))
+		return ;
 	else
 		files->fd = -1;
 		
@@ -124,7 +126,6 @@ void	open_files(t_cmds *ptr)
 void	dup_fds(t_cmds *ptr)
 {
 	t_filetype *files;
-
 	t_list *tmp;
 
 	if (!ptr->files)
@@ -135,7 +136,7 @@ void	dup_fds(t_cmds *ptr)
 	{
 		if (!ft_strcmp(files->type, "OUTPUT") || !ft_strcmp(files->type, "APPEND"))
 			dup2(files->fd, 1);
-		else if(!ft_strcmp(files->type, "INPUT"))
+		else if(!ft_strcmp(files->type, "INPUT") || (!ft_strcmp(files->type, "DELIMITER") && files->fd != -1))
 			dup2(files->fd, 0);
 		tmp = tmp->next;
 		if (tmp)
@@ -167,6 +168,8 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 	t_cmds *ptr;
 
 	ptr = (t_cmds *)cmd->content;
+	if (!ptr->cmd_name)
+		return (0);
 	envp = env_to_array(env);
 	pid = fork();
 	if (has_redirection(args))
@@ -178,6 +181,7 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 		if (ptr->cmd_name[0] == '.' && access(ptr->cmd_name, X_OK))
 			msg_exit(ptr->cmd_name, ": No such file or directory\n", 127);
 		open_files(ptr);
+		printf("awooooooo==================\n");
 		dup_fds(ptr);
 		if (access(ptr->cmd_name, X_OK) == 0)
 			execve(ptr->cmd_name, args, envp);
