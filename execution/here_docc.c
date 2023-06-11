@@ -6,11 +6,64 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 15:02:45 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/11 19:10:29 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/11 22:27:35 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	open_files_0(t_list *commands)
+{
+	t_list *tmp;
+	t_cmds *ptr;
+	t_filetype *files;
+
+	ptr = (t_cmds *)commands->content;
+	if (ptr->cmd_name)
+		return ;
+	if (!ptr->files)
+		return ;
+	tmp = ptr->files;
+	files = (t_filetype *)tmp->content;
+	while (tmp)
+	{
+		if (!ft_strcmp(files->type, "INPUT"))
+		{
+			write(2, "Minishell: ", 11);
+			write(2, files->file_name, ft_strlenn(files->file_name));
+			write(2, ": No such file or directory\n", 28);
+			exit_s = 1;
+			return ;
+		}
+		open_file_type(files);
+		close(files->fd);
+		tmp = tmp->next;
+		if (tmp)
+			files = (t_filetype *)tmp->content;
+	}
+}
+
+int	is_heredoc(t_list *commands)
+{
+	t_cmds *ptr;
+	t_filetype *files;
+	t_list *tmp;
+
+	ptr = (t_cmds *)commands->content;
+	if (!ptr->files)
+		return (0);
+	tmp = ptr->files;
+	files = (t_filetype *)tmp->content;
+	while (tmp)
+	{
+		if (!ft_strcmp(files->type, "DELIMITER"))
+			return (1);
+		tmp = tmp->next;
+		if (tmp)
+			files = (t_filetype *)tmp->content;
+	}
+	return (0);
+}
 
 void	ft_putstr_fd(char *s, int fd)
 {
@@ -38,7 +91,7 @@ void	display_prompt(t_list *files, int fd)
 	close(fd);
 }
 
-int	here_docc(t_list *commands)
+void	here_docc(t_list *commands)
 {
 	int pid;
 	int **fds;
@@ -52,6 +105,8 @@ int	here_docc(t_list *commands)
 	ptr = (t_cmds *)commands->content;
 	docs = 0;
 	tmp = ptr->files;
+	if (!tmp)
+		return ;
 	p = (t_filetype *)tmp->content;
 	i = 0;
 	while (tmp)
@@ -76,7 +131,7 @@ int	here_docc(t_list *commands)
 	while (i < docs)
 	{
 		if (pipe(fds[i]) < 0)
-			return (0);
+			return ;
 		i++;
 	}
 	tmp = ptr->files;
@@ -114,5 +169,4 @@ int	here_docc(t_list *commands)
 		i++;
 	}
 	last_heredoc->fd = fds[i][0];
-	return (1);
 }

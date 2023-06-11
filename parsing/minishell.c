@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/11 19:22:06 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/11 21:49:24 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,6 +236,7 @@ void	get_input(char *input, t_list **env)
 	// t_cmds *ptr;
 	int		*arr;
 	(void) env;
+
 	sig_handler();
 	// rl_catch_sigint = 0;
 	input = readline("Minishell> ");
@@ -284,10 +285,14 @@ void	get_input(char *input, t_list **env)
 	// }
 	// print_list(commands);
 	add_history(input);
-	while (tmp)
+	open_files_0(commands);
+	if (is_heredoc(commands))
 	{
-		here_docc(tmp);
-		tmp = tmp->next;
+		while (tmp)
+		{
+			here_docc(tmp);
+			tmp = tmp->next;
+		}
 	}
 	if (ft_lstsize(commands) > 1)
 	{

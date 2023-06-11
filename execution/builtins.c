@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/11 17:38:39 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/11 22:56:23 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void	execute_echo(t_list *cmd)
 	{
 		printf("\n");
 		dup2(out_fd, 1);
+		close(out_fd);
 		return ;
 	}
 	while (tmp->option[var.j] && !check_echo_option(tmp->option[var.j], &var))
@@ -85,6 +86,7 @@ void	execute_echo(t_list *cmd)
 				printf(" ");
 		}
 		dup2(out_fd, 1);
+		close(out_fd);
 		return ;
 	}
 	else
@@ -100,6 +102,7 @@ void	execute_echo(t_list *cmd)
 		printf("\n");
 	}
 	dup2(out_fd, 1);
+	close(out_fd);
 }
 
 t_list	*make_env(char **envp)
@@ -526,7 +529,7 @@ void	setpwd(t_list **env)
 		tmp = tmp->next;
 	if (i > 0)
 		free(tmp->content);
-	free(pwd);
+	// free(pwd);
 	tmp->content = ft_strjoinn("PWD=", pwd);
 	i++;
 }
@@ -576,6 +579,12 @@ void	execute_cd(t_list *cmd, t_list **env)
 	setpwd(env);
 }
 
+void	return_val_close(int fd)
+{
+	return_val = 0;
+	close(fd);
+}
+
 int	execute_builtins(t_list *cmd, t_list **env)
 {
 	t_cmds	*tmp;
@@ -584,7 +593,10 @@ int	execute_builtins(t_list *cmd, t_list **env)
 	tmp = (t_cmds *)cmd->content;
 	fd = dup(1);
 	if (!tmp->cmd_name)
+	{	
+		close(fd);
 		return (0);
+	}
 	if (!ft_strcmpp(tmp->cmd_name, "pwd"))
 	{
 		if (tmp->files)
@@ -595,13 +607,13 @@ int	execute_builtins(t_list *cmd, t_list **env)
 		free(tmp->cmd_name);
 		tmp->cmd_name = getcwd(NULL, 0);
 		(printf("%s\n", tmp->cmd_name), dup2(fd, 1));
-		return_val = 0;
+		return_val_close(fd);
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "echo"))
 	{
 		execute_echo(cmd);
-		return_val = 0;
+		return_val_close(fd);
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "cd"))
@@ -612,19 +624,19 @@ int	execute_builtins(t_list *cmd, t_list **env)
 	else if (!ft_strcmpp(tmp->cmd_name, "env"))
 	{
 		execute_env(env, cmd);
-		return_val = 0;
+		return_val_close(fd);
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "export"))
 	{
 		execute_export(cmd, env);
-		return_val = 0;
+		return_val_close(fd);
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "unset"))
 	{
 		execute_unset(cmd, env);
-		return_val = 0;
+		return_val_close(fd);
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "exit"))
@@ -632,5 +644,6 @@ int	execute_builtins(t_list *cmd, t_list **env)
 		execute_exit(cmd, env);
 		return (1);
 	}
+	close(fd);
 	return (0);
 }

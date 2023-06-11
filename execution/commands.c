@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/11 18:53:18 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/11 21:42:56 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,10 +134,19 @@ void	dup_fds(t_cmds *ptr)
 	tmp = ptr->files;
 	while (tmp)
 	{
+		if (files->fd == -1)
+		{
+			msg_exit(files->file_name, ": No such file or directory\n", 1);
+			return ;
+		}
 		if (!ft_strcmp(files->type, "OUTPUT") || !ft_strcmp(files->type, "APPEND"))
 			dup2(files->fd, 1);
-		else if(!ft_strcmp(files->type, "INPUT") || (!ft_strcmp(files->type, "DELIMITER") && files->fd != -1))
+		else if(!ft_strcmp(files->type, "INPUT") || !ft_strcmp(files->type, "DELIMITER"))
+		{
+			printf("fd : %d\n", files->fd);
+			printf("filename  : %s\n", files->file_name);
 			dup2(files->fd, 0);
+		}
 		tmp = tmp->next;
 		if (tmp)
 			files = (t_filetype *)tmp->content;
@@ -181,7 +190,6 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 		if (ptr->cmd_name[0] == '.' && access(ptr->cmd_name, X_OK))
 			msg_exit(ptr->cmd_name, ": No such file or directory\n", 127);
 		open_files(ptr);
-		printf("awooooooo==================\n");
 		dup_fds(ptr);
 		if (access(ptr->cmd_name, X_OK) == 0)
 			execve(ptr->cmd_name, args, envp);
