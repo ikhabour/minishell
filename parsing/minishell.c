@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/12 14:56:46 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/12 17:55:06 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,19 +231,28 @@ void	get_input(char *input, t_list **env)
 {
 	int		len;
 	char	**cmd_array;
-	// t_list	*commands;
-	// t_list *tmp;
+	t_list	*commands;
+	t_list *tmp;
+	struct termios	term;
+	struct termios	original;
 	
 	// t_cmds *ptr;
 	int		*arr;
 	(void) env;
 
 
+	sig_handler();
+	tcgetattr(0, &term);
+	tcgetattr(0, &original);
+	term.c_lflag &= ~(ECHOCTL);
+	tcsetattr(0, TCSANOW, &term);
+	input = readline("minishell> ");
+	tcsetattr(0, TCSANOW, &original);
+
 	// term.c_lflag &= ~(ECHOCTL);
 	// tcsetattr(0, TCSANOW, &term);
-	sig_handler();
 	// rl_catch_sigint = 0;
-	input = readline("Minishell> ");
+	// input = readline("Minishell> ");
 	if (!input || ft_strcmp(input, "") == 0)
 	{
 		if (!input)
@@ -278,54 +287,54 @@ void	get_input(char *input, t_list **env)
 		free_2d(cmd_array);
 		return ;
 	}
-	// expander(cmd_array, *env);
-	// cmd_array = quote_delete(cmd_array);
-	// commands = list_cmds(cmd_array, arr);
-	// tmp = commands;
-	// // ptr = (t_cmds *)commands;
-	// // if (ptr->cmd_name[0] == 112)
-	// // {
-	// // 	free_all(input, cmd_array);
-	// // 	free(arr);
-	// // 	my_free(commands);
-	// // 	return ;
-	// // }
-	// // print_list(commands);
-	// add_history(input);
-	// open_files_0(commands);
-	// if (is_heredoc(commands))
+	expander(cmd_array, *env);
+	cmd_array = quote_delete(cmd_array);
+	commands = list_cmds(cmd_array, arr);
+	tmp = commands;
+	// ptr = (t_cmds *)commands;
+	// if (ptr->cmd_name[0] == 112)
 	// {
-	// 	while (tmp)
-	// 	{
-	// 		here_docc(tmp);
-	// 		tmp = tmp->next;
-	// 	}
-	// }
-	// if (ft_lstsize(commands) > 1)
-	// {
-	// 	multiple_pipes(commands, env);
 	// 	free_all(input, cmd_array);
 	// 	free(arr);
 	// 	my_free(commands);
 	// 	return ;
 	// }
-	// if (execute_builtins(commands, env))
-	// {
-	// 	my_free(commands);
-	// 	free_all(input, cmd_array);
-	// 	free(arr);
-	// 	if (return_val != 0)
-	// 	{
-	// 		exit_s = return_val;
-	// 		return ;
-	// 	}
-	// 	exit_s = 0;
-	// 	return ;
-	// }
-	// execute_commands(commands, env, cmd_array);
-	// my_free(commands);
-	// free(arr);
-	// free_2d(cmd_array);
+	// print_list(commands);
+	add_history(input);
+	open_files_0(commands);
+	if (is_heredoc(commands))
+	{
+		while (tmp)
+		{
+			here_docc(tmp);
+			tmp = tmp->next;
+		}
+	}
+	if (ft_lstsize(commands) > 1)
+	{
+		multiple_pipes(commands, env);
+		free_all(input, cmd_array);
+		free(arr);
+		my_free(commands);
+		return ;
+	}
+	if (execute_builtins(commands, env))
+	{
+		my_free(commands);
+		free_all(input, cmd_array);
+		free(arr);
+		if (return_val != 0)
+		{
+			exit_s = return_val;
+			return ;
+		}
+		exit_s = 0;
+		return ;
+	}
+	execute_commands(commands, env, cmd_array);
+	my_free(commands);
+	free(arr);
+	free_2d(cmd_array);
 	free(input);
 }
 

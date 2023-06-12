@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 14:14:21 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/08 18:05:22 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/12 18:37:20 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,6 +187,8 @@ char	*env_value(char *str, t_list *env)
 	int i;
 	// (void) str;
 
+	if (ft_strcmp(str, "") == 0)
+		return (NULL);
 	tmp = env;
 	i = 0;
 	while (tmp)
@@ -208,6 +210,14 @@ char	*env_value(char *str, t_list *env)
 	return (NULL);
 }
 
+int	ft_ischar(int i)
+{
+	if (i == 64 || i == 42 || i == 36 || i == 33 || i == 63 || (i >= 48 && i <= 57))
+		return (1);
+	else
+		return (0);
+}
+
 static char	*ft_expand(char *cmd, t_list *env, int *i)
 {
 	int		limiter;
@@ -217,8 +227,9 @@ static char	*ft_expand(char *cmd, t_list *env, int *i)
 	char	*value;
 
 	limiter = *i + 1;
-	while (cmd[limiter] && ft_isalnum(cmd[limiter]))
+	while (cmd[limiter] && (ft_isalnum(cmd[limiter]) || ft_ischar(cmd[limiter])))
 	{
+
 		// *i++;
 		limiter++;
 	}
