@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   multiple_pipes.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 15:40:24 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/06 21:16:16 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/11 23:55:27 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,7 @@ void	last_command(t_list *commands, t_list **env, int *fd)
 			break ;
 		i++;
 	}
-	my_free(commands);
+	// my_free(commands);
 	execve(paths[i], argv, envp);
 	msg_exit(ptr->cmd_name, ": command not found\n", 127);
 }

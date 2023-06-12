@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 09:36:19 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/05/27 17:41:10 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/11 23:37:03 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,13 @@ int	check_quotes(char *input)
 	}
 	if (s_count % 2 != 0)
 	{
+		write(2, "syntax error, unclosed quotes\n", 31);
 		exit_s = 1;
 		return (1);
 	}
 	if (d_count % 2 != 0)
 	{
+		write(2, "syntax error, unclosed quotes\n", 31);
 		exit_s = 1;
 		return (1);
 	}

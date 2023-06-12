@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/11 21:49:24 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/12 14:56:46 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,12 +231,16 @@ void	get_input(char *input, t_list **env)
 {
 	int		len;
 	char	**cmd_array;
-	t_list	*commands;
-	t_list *tmp;
+	// t_list	*commands;
+	// t_list *tmp;
+	
 	// t_cmds *ptr;
 	int		*arr;
 	(void) env;
 
+
+	// term.c_lflag &= ~(ECHOCTL);
+	// tcsetattr(0, TCSANOW, &term);
 	sig_handler();
 	// rl_catch_sigint = 0;
 	input = readline("Minishell> ");
@@ -256,14 +260,17 @@ void	get_input(char *input, t_list **env)
 	len = get_length(input);
 	// printf("len is : %d\n", len);
 	if (check_line(input))
+	{
+		free (input);
 		return ;
+	}
 	input = fill_line(input, len);
 	input = add_spaces(input);
 	// printf("this is the line : %s\n", input);
 	cmd_array = ft_split(input, ' ');
 	// // split_print(cmd_array);
 	arr = array_tokens(cmd_array, num_elemnts(cmd_array));
-	// array_printer(arr);
+	array_printer(arr);
 	if (op_order(arr))
 	{
 		exit_s = 258;
@@ -271,54 +278,54 @@ void	get_input(char *input, t_list **env)
 		free_2d(cmd_array);
 		return ;
 	}
-	expander(cmd_array, *env);
-	cmd_array = quote_delete(cmd_array);
-	commands = list_cmds(cmd_array, arr);
-	tmp = commands;
-	// ptr = (t_cmds *)commands;
-	// if (ptr->cmd_name[0] == 112)
+	// expander(cmd_array, *env);
+	// cmd_array = quote_delete(cmd_array);
+	// commands = list_cmds(cmd_array, arr);
+	// tmp = commands;
+	// // ptr = (t_cmds *)commands;
+	// // if (ptr->cmd_name[0] == 112)
+	// // {
+	// // 	free_all(input, cmd_array);
+	// // 	free(arr);
+	// // 	my_free(commands);
+	// // 	return ;
+	// // }
+	// // print_list(commands);
+	// add_history(input);
+	// open_files_0(commands);
+	// if (is_heredoc(commands))
 	// {
+	// 	while (tmp)
+	// 	{
+	// 		here_docc(tmp);
+	// 		tmp = tmp->next;
+	// 	}
+	// }
+	// if (ft_lstsize(commands) > 1)
+	// {
+	// 	multiple_pipes(commands, env);
 	// 	free_all(input, cmd_array);
 	// 	free(arr);
 	// 	my_free(commands);
 	// 	return ;
 	// }
-	// print_list(commands);
-	add_history(input);
-	open_files_0(commands);
-	if (is_heredoc(commands))
-	{
-		while (tmp)
-		{
-			here_docc(tmp);
-			tmp = tmp->next;
-		}
-	}
-	if (ft_lstsize(commands) > 1)
-	{
-		multiple_pipes(commands, env);
-		free_all(input, cmd_array);
-		free(arr);
-		my_free(commands);
-		return ;
-	}
-	if (execute_builtins(commands, env))
-	{
-		my_free(commands);
-		free_all(input, cmd_array);
-		free(arr);
-		if (return_val != 0)
-		{
-			exit_s = return_val;
-			return ;
-		}
-		exit_s = 0;
-		return ;
-	}
-	execute_commands(commands, env, cmd_array);
-	my_free(commands);
-	free(arr);
-	free_2d(cmd_array);
+	// if (execute_builtins(commands, env))
+	// {
+	// 	my_free(commands);
+	// 	free_all(input, cmd_array);
+	// 	free(arr);
+	// 	if (return_val != 0)
+	// 	{
+	// 		exit_s = return_val;
+	// 		return ;
+	// 	}
+	// 	exit_s = 0;
+	// 	return ;
+	// }
+	// execute_commands(commands, env, cmd_array);
+	// my_free(commands);
+	// free(arr);
+	// free_2d(cmd_array);
 	free(input);
 }
 

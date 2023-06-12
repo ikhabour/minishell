@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 13:45:16 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/06 15:34:32 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/12 14:59:30 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	op_order(int *token)
 		}
 		if (token[i] == PIPE)
 		{
-			if (token[i + 1] && (token[i + 1] == R_APP_SIG || token[i + 1] == R_IN_SIG || token[i + 1] == R_OUT_SIG || token[i + 1] == HEREDOC_SIG || token[i + 1] == PIPE))
+			if (token[i + 1] && token[i + 1] == PIPE)
 			{
 				free(token);
 				printf("Error, problem with pipe.\n");
