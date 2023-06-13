@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 23:06:44 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/08 23:46:17 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/13 15:03:22 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	handler(int sig)
 {
 	(void) sig;
-	write (1, "\n", 2);
+	write (1, "\n", 1);
 	write (1, "Minishell> ", 11);
 	// write (1, "new prompt\n", 12);
 	// fflush(stdout);

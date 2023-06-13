@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/12 17:55:06 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/13 15:13:00 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,7 +246,7 @@ void	get_input(char *input, t_list **env)
 	tcgetattr(0, &original);
 	term.c_lflag &= ~(ECHOCTL);
 	tcsetattr(0, TCSANOW, &term);
-	input = readline("minishell> ");
+	input = readline("Minishell> ");
 	tcsetattr(0, TCSANOW, &original);
 
 	// term.c_lflag &= ~(ECHOCTL);
@@ -279,7 +279,7 @@ void	get_input(char *input, t_list **env)
 	cmd_array = ft_split(input, ' ');
 	// // split_print(cmd_array);
 	arr = array_tokens(cmd_array, num_elemnts(cmd_array));
-	array_printer(arr);
+	// array_printer(arr);
 	if (op_order(arr))
 	{
 		exit_s = 258;
@@ -301,7 +301,6 @@ void	get_input(char *input, t_list **env)
 	// }
 	// print_list(commands);
 	add_history(input);
-	open_files_0(commands);
 	if (is_heredoc(commands))
 	{
 		while (tmp)

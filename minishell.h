@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/11 21:49:50 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 15:00:51 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,6 @@ void	my_free(t_list *commands);
 void	shlvl_edit(t_list **env, int op);
 void		here_docc(t_list *commands);
 int	is_heredoc(t_list *commands);
-void	open_files_0(t_list *commands);
+void	free_int_arr(int **arr, int size);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/11 22:56:23 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 15:28:59 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,9 @@ void	execute_echo(t_list *cmd)
 		open_files(tmp);
 		dup_fds(tmp);
 	}
-	if (!tmp->option)
+	if (!tmp->option[0])
 	{
-		printf("\n");
+		write(1, "\n", 1);
 		dup2(out_fd, 1);
 		close(out_fd);
 		return ;
@@ -81,9 +81,10 @@ void	execute_echo(t_list *cmd)
 			var.i++;
 		while (tmp->option[var.i])
 		{
-			printf("%s", tmp->option[var.i++]);
+			write(1, tmp->option[var.i], ft_strlenn(tmp->option[var.i]));
+			var.i++;
 			if (tmp->option[var.i])
-				printf(" ");
+				write(1, " ", 1);
 		}
 		dup2(out_fd, 1);
 		close(out_fd);
@@ -95,11 +96,12 @@ void	execute_echo(t_list *cmd)
 			var.i++;
 		while (tmp->option[var.i])
 		{
-			printf("%s", tmp->option[var.i++]);
+			write(1, tmp->option[var.i], ft_strlenn(tmp->option[var.i]));
+			var.i++;
 			if (tmp->option[var.i])
-				printf(" ");
+				write(1, " ", 1);
 		}
-		printf("\n");
+		write(1, "\n", 1);
 	}
 	dup2(out_fd, 1);
 	close(out_fd);

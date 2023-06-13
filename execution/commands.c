@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/11 21:42:56 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 15:23:04 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,11 @@ void	open_file_type(t_filetype *files)
 	if (!ft_strcmp(files->type, "INPUT"))
 		files->fd = open(files->file_name, O_RDONLY, 0644);
 	else if (!ft_strcmp(files->type, "OUTPUT"))
+	{
 		files->fd = open(files->file_name, O_CREAT | O_TRUNC | O_RDWR, 0644);
+		// printf("fd : %d\n", files->fd);
+		// printf("test\n");
+	}
 	else if (!ft_strcmp(files->type, "APPEND"))
 		files->fd = open(files->file_name, O_CREAT | O_APPEND | O_RDWR, 0644);
 	else if (!ft_strcmp(files->type, "DELIMITER"))
@@ -142,11 +146,7 @@ void	dup_fds(t_cmds *ptr)
 		if (!ft_strcmp(files->type, "OUTPUT") || !ft_strcmp(files->type, "APPEND"))
 			dup2(files->fd, 1);
 		else if(!ft_strcmp(files->type, "INPUT") || !ft_strcmp(files->type, "DELIMITER"))
-		{
-			printf("fd : %d\n", files->fd);
-			printf("filename  : %s\n", files->file_name);
 			dup2(files->fd, 0);
-		}
 		tmp = tmp->next;
 		if (tmp)
 			files = (t_filetype *)tmp->content;
@@ -177,8 +177,6 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 	t_cmds *ptr;
 
 	ptr = (t_cmds *)cmd->content;
-	if (!ptr->cmd_name)
-		return (0);
 	envp = env_to_array(env);
 	pid = fork();
 	if (has_redirection(args))
@@ -187,10 +185,12 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 		(write(2, "Fork Failed\n", 12), exit(1));
 	else if (pid == 0)
 	{
-		if (ptr->cmd_name[0] == '.' && access(ptr->cmd_name, X_OK))
-			msg_exit(ptr->cmd_name, ": No such file or directory\n", 127);
 		open_files(ptr);
 		dup_fds(ptr);
+		if (!ptr->cmd_name)
+			exit(0);
+		if (ptr->cmd_name[0] == '.' && access(ptr->cmd_name, X_OK))
+			msg_exit(ptr->cmd_name, ": No such file or directory\n", 127);
 		if (access(ptr->cmd_name, X_OK) == 0)
 			execve(ptr->cmd_name, args, envp);
 		paths = get_path(envp);

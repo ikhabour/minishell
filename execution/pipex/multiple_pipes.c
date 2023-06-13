@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   multiple_pipes.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 15:40:24 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/11 23:55:27 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/13 15:07:12 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ char	**make_argv(t_list *commands)
 	ptr = (t_cmds *)commands->content;
 	i = 0;
 	j = 0;
+	if (!ptr->cmd_name)
+		return (NULL);
 	if (!ptr->option)
 	{
 		argv = malloc(sizeof(char *) * 2);
@@ -64,7 +66,7 @@ int	input_file(t_cmds *ptr)
 	files = (t_filetype *)tmp->content;
 	while (tmp)
 	{
-		if (!ft_strcmp(files->type, "INPUT"))
+		if (!ft_strcmp(files->type, "INPUT") || !ft_strcmp(files->type, "DELIMITER"))
 			return (1);
 		tmp = tmp->next;
 		if (tmp)
@@ -84,7 +86,7 @@ void	dup_input_file(t_cmds *ptr)
 	files = (t_filetype *)tmp->content;
 	while (tmp)
 	{
-		if (!ft_strcmp(files->type, "INPUT"))
+		if (!ft_strcmp(files->type, "INPUT") || !ft_strcmp(files->type, "DELIMITER"))
 			dup2(files->fd, 0);
 		tmp = tmp->next;
 		if (tmp)
@@ -103,7 +105,7 @@ int	output_file(t_cmds *ptr)
 	files = (t_filetype *)tmp->content;
 	while (tmp)
 	{
-		if (!ft_strcmp(files->type, "OUTPUT"))
+		if (!ft_strcmp(files->type, "OUTPUT") || !ft_strcmp(files->type, "APPEND"))
 			return (1);
 		tmp = tmp->next;
 		if (tmp)
@@ -123,7 +125,7 @@ void	dup_output_file(t_cmds *ptr)
 	files = (t_filetype *)tmp->content;
 	while (tmp)
 	{
-		if (!ft_strcmp(files->type, "OUTPUT"))
+		if (!ft_strcmp(files->type, "OUTPUT") || !ft_strcmp(files->type, "APPEND"))
 			dup2(files->fd, 1);
 		tmp = tmp->next;
 		if (tmp)
