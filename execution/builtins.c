@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/11 22:56:23 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 17:22:05 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,9 @@ void	execute_echo(t_list *cmd)
 		open_files(tmp);
 		dup_fds(tmp);
 	}
-	if (!tmp->option)
+	if (!tmp->option[0])
 	{
-		printf("\n");
+		write(1, "\n", 1);
 		dup2(out_fd, 1);
 		close(out_fd);
 		return ;
@@ -81,9 +81,10 @@ void	execute_echo(t_list *cmd)
 			var.i++;
 		while (tmp->option[var.i])
 		{
-			printf("%s", tmp->option[var.i++]);
+			write(1, tmp->option[var.i], ft_strlenn(tmp->option[var.i]));
+			var.i++;
 			if (tmp->option[var.i])
-				printf(" ");
+				write(1, " ", 1);
 		}
 		dup2(out_fd, 1);
 		close(out_fd);
@@ -95,11 +96,12 @@ void	execute_echo(t_list *cmd)
 			var.i++;
 		while (tmp->option[var.i])
 		{
-			printf("%s", tmp->option[var.i++]);
+			write(1, tmp->option[var.i], ft_strlenn(tmp->option[var.i]));
+			var.i++;
 			if (tmp->option[var.i])
-				printf(" ");
+				write(1, " ", 1);
 		}
-		printf("\n");
+		write(1, "\n", 1);
 	}
 	dup2(out_fd, 1);
 	close(out_fd);
@@ -416,6 +418,12 @@ void	execute_unset(t_list *cmd, t_list **env)
 		(write(2,"unset: not enough arguments\n", 28), dup2(fd, 1));
 		return ;
 	}
+	if (!valid_identifier(ptr->option))
+	{
+		write(2, ": not a valid identifier\n", 25);
+		exit_s = 1;
+		return ;
+	}
 	while (ptr->option[i])
 	{
 		curr = *env;
@@ -529,8 +537,8 @@ void	setpwd(t_list **env)
 		tmp = tmp->next;
 	if (i > 0)
 		free(tmp->content);
-	// free(pwd);
 	tmp->content = ft_strjoinn("PWD=", pwd);
+	free(pwd);
 	i++;
 }
 
@@ -558,25 +566,30 @@ void	execute_cd(t_list *cmd, t_list **env)
 		if (!tmp)
 		{
 			(write(2, "cd: HOME not set\n", 17), dup2(fd, 1));
+			close(fd);
 			return_val = 1;
 			return ;
 		}
 		(chdir(tmp->content + 5), dup2(fd, 1));
+		close(fd);
 		setpwd(env);
 		return ;
 	}
 	if (access(ptr->option[0], F_OK))
 	{
 		(write(2, "Minishell: cd: No such file or directory\n", 41), dup2(fd, 1));
+		close(fd);
 		return ;
 	}
 	else if (access(ptr->option[0], X_OK))
 	{
 		(write(2, "Minishell: cd: Permission Denied!\n", 21), dup2(fd, 1));
+		close(fd);
 		return ;
 	}
 	(chdir(ptr->option[0]), dup2(fd, 1));
 	setpwd(env);
+	close(fd);
 }
 
 void	return_val_close(int fd)
@@ -619,6 +632,7 @@ int	execute_builtins(t_list *cmd, t_list **env)
 	else if (!ft_strcmpp(tmp->cmd_name, "cd"))
 	{
 		execute_cd(cmd, env);
+		close(fd);
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "env"))

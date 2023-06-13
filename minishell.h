@@ -6,7 +6,11 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2023/06/13 14:30:03 by bhazzout         ###   ########.fr       */
+=======
+/*   Updated: 2023/06/13 17:12:58 by ikhabour         ###   ########.fr       */
+>>>>>>> 4808b3c485e1f00a778fafbf80906f2f18d61b48
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +180,7 @@ void	my_free(t_list *commands);
 void	shlvl_edit(t_list **env, int op);
 void		here_docc(t_list *commands);
 int	is_heredoc(t_list *commands);
-void	open_files_0(t_list *commands);
+void	free_int_arr(int **arr, int size);
+void	close_files(t_list *commands);
 
 #endif

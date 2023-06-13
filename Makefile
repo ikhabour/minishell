@@ -6,13 +6,13 @@
 #    By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/12 21:30:08 by bhazzout          #+#    #+#              #
-#    Updated: 2023/06/13 15:01:05 by bhazzout         ###   ########.fr        #
+#    Updated: 2023/06/13 17:36:40 by bhazzout         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	minishell
 
-CFLAGS	=	-Wall -Wextra -Werror -fsanitize=address -g3 #-fno-omit-frame-pointer
+CFLAGS	=	-Wall -Wextra -Werror #-fsanitize=address -g3 #-fno-omit-frame-pointer
  
 
 RM		=	rm -rf

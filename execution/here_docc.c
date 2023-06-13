@@ -6,40 +6,40 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 15:02:45 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/11 22:27:35 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 17:16:10 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	open_files_0(t_list *commands)
+
+void	close_files(t_list *commands)
 {
 	t_list *tmp;
-	t_cmds *ptr;
+	t_list *tmp1;
 	t_filetype *files;
+	t_cmds *ptr;
 
-	ptr = (t_cmds *)commands->content;
-	if (ptr->cmd_name)
-		return ;
-	if (!ptr->files)
-		return ;
-	tmp = ptr->files;
-	files = (t_filetype *)tmp->content;
-	while (tmp)
+	tmp1 = commands;
+
+	ptr = (t_cmds *)tmp1->content;
+	while (tmp1)
 	{
-		if (!ft_strcmp(files->type, "INPUT"))
-		{
-			write(2, "Minishell: ", 11);
-			write(2, files->file_name, ft_strlenn(files->file_name));
-			write(2, ": No such file or directory\n", 28);
-			exit_s = 1;
+		if (!ptr->files)
 			return ;
+		tmp = ptr->files;
+		files = (t_filetype *)tmp->content;
+		while (tmp)
+		{
+			if (files->fd != -1 && files->fd != 0)
+				close(files->fd);
+			tmp = tmp->next;
+			if (tmp)
+				files = (t_filetype *)tmp->content;
 		}
-		open_file_type(files);
-		close(files->fd);
-		tmp = tmp->next;
-		if (tmp)
-			files = (t_filetype *)tmp->content;
+		tmp1 = tmp1->next;
+		if (tmp1)
+			ptr = (t_cmds *)tmp1->content;
 	}
 }
 
@@ -155,7 +155,7 @@ void	here_docc(t_list *commands)
 	while (tmp)
 	{
 		if (!ft_strcmp(p->type, "DELIMITER"))
-			p->fd = -1;
+			p->fd = -2;
 		tmp = tmp->next;
 		if (tmp)
 			p = (t_filetype *)tmp->content;
@@ -169,4 +169,5 @@ void	here_docc(t_list *commands)
 		i++;
 	}
 	last_heredoc->fd = fds[i][0];
+	free_int_arr(fds, docs);
 }
