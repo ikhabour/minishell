@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 14:14:21 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/12 18:37:20 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/13 15:53:21 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,7 @@ char	*env_value(char *str, t_list *env)
 
 int	ft_ischar(int i)
 {
-	if (i == 64 || i == 42 || i == 36 || i == 33 || i == 63 || (i >= 48 && i <= 57))
+	if (i == 64 || i == 42 || i == 33 || i == 63 || (i >= 48 && i <= 57))
 		return (1);
 	else
 		return (0);
@@ -229,21 +229,29 @@ static char	*ft_expand(char *cmd, t_list *env, int *i)
 	limiter = *i + 1;
 	while (cmd[limiter] && (ft_isalnum(cmd[limiter]) || ft_ischar(cmd[limiter])))
 	{
-
-		// *i++;
+		
 		limiter++;
 	}
+	printf("this is the limiter (%d)\n", limiter);
 	str = ft_substr(cmd, (*i + 1), limiter - (*i + 1));
 	value = env_value(str, env);
-	lineup = ft_substr(cmd, 0, (*i));
 	if (value)
+	{
+		lineup = ft_substr(cmd, 0, (*i));
 		full_str = ft_strjoin(lineup, value);
+	}
 	else
+	{
+		lineup = ft_substr(cmd, 0, (*i));
 		full_str = ft_strdup(lineup);
+	}
 	free(lineup);
 	if (cmd[limiter])
 	{
-		lineup = ft_substr(cmd, limiter, 1000);
+		if (cmd[limiter - 1] == '$')
+			lineup = ft_substr(cmd, limiter - 1, 1000);
+		else
+			lineup = ft_substr(cmd, limiter, 1000);
 		free(cmd);
 		cmd = ft_strjoin(full_str, lineup);
 		free(lineup);
@@ -254,13 +262,11 @@ static char	*ft_expand(char *cmd, t_list *env, int *i)
 		cmd = ft_strdup(full_str);
 	}
 	*i = ft_strlen(full_str);
+	printf("this is the lineup (%d)\n", *i);
 	free(full_str);
-	// free(lineup);
 	free(str);
-	if (cmd[*i] == '$' || cmd[*i] == '"' || cmd[*i] == '\'')
+	if ((*i > 0) && cmd[*i] == '$')
             *i -= 1;
-    // else if (!cmd[*i])
-    //         *i = -2;
 	return(cmd);
 }
 
@@ -274,13 +280,7 @@ static char	*ft_expand_exit(char *cmd, t_list *env, int *i)
 	char	*full_str;
 
 	limiter = *(i) + 2;
-	if (cmd[limiter])
-		str = ft_substr(cmd, limiter, 1000);
-	else
-	{
-		limiter -= 1;
-		str = ft_strdup(" ");
-	}
+	str = ft_substr(cmd, limiter, 1000);
 	value = ft_itoa(exit_s);
 	lineup = ft_substr(cmd, 0, *i);
 	full_str = ft_strjoin(lineup, value);
@@ -289,7 +289,8 @@ static char	*ft_expand_exit(char *cmd, t_list *env, int *i)
 	cmd = ft_strjoin(full_str, str);
 	free(full_str);
 	free(value);
-	if (cmd[*i] == '$' || cmd[*i] == '"' || cmd[*i] == '\'')
+	free(str);
+	if ((*i > 0) && cmd[*i] == '$')
             *i -= 1;
 	return (cmd);
 }
@@ -310,13 +311,18 @@ char	*expand_processor(char *cmd, t_list *env)
 		{
 			flag = is_outside(flag, cmd[i]);
 		}
-		if (cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] == '?' && flag != 1)
+		if (cmd[i] && cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] == '?' && flag != 1)
 		{
 			cmd = ft_expand_exit(cmd, env, (&i));
 		}
-		if (cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] != '?' && flag != 1)
+		if (cmd[i] && cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] != '?' && flag != 1)
 		{
 			cmd = ft_expand(cmd, env, (&i));
+			printf("this is cmd (%d)\n", i);
+		}
+		if (cmd[i] && cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] == '?' && flag != 1)
+		{
+			cmd = ft_expand_exit(cmd, env, (&i));
 		}
 		if (cmd[i])
 			i++;
@@ -324,10 +330,12 @@ char	*expand_processor(char *cmd, t_list *env)
 	return (cmd);
 }
 
-void	expander(char **cmd, t_list *env)
+char	**expander(char **cmd, t_list *env)
 {
 	int	i;
 	int	j;
+	char	**new_cmd;
+	int	count = 0;
 
 	i = 0;
 	j = 0;
@@ -336,7 +344,33 @@ void	expander(char **cmd, t_list *env)
 		if (ft_strchr(cmd[i], '$'))
 		{
 			cmd[i] = expand_processor(cmd[i], env);
+			printf("(%s)\n", cmd[i]);
+			
+			// if (ft_strcmp(cmd[i], "") == 0)
+			// 	return (1);
 		}
 		i++;
 	}
+	while (cmd[j])
+	{
+		if (ft_strcmp(cmd[j], "") != 0)
+			count++;
+		j++;
+	}
+	new_cmd = (char **)ft_calloc(sizeof(char *), count + 1);
+	new_cmd[count] = NULL;
+	j = 0;
+	i = 0;
+	while (cmd[j])
+	{
+		if (ft_strcmp(cmd[j], "") != 0)
+		{
+			new_cmd[i] = ft_strdup(cmd[j]);
+			i++;
+		}
+		j++;
+	}
+	free_2d(cmd);
+	// split_print(new_cmd);
+	return (new_cmd);
 }

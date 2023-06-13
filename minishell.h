@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/11 21:49:50 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 14:30:03 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ int					check_outside(int count);
 int					op_order(int *token);
 int					is_outside(int flag, char c);
 char				**quote_delete(char **cmd);
-void				expander(char **cmd, t_list *env);
+char				**expander(char **cmd, t_list *env);
 int					ft_envcmp(char *s1, char *s2, int length);
 // t_list	**list_cmds(char **cmd_array, int *arr);
 t_list				*my_lstnew(void *content);

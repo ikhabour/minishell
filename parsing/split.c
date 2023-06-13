@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 22:23:04 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/06 17:30:46 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/13 15:00:41 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,20 +107,6 @@ char	*ft_charge(char *s, int i, char c, int flag)
 	return (str);
 }
 
-// void	*freeini(char **string, int len)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (i < len)
-// 	{
-// 		free(string[i]);
-// 		i++;
-// 	}
-// 	free(string);
-// 	return (NULL);
-// }
-
 char	**ft_split(char *s, char sep)
 {
 	char	**strs;
@@ -138,16 +124,11 @@ char	**ft_split(char *s, char sep)
 	while (j < words)
 	{
 		length = ft_wordlen(s, 0, sep);
-		// printf("string: %s---> %d------> %d\n", s, j, length);
 		strs[j] = ft_substr(s, 0, length);
-		// printf("str: (%s), the length: %d\n", strs[j],length);
 		s += length;
 		if (*s == sep)
 			s++;
 		j++;
 	}
-	// printf("this is the count: %d\n", calc_words(s, ' '));
-	// printf("idk what the fuck m doing: (%s)\n", s);
-	// printf("the len of the first word : %d\n", ft_wordlen(s, 0, ' '));
 	return (strs);
 }
