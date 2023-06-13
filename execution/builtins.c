@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/13 17:52:05 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 20:12:19 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,36 +268,19 @@ int	var_exists(char *var, t_list **env)
 	return (1);
 }
 
-int	valid_identifier(char **str)
+int	valid_identifier(char *str)
 {
 	int i;
-	int j;
 
 	i = 0;
-	j = 0;
-	while (str[i])
-	{
-		while (str[i][j])
-		{
-			if ((str[i][j] >= 'a' && str[i][j] <= 'z') || str[i][j] == '_')
-				j++;
-			while (str[i][j])
-			{
-				if ((str[i][j] >= 'a' && str[i][j] <= 'z') || str[i][j] == '_' || str[i][j] == '=' || str[i][j] == '+')
-					j++;
-				else
-				{
-					write(2, "bash: export: \'", 15);
-					write(2, str[i], ft_strlenn(str[i]));
-					write(2, "\'", 1);
-					return (0);
-				}
-			}
-			if (!str[i][j])
-				continue;
-		}
+	if (!str[i])
+		return (0);
+	if (is_space(str))
+		return (0);
+	if (str[i] && ((str[i] >= 'a' && str[i] <= 'z') || str[i] == '_'))
 		i++;
-	}
+	while ((str[i] >= 'a' && str[i] <= 'z') || str[i] == '_')
+		i++;
 	if (!str[i])
 		return (1);
 	return (0);
@@ -328,14 +311,16 @@ void	execute_export(t_list *cmd, t_list **env)
 		(print_export(env), dup2(fd, 1));
 		return ;
 	}
-	if (!valid_identifier(ptr->option))
-	{
-		write(2, ": not a valid identifier\n", 25);
-		exit_s = 1;
-		return ;
-	}
 	while (ptr->option[var.j])
 	{
+		if (!valid_identifier(ptr->option[var.j]))
+		{
+			write(2, "Minishell : export: `", 21);
+			write(2, ptr->option[var.j], ft_strlenn(ptr->option[var.j]));
+			write(2, "': not a valid identifier\n", 26);
+			var.j++;
+			continue ;
+		}
 		if (append_value(ptr->option[var.j]))
 		{
 			var.i = 0;
@@ -418,12 +403,12 @@ void	execute_unset(t_list *cmd, t_list **env)
 		(write(2,"unset: not enough arguments\n", 28), dup2(fd, 1));
 		return ;
 	}
-	if (!valid_identifier(ptr->option))
-	{
-		write(2, ": not a valid identifier\n", 25);
-		exit_s = 1;
-		return ;
-	}
+	// if (!valid_identifier(ptr->option))
+	// {
+	// 	write(2, ": not a valid identifier\n", 25);
+	// 	exit_s = 1;
+	// 	return ;
+	// }
 	while (ptr->option[i])
 	{
 		curr = *env;

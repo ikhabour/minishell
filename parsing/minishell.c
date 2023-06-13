@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/13 17:54:29 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 19:50:41 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,8 +319,8 @@ void	get_input(char *input, t_list **env)
 	}
 	if (execute_builtins(commands, env))
 	{
-		my_free(commands);
 		close_files(commands);
+		my_free(commands);
 		free_all(input, new);
 		free(arr);
 		if (return_val != 0)

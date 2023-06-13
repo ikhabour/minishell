@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/13 17:42:29 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 20:08:40 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,5 +178,6 @@ void		here_docc(t_list *commands);
 int	is_heredoc(t_list *commands);
 void	free_int_arr(int **arr, int size);
 void	close_files(t_list *commands);
+int	is_space(char *str);
 
 #endif
