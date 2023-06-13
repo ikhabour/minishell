@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/13 15:01:02 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/13 17:54:29 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,13 +232,13 @@ void	get_input(char *input, t_list **env)
 	int		len;
 	char	**cmd_array;
 	char	**new;
-	// t_list	*commands;
-	// t_list *tmp;
+	t_list	*commands;
+	t_list *tmp;
 	struct termios	term;
 	struct termios	original;
 	
 	// t_cmds *ptr;
-	// int		*arr;
+	int		*arr;
 	(void) env;
 
 
@@ -280,62 +280,61 @@ void	get_input(char *input, t_list **env)
 	cmd_array = ft_split(input, ' ');
 	new = expander(cmd_array, *env);
 	split_print(new);
-	// // // split_print(cmd_array);
-	// arr = array_tokens(new, num_elemnts(new));
+	// // split_print(cmd_array);
+	arr = array_tokens(new, num_elemnts(new));
 	// array_printer(arr);
-	// if (op_order(arr))
-	// {
-	// 	exit_s = 258;
-	// 	free(input);
-	// 	free_2d(new);
-	// 	return ;
-	// }
-	// new = quote_delete(new);
-	// commands = list_cmds(new, arr);
-	// tmp = commands;
-	// ptr = (t_cmds *)commands;
-	// if (ptr->cmd_name[0] == 112)
-	// {
-	// 	free_all(input, new);
-	// 	free(arr);
-	// 	my_free(commands);
-	// 	return ;
-	// }
-	// // print_list(commands);
-	// add_history(input);
-	// open_files_0(commands);
-	// if (is_heredoc(commands))
-	// {
-	// 	while (tmp)
-	// 	{
-	// 		here_docc(tmp);
-	// 		tmp = tmp->next;
-	// 	}
-	// }
-	// if (ft_lstsize(commands) > 1)
-	// {
-	// 	multiple_pipes(commands, env);
-	// 	free_all(input, cmd_array);
-	// 	free(arr);
-	// 	my_free(commands);
-	// 	return ;
-	// }
-	// if (execute_builtins(commands, env))
-	// {
-	// 	my_free(commands);
-	// 	free_all(input, cmd_array);
-	// 	free(arr);
-	// 	if (return_val != 0)
-	// 	{
-	// 		exit_s = return_val;
-	// 		return ;
-	// 	}
-	// 	exit_s = 0;
-	// 	return ;
-	// }
-	// execute_commands(commands, env, cmd_array);
-	// my_free(commands);
-	// free(arr);
+	if (op_order(arr))
+	{
+		exit_s = 258;
+		free(input);
+		free_2d(new);
+		return ;
+	}
+	new = quote_delete(new);
+	commands = list_cmds(new, arr);
+	tmp = commands;
+	print_list(commands);
+	add_history(input);
+	if (!commands)
+	{
+		free_2d(new);
+		free(arr);
+		free(input);
+		return ;
+	}
+	while (tmp)
+	{
+		if (is_heredoc(tmp))
+			here_docc(tmp);
+		tmp = tmp->next;
+	}
+	if (ft_lstsize(commands) > 1)
+	{
+		multiple_pipes(commands, env);
+		close_files(commands);
+		free_all(input, new);
+		free(arr);
+		my_free(commands);
+		return ;
+	}
+	if (execute_builtins(commands, env))
+	{
+		my_free(commands);
+		close_files(commands);
+		free_all(input, new);
+		free(arr);
+		if (return_val != 0)
+		{
+			exit_s = return_val;
+			return ;
+		}
+		exit_s = 0;
+		return ;
+	}
+	execute_commands(commands, env, new);
+	close_files(commands);
+	my_free(commands);
+	free(arr);
 	free_2d(new);
 	free(input);
 }
