@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/13 19:50:41 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 22:01:35 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -279,7 +279,7 @@ void	get_input(char *input, t_list **env)
 	// printf("this is the line : %s\n", input);
 	cmd_array = ft_split(input, ' ');
 	new = expander(cmd_array, *env);
-	split_print(new);
+	// split_print(new);
 	// // split_print(cmd_array);
 	arr = array_tokens(new, num_elemnts(new));
 	// array_printer(arr);
@@ -293,7 +293,7 @@ void	get_input(char *input, t_list **env)
 	new = quote_delete(new);
 	commands = list_cmds(new, arr);
 	tmp = commands;
-	print_list(commands);
+	// print_list(commands);
 	add_history(input);
 	if (!commands)
 	{
@@ -323,12 +323,6 @@ void	get_input(char *input, t_list **env)
 		my_free(commands);
 		free_all(input, new);
 		free(arr);
-		if (return_val != 0)
-		{
-			exit_s = return_val;
-			return ;
-		}
-		exit_s = 0;
 		return ;
 	}
 	execute_commands(commands, env, new);

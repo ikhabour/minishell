@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/13 20:12:19 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 22:36:49 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,22 +34,6 @@ int	check_echo_option(char *str, t_bvars *var)
 	return (0);
 }
 
-void	close_fds(t_cmds *ptr)
-{
-	t_filetype *files;
-	t_list *tmp;
-
-	tmp = ptr->files;
-	files = (t_filetype *)tmp->content;
-	while (tmp)
-	{
-		close(files->fd);
-		tmp = tmp->next;
-		if (tmp)
-			files = (t_filetype *)tmp->content;
-	}
-}
-
 void	execute_echo(t_list *cmd)
 {
 	t_bvars	var;
@@ -69,8 +53,7 @@ void	execute_echo(t_list *cmd)
 	if (!tmp->option[0])
 	{
 		write(1, "\n", 1);
-		dup2(out_fd, 1);
-		close(out_fd);
+		(dup2(out_fd, 1), close(out_fd));
 		return ;
 	}
 	while (tmp->option[var.j] && !check_echo_option(tmp->option[var.j], &var))
@@ -86,8 +69,7 @@ void	execute_echo(t_list *cmd)
 			if (tmp->option[var.i])
 				write(1, " ", 1);
 		}
-		dup2(out_fd, 1);
-		close(out_fd);
+		(dup2(out_fd, 1), close(out_fd));
 		return ;
 	}
 	else
@@ -103,8 +85,7 @@ void	execute_echo(t_list *cmd)
 		}
 		write(1, "\n", 1);
 	}
-	dup2(out_fd, 1);
-	close(out_fd);
+	(dup2(out_fd, 1), close(out_fd));
 }
 
 t_list	*make_env(char **envp)
@@ -166,10 +147,12 @@ void	execute_env(t_list **env, t_list *cmd)
 				printf("%s\n", tmp->content);
 			tmp = tmp->next;
 		}
-		dup2(fd, 1);
+		(dup2(fd, 1), close(fd), exit_s = 0);
 		return ;
 	}
 	(printf("env: %s: No such file or directory\n", ptr->option[0]), dup2(fd, 1));
+	close(fd);
+	exit_s = 127;
 }
 
 int	append_value(char *argument)
@@ -177,9 +160,13 @@ int	append_value(char *argument)
 	int	i;
 
 	i = 0;
-	while (argument[i] && argument[i] != '+')
+	while (argument[i])
+	{
+		if (argument[i] == '+' || argument[i] == '=')
+			break ;
 		i++;
-	if (argument[i] && argument[i + 1] == '=')
+	}
+	if (argument[i] && argument[i] == '+'  && argument[i + 1] == '=' )
 		return (1);
 	return (0);
 }
@@ -268,6 +255,13 @@ int	var_exists(char *var, t_list **env)
 	return (1);
 }
 
+int	is_alpha(char c)
+{
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		return (1);
+	return (0);
+}
+
 int	valid_identifier(char *str)
 {
 	int i;
@@ -277,9 +271,11 @@ int	valid_identifier(char *str)
 		return (0);
 	if (is_space(str))
 		return (0);
-	if (str[i] && ((str[i] >= 'a' && str[i] <= 'z') || str[i] == '_'))
+	if (str[i] && (is_alpha(str[i]) || str[i] == '_'))
 		i++;
-	while ((str[i] >= 'a' && str[i] <= 'z') || str[i] == '_')
+	else
+		return (0);
+	while (is_alpha(str[i]) || str[i] == '_' || str[i] == '=' || str[i] == '+' || str[i] == '-' || str[i] == ' ')
 		i++;
 	if (!str[i])
 		return (1);
@@ -306,9 +302,10 @@ void	execute_export(t_list *cmd, t_list **env)
 		open_files(ptr);
 		dup_fds(ptr);
 	}
+	exit_s = 0;
 	if (!ptr->option[0])
 	{
-		(print_export(env), dup2(fd, 1));
+		(print_export(env), dup2(fd, 1), close(fd));
 		return ;
 	}
 	while (ptr->option[var.j])
@@ -318,11 +315,11 @@ void	execute_export(t_list *cmd, t_list **env)
 			write(2, "Minishell : export: `", 21);
 			write(2, ptr->option[var.j], ft_strlenn(ptr->option[var.j]));
 			write(2, "': not a valid identifier\n", 26);
-			var.j++;
+			(exit_s = 1, var.j++);
 			continue ;
 		}
 		if (append_value(ptr->option[var.j]))
-		{
+		{	
 			var.i = 0;
 			tmp = *env;
 			while (ptr->option[var.j][var.i] != '=')
@@ -330,20 +327,17 @@ void	execute_export(t_list *cmd, t_list **env)
 			while (tmp && ft_strncmpp(tmp->content, ptr->option[var.j], var.i - 1))
 				tmp = tmp->next;
 			if (!tmp)
-			{
 				ft_lstadd_backk(env, ft_lstneww(remove_plus(ptr->option[var.j])));
-			}
 			else
 			{
+				temp = tmp->content;
 				if (!change_value(tmp->content))
 				{
-					temp = tmp->content;
 					tmp->content = ft_strjoinn(temp, ptr->option[var.j] + (var.i));
 					free(temp);
 				}
 				else
 				{
-					temp = tmp->content;
 					tmp->content = ft_strjoinn(temp, ptr->option[var.j] + (var.i + 1));
 					free(temp);
 				}
@@ -373,13 +367,13 @@ void	execute_export(t_list *cmd, t_list **env)
 			while (tmp && ft_strncmpp(tmp->content, ptr->option[var.j], var.i))
 				tmp = tmp->next;
 			if (!tmp)
-			{
 				ft_lstadd_backk(env, ft_lstneww(ft_strdup(ptr->option[var.j])));
-			}
 		}
 		var.j++;
 	}
-	dup2(fd, 1);
+	(dup2(fd, 1), close(fd));
+	if (exit_s == 1)
+		return ;
 }
 
 void	execute_unset(t_list *cmd, t_list **env)
@@ -398,26 +392,29 @@ void	execute_unset(t_list *cmd, t_list **env)
 		open_files(ptr);
 		dup_fds(ptr);
 	}
+	exit_s = 0;
 	if (!ptr->option)
 	{
-		(write(2,"unset: not enough arguments\n", 28), dup2(fd, 1));
+		(dup2(fd, 1), close(fd));
 		return ;
 	}
-	// if (!valid_identifier(ptr->option))
-	// {
-	// 	write(2, ": not a valid identifier\n", 25);
-	// 	exit_s = 1;
-	// 	return ;
-	// }
 	while (ptr->option[i])
 	{
+		if (!valid_identifier(ptr->option[i]))
+		{
+			write(2, "Minishell : unset: `", 20);
+			write(2, ptr->option[i], ft_strlenn(ptr->option[i]));
+			write(2, "': not a valid identifier\n", 26);
+			(exit_s = 1, i++);
+			continue ;
+		}
 		curr = *env;
 		prev = NULL;
 		if (curr && !ft_strncmpp(curr->content, ptr->option[i],
 				ft_strlenn(ptr->option[i])))
 		{
 			*env = curr->next;
-			(free(curr), dup2(fd, 1));
+			(free(curr), dup2(fd, 1), close(fd));
 			return ;
 		}
 		while (curr && ft_strncmpp(curr->content, ptr->option[i],
@@ -428,14 +425,16 @@ void	execute_unset(t_list *cmd, t_list **env)
 		}
 		if (curr == NULL)
 		{
-			dup2(fd, 1);
+			(dup2(fd, 1), close(fd));
 			return ;
 		}
 		prev->next = curr->next;
 		free(curr);
 		i++;
 	}
-	dup2(fd, 1);
+	(dup2(fd, 1), close(fd));
+	if (exit_s == 1)
+		return ;
 }
 
 void	execute_exit(t_list *cmd, t_list **env)
@@ -455,8 +454,8 @@ void	execute_exit(t_list *cmd, t_list **env)
 	}
 	if (!ptr->option[0])
 	{
-		exit(0);
 		shlvl_edit(env, 1);
+		exit(0);
 	}
 	while (ptr->option[i])
 		i++;
@@ -544,6 +543,7 @@ void	execute_cd(t_list *cmd, t_list **env)
 		open_files(ptr);
 		dup_fds(ptr);
 	}
+	exit_s = 0;
 	if (!ptr->option[0])
 	{
 		while (tmp && ft_strncmpp(tmp->content, "HOME=", 5))
@@ -551,36 +551,27 @@ void	execute_cd(t_list *cmd, t_list **env)
 		if (!tmp)
 		{
 			(write(2, "cd: HOME not set\n", 17), dup2(fd, 1));
-			close(fd);
-			return_val = 1;
+			(exit_s = 1, close(fd));
 			return ;
 		}
 		(chdir(tmp->content + 5), dup2(fd, 1));
-		close(fd);
-		setpwd(env);
+		(setpwd(env), close(fd));
 		return ;
 	}
 	if (access(ptr->option[0], F_OK))
 	{
 		(write(2, "Minishell: cd: No such file or directory\n", 41), dup2(fd, 1));
-		close(fd);
+		(exit_s = 1, close(fd));
 		return ;
 	}
 	else if (access(ptr->option[0], X_OK))
 	{
 		(write(2, "Minishell: cd: Permission Denied!\n", 21), dup2(fd, 1));
-		close(fd);
+		(exit_s = 1, close(fd));
 		return ;
 	}
 	(chdir(ptr->option[0]), dup2(fd, 1));
-	setpwd(env);
-	close(fd);
-}
-
-void	return_val_close(int fd)
-{
-	return_val = 0;
-	close(fd);
+	(setpwd(env), close(fd));
 }
 
 int	execute_builtins(t_list *cmd, t_list **env)
@@ -605,37 +596,32 @@ int	execute_builtins(t_list *cmd, t_list **env)
 		free(tmp->cmd_name);
 		tmp->cmd_name = getcwd(NULL, 0);
 		(printf("%s\n", tmp->cmd_name), dup2(fd, 1));
-		return_val_close(fd);
+		(exit_s = 0, close(fd));
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "echo"))
 	{
-		execute_echo(cmd);
-		return_val_close(fd);
+		(execute_echo(cmd), close(fd), exit_s = 0);
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "cd"))
 	{
-		execute_cd(cmd, env);
-		close(fd);
+		(execute_cd(cmd, env), close(fd));
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "env"))
 	{
-		execute_env(env, cmd);
-		return_val_close(fd);
+		(execute_env(env, cmd), close(fd));
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "export"))
 	{
-		execute_export(cmd, env);
-		return_val_close(fd);
+		(execute_export(cmd, env), close(fd));
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "unset"))
 	{
-		execute_unset(cmd, env);
-		return_val_close(fd);
+		(execute_unset(cmd, env), close(fd))
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "exit"))
