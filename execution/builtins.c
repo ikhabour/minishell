@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/13 15:28:59 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 17:22:05 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -418,6 +418,12 @@ void	execute_unset(t_list *cmd, t_list **env)
 		(write(2,"unset: not enough arguments\n", 28), dup2(fd, 1));
 		return ;
 	}
+	if (!valid_identifier(ptr->option))
+	{
+		write(2, ": not a valid identifier\n", 25);
+		exit_s = 1;
+		return ;
+	}
 	while (ptr->option[i])
 	{
 		curr = *env;
@@ -531,8 +537,8 @@ void	setpwd(t_list **env)
 		tmp = tmp->next;
 	if (i > 0)
 		free(tmp->content);
-	// free(pwd);
 	tmp->content = ft_strjoinn("PWD=", pwd);
+	free(pwd);
 	i++;
 }
 
@@ -560,25 +566,30 @@ void	execute_cd(t_list *cmd, t_list **env)
 		if (!tmp)
 		{
 			(write(2, "cd: HOME not set\n", 17), dup2(fd, 1));
+			close(fd);
 			return_val = 1;
 			return ;
 		}
 		(chdir(tmp->content + 5), dup2(fd, 1));
+		close(fd);
 		setpwd(env);
 		return ;
 	}
 	if (access(ptr->option[0], F_OK))
 	{
 		(write(2, "Minishell: cd: No such file or directory\n", 41), dup2(fd, 1));
+		close(fd);
 		return ;
 	}
 	else if (access(ptr->option[0], X_OK))
 	{
 		(write(2, "Minishell: cd: Permission Denied!\n", 21), dup2(fd, 1));
+		close(fd);
 		return ;
 	}
 	(chdir(ptr->option[0]), dup2(fd, 1));
 	setpwd(env);
+	close(fd);
 }
 
 void	return_val_close(int fd)
@@ -621,6 +632,7 @@ int	execute_builtins(t_list *cmd, t_list **env)
 	else if (!ft_strcmpp(tmp->cmd_name, "cd"))
 	{
 		execute_cd(cmd, env);
+		close(fd);
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "env"))

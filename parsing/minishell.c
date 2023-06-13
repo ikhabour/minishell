@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/13 15:13:00 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 17:15:50 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +256,7 @@ void	get_input(char *input, t_list **env)
 	if (!input || ft_strcmp(input, "") == 0)
 	{
 		if (!input)
-			exit(0);
+			exit(153);
 		free(input);
 		return ;
 	}
@@ -301,17 +301,17 @@ void	get_input(char *input, t_list **env)
 	// }
 	// print_list(commands);
 	add_history(input);
-	if (is_heredoc(commands))
+	while (tmp)
 	{
-		while (tmp)
-		{
+		if (is_heredoc(tmp))
 			here_docc(tmp);
-			tmp = tmp->next;
-		}
+		tmp = tmp->next;
 	}
+	
 	if (ft_lstsize(commands) > 1)
 	{
 		multiple_pipes(commands, env);
+		close_files(commands);
 		free_all(input, cmd_array);
 		free(arr);
 		my_free(commands);
@@ -319,6 +319,7 @@ void	get_input(char *input, t_list **env)
 	}
 	if (execute_builtins(commands, env))
 	{
+		close_files(commands);
 		my_free(commands);
 		free_all(input, cmd_array);
 		free(arr);
@@ -331,6 +332,7 @@ void	get_input(char *input, t_list **env)
 		return ;
 	}
 	execute_commands(commands, env, cmd_array);
+	close_files(commands);
 	my_free(commands);
 	free(arr);
 	free_2d(cmd_array);

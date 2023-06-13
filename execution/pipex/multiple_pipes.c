@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 15:40:24 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/13 15:07:12 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/13 16:49:11 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,13 @@ void	dup_input_file(t_cmds *ptr)
 	files = (t_filetype *)tmp->content;
 	while (tmp)
 	{
+		if (files->fd == -1)
+		{
+			write(2, "Minishell: ", 11);
+			write(2, files->file_name, ft_strlenn(files->file_name));
+			write(2, ": No such file or directory\n", 28);
+			return ;
+		}
 		if (!ft_strcmp(files->type, "INPUT") || !ft_strcmp(files->type, "DELIMITER"))
 			dup2(files->fd, 0);
 		tmp = tmp->next;
@@ -153,6 +160,8 @@ void	first_command(t_list *commands, t_list **env, int *fd)
 	else
 		dup2(fd[1], 1);
 	close(fd[0]);
+	if (!ptr->cmd_name)
+		exit(0);
 	if (execute_builtins(commands, env))
 		exit(0);
 	if (access(ptr->cmd_name, X_OK) == 0)
@@ -169,7 +178,6 @@ void	first_command(t_list *commands, t_list **env, int *fd)
 			break ;
 		i++;
 	}
-	my_free(commands);
 	execve(paths[i], argv, envp);
 	msg_exit(ptr->cmd_name, ": command not found\n", 127);
 }
@@ -195,6 +203,8 @@ void	last_command(t_list *commands, t_list **env, int *fd)
 	else
 		dup2(fd[0], 0);
 	close(fd[1]);
+	if (!ptr->cmd_name)
+		exit(0);
 	if (execute_builtins(commands, env))
 		exit(0);
 	if (access(ptr->cmd_name, X_OK) == 0)
@@ -211,7 +221,6 @@ void	last_command(t_list *commands, t_list **env, int *fd)
 			break ;
 		i++;
 	}
-	// my_free(commands);
 	execve(paths[i], argv, envp);
 	msg_exit(ptr->cmd_name, ": command not found\n", 127);
 }
@@ -240,6 +249,8 @@ void	middle_command(t_list *commands, t_list **env, int *fdin, int *fdout)
 		dup2(fdin[0], 0);
 	close(fdout[0]);
 	close(fdin[1]);
+	if (!ptr->cmd_name)
+		exit(0);
 	if (execute_builtins(commands, env))
 		exit(0);
 	if (access(ptr->cmd_name, X_OK) == 0)
@@ -256,10 +267,9 @@ void	middle_command(t_list *commands, t_list **env, int *fdin, int *fdout)
 			break ;
 		i++;
 	}
-	my_free(commands);
 	execve(paths[i], argv, envp);
-	msg_exit(ptr->cmd_name, ": command not found\n", 127);
-}
+	msg_exit(ptr->cmd_name, ": command not fosund\n", 127);
+}	
 
 void	free_int_arr(int **arr, int size)
 {
