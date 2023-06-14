@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/14 17:04:36 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/14 16:44:06 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,10 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 	envp = env_to_array(env);
 	pid = fork();
 	if (has_redirection(args))
-		(free_2d(args), args = make_argv(cmd));
+	{
+		free_2d(args);
+		args = make_argv(cmd);
+	}
 	if (pid == -1)
 		(write(2, "Fork Failed\n", 12), exit(1));
 	else if (pid == 0)
@@ -218,7 +221,10 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 		msg_exit(ptr->cmd_name, ": command not found\n", 127);
 	}
 	else
-		(waitpid(pid, &i, 0), exit_s = WEXITSTATUS(i));
+	{
+		waitpid(pid, &i, 0);
+		exit_s = WEXITSTATUS(i);
+	}
 	free_2d(envp);
 	if (args)
 		free_2d(args);

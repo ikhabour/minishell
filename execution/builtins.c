@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/14 22:39:19 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/14 15:32:54 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,7 +275,7 @@ int	valid_identifier(char *str)
 		i++;
 	else
 		return (0);
-	while (is_alpha(str[i]) || str[i] == '_' || str[i] == '=' || str[i] == '+' || str[i] == '-' || str[i] == ' ' || str[i] == '\'')
+	while (is_alpha(str[i]) || str[i] == '_' || str[i] == '=' || str[i] == '+' || str[i] == '-' || str[i] == ' ')
 		i++;
 	if (!str[i])
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 15:40:24 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/14 17:08:15 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/14 16:45:37 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,7 +250,8 @@ void	middle_command(t_list *commands, t_list **env, int *fdin, int *fdout)
 		dup_input_file(ptr);
 	else
 		dup2(fdin[0], 0);
-	(close(fdout[0]), close(fdin[1]));
+	close(fdout[0]);
+	close(fdin[1]);
 	if (!ptr->cmd_name)
 		exit(0);
 	if (execute_builtins(commands, env))
@@ -301,9 +302,13 @@ void	multiple_pipes(t_list *commands, t_list **env)
 	fd = malloc(sizeof(int *) *(pipes + 1));
 	pids = malloc(sizeof(int) * (pipes + 1));
 	while (i < pipes)
-		fd[i++] = malloc(sizeof(int) * 2);
+	{
+		fd[i] = malloc(sizeof(int) * 2);
+		i++;
+	}
 	fd[i] = NULL;
 	i = 0;
+	int j;
 	while (i < pipes + 1)
 	{
 		if (i < pipes && pipe(fd[i]) < 0)
@@ -326,15 +331,17 @@ void	multiple_pipes(t_list *commands, t_list **env)
 		i++;
 		tmp = tmp->next;
 	}
-	i = 0;
-	while (i < pipes)
+	j = 0;
+	while (j < pipes)
 	{
-		(close(fd[i][0]), close(fd[i][1]));
-		i++;
+		close(fd[j][0]);
+		close(fd[j][1]);
+		j++;
 	}
-	i = 0;
-	while (i < pipes + 1)
-		waitpid(pids[i++], &status, 0);
+	j = 0;
+	while (j < pipes + 1)
+		waitpid(pids[j++], &status, 0);
 	exit_s = WEXITSTATUS(status);
-	(free(pids), free_int_arr(fd, pipes));
+	free(pids);
+	free_int_arr(fd, pipes);
 }
