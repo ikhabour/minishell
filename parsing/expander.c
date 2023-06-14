@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 14:14:21 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/14 17:03:54 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/14 23:42:47 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,23 @@ int	dollar_index(char *cmd)
 	return (count);
 }
 
+int	var_length(char *str)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while (str[i])
+	{
+		if (str[i] == '=')
+			break ;
+		i++;
+		count++;
+	}
+	return (count);
+}
+
 char	*env_value(char *str, t_list *env)
 {
 	t_list	*tmp;
@@ -193,8 +210,7 @@ char	*env_value(char *str, t_list *env)
 	i = 0;
 	while (tmp)
 	{
-		// printf("(%s)\n", tmp->content);
-		if (ft_strncmp(str, tmp->content, ft_strlen(str)) == 0)
+		if (ft_strncmp(str, tmp->content, var_length(tmp->content)) == 0)
 		{
 			value = ft_strdup(tmp->content);
 			while (value[i] != '=')
@@ -229,10 +245,8 @@ static char	*ft_expand(char *cmd, t_list *env, int *i)
 	limiter = *i + 1;
 	while (cmd[limiter] && (ft_isalnum(cmd[limiter]) || ft_ischar(cmd[limiter])))
 	{
-		
 		limiter++;
 	}
-	printf("this is the limiter (%d)\n", limiter);
 	str = ft_substr(cmd, (*i + 1), limiter - (*i + 1));
 	value = env_value(str, env);
 	if (value)
@@ -262,7 +276,6 @@ static char	*ft_expand(char *cmd, t_list *env, int *i)
 		cmd = ft_strdup(full_str);
 	}
 	*i = ft_strlen(full_str);
-	printf("this is the lineup (%d)\n", *i);
 	free(full_str);
 	free(str);
 	if ((*i > 0) && cmd[*i] == '$')
@@ -320,7 +333,6 @@ char	*expand_processor(char *cmd, t_list *env)
 		if (cmd[i] && cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] != '?' && flag != 1)
 		{
 			cmd = ft_expand(cmd, env, (&i));
-			printf("this is cmd (%d)\n", i);
 		}
 		if (cmd[i] && cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] == '?' && flag != 1)
 		{
@@ -346,7 +358,6 @@ char	**expander(char **cmd, t_list *env)
 		if (ft_strchr(cmd[i], '$'))
 		{
 			cmd[i] = expand_processor(cmd[i], env);
-			printf("(%s)\n", cmd[i]);
 			
 			// if (ft_strcmp(cmd[i], "") == 0)
 			// 	return (1);
