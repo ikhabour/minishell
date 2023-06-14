@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/14 22:56:19 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/14 23:55:14 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ char				*ft_itoa(int num);
 void				sig_handler();
 void				handler(int sig);
 int					check_delimiter(char *cmd);
+char	*env_value(char *str, t_list *env);
 
 //	################		execution prototypes 		##################	//
 
@@ -176,7 +177,7 @@ void	free_2d(char **array);
 void	free_files(t_list *files);
 void	my_free(t_list *commands);
 void	shlvl_edit(t_list **env, int op);
-void		here_docc(t_list *commands);
+void		here_docc(t_list *commands, t_list **env);
 int	is_heredoc(t_list *commands);
 void	free_int_arr(int **arr, int size);
 void	close_files(t_list *commands);

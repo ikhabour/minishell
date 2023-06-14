@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/14 23:03:37 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/14 23:57:21 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,7 +276,7 @@ void	get_input(char *input, t_list **env)
 	// tcsetattr(0, TCSANOW, &term);
 	// rl_catch_sigint = 0;
 	// input = readline("Minishell> ");
-if (!input || ft_strcmp(input, "") == 0)
+	if (!input || ft_strcmp(input, "") == 0)
 	{
 		if (!input)
 			exit(0);
@@ -323,7 +323,7 @@ if (!input || ft_strcmp(input, "") == 0)
 	}
 	commands = list_cmds(new, arr, &delimiter);
 	tmp = commands;
-	print_list(commands);
+	// print_list(commands);
 	add_history(input);
 	if (!commands)
 	{
@@ -335,7 +335,7 @@ if (!input || ft_strcmp(input, "") == 0)
 	while (tmp)
 	{
 		if (is_heredoc(tmp))
-			here_docc(tmp);
+			here_docc(tmp, env);
 		tmp = tmp->next;
 	}
 	if (ft_lstsize(commands) > 1)
