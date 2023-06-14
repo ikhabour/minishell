@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:32:20 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/06 17:30:41 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/14 22:54:55 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,13 +84,33 @@ char	*quote_processor(char *str)
 	return (cmd);
 }
 
-char	**quote_delete(char **cmd)
+int	check_delimiter(char *cmd)
 {
-	int		i;
+	int	i;
 
 	i = 0;
 	while (cmd[i])
 	{
+		if (cmd[i] == '"' || cmd[i] == '/')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+char	**quote_delete(char **cmd, int *delimiter, int *arr)
+{
+	int		i;
+	// int	flag;
+
+	i = 0;
+	// flag = 0;
+	while (cmd[i])
+	{
+		if (arr[i] == HEREDOC_LIM)
+		{
+			*delimiter = check_delimiter(cmd[i]);
+		}
 		cmd[i] = quote_processor(cmd[i]);
 		i++;
 	}

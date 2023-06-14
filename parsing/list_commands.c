@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list_commands.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/11 18:13:07 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/14 23:04:35 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,11 @@ void	print_list(t_list *list)
 				printf("the type : %s\n", file_node->type);
 				printf("the red : %s\n", file_node->red);
 				printf("the file name : %s\n", file_node->file_name);
+				printf("has quotes : %d\n", file_node->has_quotes);
 				node->files = node->files->next;
-			if (node->files)
+				if (node->files)
 				{
-				file_node = (t_filetype *)node->files->content;
+					file_node = (t_filetype *)node->files->content;
 				}
 			}
 		}
@@ -58,14 +59,16 @@ void	print_list(t_list *list)
     }
 }
 
-t_filetype	*fill_file(char **cmd_array, int *arr, int i)
+t_filetype	*fill_file(char **cmd_array, int *arr, int i, int *delimiter)
 {
 	t_filetype	*file_node;
+	// int			flag;
 
 	file_node = malloc (sizeof(t_filetype));
 	file_node->red = NULL;
 	file_node->type = NULL;
 	file_node->file_name = NULL;
+	file_node->has_quotes = 0;
 	if (arr[i] == R_IN_OUT)
 	{
 		file_node->type = ft_strdup("OUTPUT");
@@ -103,6 +106,7 @@ t_filetype	*fill_file(char **cmd_array, int *arr, int i)
 	// 	file_node->red = ft_strdup(cmd_array[i]);
 	else if (arr[i] == HEREDOC_LIM)
 	{
+		file_node->has_quotes = *delimiter;
 		file_node->type = ft_strdup("DELIMITER");
 		file_node->file_name = ft_strdup(cmd_array[i]);
 		file_node->red = ft_strdup(cmd_array[i - 1]);
@@ -128,7 +132,7 @@ void	node_printer(t_list *file_node)
 	}
 }
 
-t_cmds	*fill_node(char **cmd_array, int *arr, int i)
+t_cmds	*fill_node(char **cmd_array, int *arr, int i, int *delimiter)
 {
 	int	count;
 	int	arg_counter = 0;
@@ -168,7 +172,7 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 		else if (arr[i] == R_IN_FILE || arr[i] == R_OUT_FILE || arr[i] == R_APP_FILE
 				|| arr[i] == HEREDOC_LIM)
 		{
-			file_node = fill_file(cmd_array, arr, i);
+			file_node = fill_file(cmd_array, arr, i, delimiter);
 			ft_lstadd_front(&file, my_lstnew(file_node));
 		}
 		i--;
@@ -177,7 +181,7 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i)
 	return (node);
 }
 
-t_list	*list_cmds(char **cmd_array, int *arr)
+t_list	*list_cmds(char **cmd_array, int *arr, int *delimiter)
 {
 	int		i;
 	t_list *list = NULL;
@@ -190,13 +194,13 @@ t_list	*list_cmds(char **cmd_array, int *arr)
 	{
 		if (arr[i] == PIPE)
 		{
-			node = fill_node(cmd_array, arr, (i - 1));
+			node = fill_node(cmd_array, arr, (i - 1), delimiter);
 			my_lstadd_back(&list, my_lstnew(node));
 		}
 		i++;
 		if (arr[i] == '\0')
 		{
-			node = fill_node(cmd_array, arr, (i - 1));
+			node = fill_node(cmd_array, arr, (i - 1), delimiter);
 			my_lstadd_back(&list, my_lstnew(node));
 		}
 	}

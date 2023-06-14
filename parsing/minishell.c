@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/14 17:02:12 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/14 23:03:37 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,6 +252,7 @@ int	valid_command(char **new)
 void	get_input(char *input, t_list **env)
 {
 	int		len;
+	int		delimiter = 0;
 	char	**cmd_array;
 	char	**new;
 	t_list	*commands;
@@ -261,7 +262,6 @@ void	get_input(char *input, t_list **env)
 	
 	// t_cmds *ptr;
 	int		*arr;
-	(void) env;
 
 
 	sig_handler();
@@ -310,7 +310,9 @@ if (!input || ft_strcmp(input, "") == 0)
 	}
 	new = expander(cmd_array, *env);
 	arr = array_tokens(new, num_elemnts(new));
-	new = quote_delete(new);
+	new = quote_delete(new, &delimiter, arr);
+	// printf("this is the delimiter (%d)\n", delimiter);
+	// split_print(new);
 	if (valid_command(new))
 	{
 		printf("nothing to do\n");
@@ -319,10 +321,9 @@ if (!input || ft_strcmp(input, "") == 0)
 		free(input);
 		return ;
 	}
-	// split_print(new);
-	commands = list_cmds(new, arr);
+	commands = list_cmds(new, arr, &delimiter);
 	tmp = commands;
-	// print_list(commands);
+	print_list(commands);
 	add_history(input);
 	if (!commands)
 	{

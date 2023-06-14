@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/14 16:42:50 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/14 22:56:19 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct s_filetype
 	char			*red;
 	char			*type;
 	char			*file_name;
+	int				has_quotes;
 }					t_filetype;
 
 typedef struct s_list1
@@ -112,7 +113,7 @@ int					check_quotes(char *input);
 int					check_outside(int count);
 int					op_order(int *token);
 int					is_outside(int flag, char c);
-char				**quote_delete(char **cmd);
+char				**quote_delete(char **cmd, int *delimiter, int *arr);
 char				**expander(char **cmd, t_list *env);
 int					ft_envcmp(char *s1, char *s2, int length);
 // t_list	**list_cmds(char **cmd_array, int *arr);
@@ -120,11 +121,12 @@ t_list				*my_lstnew(void *content);
 void				my_lstadd_back(t_list **lst, t_list *new);
 void				split_print(char **input);
 void				print_list(t_list *list);
-t_list				*list_cmds(char **cmd_array, int *arr);
+t_list				*list_cmds(char **cmd_array, int *arr, int *delimiter);
 int					n_calculator(int num);
 char				*ft_itoa(int num);
 void				sig_handler();
 void				handler(int sig);
+int					check_delimiter(char *cmd);
 
 //	################		execution prototypes 		##################	//
 
