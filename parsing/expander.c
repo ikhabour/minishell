@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 14:14:21 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/13 15:53:21 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/14 17:03:54 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -311,6 +311,8 @@ char	*expand_processor(char *cmd, t_list *env)
 		{
 			flag = is_outside(flag, cmd[i]);
 		}
+		if (cmd[i] && cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] == '$' && flag != 1)
+			i++;
 		if (cmd[i] && cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] == '?' && flag != 1)
 		{
 			cmd = ft_expand_exit(cmd, env, (&i));

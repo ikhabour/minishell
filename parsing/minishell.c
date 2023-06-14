@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/14 16:28:07 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/14 17:02:12 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,6 +227,28 @@ void	free_all(char *input, char **array)
 	free_2d(array);
 }
 
+int	valid_command(char **new)
+{
+	int	i;
+	int	j;
+	int	flag;
+
+	i = 0;
+	j = 0;
+	flag = 0;
+	if (new[i] == NULL)
+		return (1);
+	while (new[i])
+		i++;
+	if (ft_strcmp(new[i - 1], "|") == 0)
+		return (1);
+	if (ft_strcmp(new[i - 1], ">") == 0)
+		return (1);
+	if (ft_strcmp(new[i - 1], ">>") == 0)
+		return (1);
+	return (0);
+}
+
 void	get_input(char *input, t_list **env)
 {
 	int		len;
@@ -254,7 +276,7 @@ void	get_input(char *input, t_list **env)
 	// tcsetattr(0, TCSANOW, &term);
 	// rl_catch_sigint = 0;
 	// input = readline("Minishell> ");
-	if (!input || ft_strcmp(input, "") == 0)
+if (!input || ft_strcmp(input, "") == 0)
 	{
 		if (!input)
 			exit(0);
@@ -278,19 +300,26 @@ void	get_input(char *input, t_list **env)
 	input = add_spaces(input);
 	// printf("this is the line : %s\n", input);
 	cmd_array = ft_split(input, ' ');
-	new = expander(cmd_array, *env);
-	// split_print(new);
-	// // split_print(cmd_array);
-	arr = array_tokens(new, num_elemnts(new));
 	// array_printer(arr);
-	if (op_order(arr))
+	if (op_order(array_tokens(cmd_array, num_elemnts(cmd_array))))
 	{
 		exit_s = 258;
 		free(input);
-		free_2d(new);
+		free_2d(cmd_array);
 		return ;
 	}
+	new = expander(cmd_array, *env);
+	arr = array_tokens(new, num_elemnts(new));
 	new = quote_delete(new);
+	if (valid_command(new))
+	{
+		printf("nothing to do\n");
+		free(arr);
+		free_2d(new);
+		free(input);
+		return ;
+	}
+	// split_print(new);
 	commands = list_cmds(new, arr);
 	tmp = commands;
 	// print_list(commands);
