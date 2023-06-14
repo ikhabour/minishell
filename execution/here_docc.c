@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 15:02:45 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/13 17:16:10 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/14 15:54:04 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ void	ft_putstr_fd(char *s, int fd)
 	if (!s)
 		return ;
 	write(fd, s, ft_strlen(s));
-	write(fd, "\n", 1);
 }
 
 
@@ -79,13 +78,17 @@ void	display_prompt(t_list *files, int fd)
 	char *input;
 	t_filetype *ptr;
 	ptr = (t_filetype *)files->content;
+	char *joined;
 
 	while (1)
 	{
-		input	= readline("> ");
+		input = readline("> ");
 		if (!input || !ft_strcmp(input, ptr->file_name))
 			break ;
-		ft_putstr_fd(input, fd);
+		joined = ft_strjoinn(input, "\n");
+		ft_putstr_fd(joined, fd);
+		free(joined);
+		free(input);
 
 	}
 	close(fd);
@@ -122,10 +125,7 @@ void	here_docc(t_list *commands)
 	}
 	fds = malloc(sizeof(int *) * (docs + 1));
 	while (i < docs)
-	{
-		fds[i] = malloc(sizeof(int) * 2);
-		i++;
-	}
+		fds[i++] = malloc(sizeof(int) * 2);
 	fds[i] = 0;
 	i = 0;
 	while (i < docs)
@@ -151,7 +151,6 @@ void	here_docc(t_list *commands)
 		exit(0);
 	}
 	waitpid(pid, NULL, 0);
-
 	while (tmp)
 	{
 		if (!ft_strcmp(p->type, "DELIMITER"))

@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/13 22:01:35 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/14 16:28:07 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -312,9 +312,9 @@ void	get_input(char *input, t_list **env)
 	{
 		multiple_pipes(commands, env);
 		close_files(commands);
+		my_free(commands);
 		free_all(input, new);
 		free(arr);
-		my_free(commands);
 		return ;
 	}
 	if (execute_builtins(commands, env))
@@ -329,7 +329,6 @@ void	get_input(char *input, t_list **env)
 	close_files(commands);
 	my_free(commands);
 	free(arr);
-	free_2d(new);
 	free(input);
 }
 

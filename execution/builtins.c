@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/13 22:36:49 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/14 15:32:54 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -372,8 +372,6 @@ void	execute_export(t_list *cmd, t_list **env)
 		var.j++;
 	}
 	(dup2(fd, 1), close(fd));
-	if (exit_s == 1)
-		return ;
 }
 
 void	execute_unset(t_list *cmd, t_list **env)
@@ -433,8 +431,6 @@ void	execute_unset(t_list *cmd, t_list **env)
 		i++;
 	}
 	(dup2(fd, 1), close(fd));
-	if (exit_s == 1)
-		return ;
 }
 
 void	execute_exit(t_list *cmd, t_list **env)
@@ -621,7 +617,7 @@ int	execute_builtins(t_list *cmd, t_list **env)
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "unset"))
 	{
-		(execute_unset(cmd, env), close(fd))
+		(execute_unset(cmd, env), close(fd));
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "exit"))

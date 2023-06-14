@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/13 17:51:46 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/14 16:44:06 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,41 +89,48 @@ void	msg_exit(char *msg, char *msg1, int status)
 	exit(status);
 }
 
-void	open_file_type(t_filetype *files)
+int	open_file_type(t_filetype *files)
 {
+	if (!access(files->file_name, F_OK) && (access(files->file_name, W_OK) || access(files->file_name, R_OK)))
+	{
+		write(2, "Minishell : ", 12);
+		write(2, files->file_name, ft_strlenn(files->file_name));
+		write(2, ": Permission denied\n", 20);
+		exit_s = 1;
+		return (0);
+	}
 	if (!ft_strcmp(files->type, "INPUT"))
 		files->fd = open(files->file_name, O_RDONLY, 0644);
 	else if (!ft_strcmp(files->type, "OUTPUT"))
-	{
 		files->fd = open(files->file_name, O_CREAT | O_TRUNC | O_RDWR, 0644);
-		// printf("fd : %d\n", files->fd);
-		// printf("test\n");
-	}
 	else if (!ft_strcmp(files->type, "APPEND"))
 		files->fd = open(files->file_name, O_CREAT | O_APPEND | O_RDWR, 0644);
 	else if (!ft_strcmp(files->type, "DELIMITER"))
-		return ;
+		return (1);
 	else
 		files->fd = -1;
+	return (1);
 		
 }
 
-void	open_files(t_cmds *ptr)
+int	open_files(t_cmds *ptr)
 {
 	t_filetype *files;
 	t_list *tmp;
 
 	if (!ptr->files)
-		return ;
+		return (1);
 	tmp = ptr->files;
 	files = (t_filetype *)ptr->files->content;
 	while (tmp)
 	{
-		open_file_type(files);
+		if (!open_file_type(files))
+			return (0);
 		tmp = tmp->next;
 		if (tmp)
 			files = (t_filetype *)tmp->content;
 	}
+	return (1);
 
 }
 
@@ -180,12 +187,16 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 	envp = env_to_array(env);
 	pid = fork();
 	if (has_redirection(args))
+	{
+		free_2d(args);
 		args = make_argv(cmd);
+	}
 	if (pid == -1)
 		(write(2, "Fork Failed\n", 12), exit(1));
 	else if (pid == 0)
 	{
-		open_files(ptr);
+		if (!open_files(ptr))
+			exit(1);
 		dup_fds(ptr);
 		if (!ptr->cmd_name)
 			exit(0);
@@ -215,5 +226,7 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 		exit_s = WEXITSTATUS(i);
 	}
 	free_2d(envp);
+	if (args)
+		free_2d(args);
 	return (1);
 }

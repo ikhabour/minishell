@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/13 20:08:40 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/14 16:42:50 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,8 +167,8 @@ char				**env_to_array(t_list **env);
 
 char				**make_argv(t_list *commands);
 
-void				open_file_type(t_filetype *files);
-void				open_files(t_cmds *ptr);
+int				open_file_type(t_filetype *files);
+int				open_files(t_cmds *ptr);
 void		dup_fds(t_cmds *ptr);
 void	free_2d(char **array);
 void	free_files(t_list *files);

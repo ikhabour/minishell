@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 15:40:24 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/13 16:49:11 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/14 16:45:37 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,8 @@ void	first_command(t_list *commands, t_list **env, int *fd)
 	ptr = (t_cmds *)commands->content;
 	envp = env_to_array(env);
 	argv = make_argv(commands);
-	open_files(ptr);
+	if (!open_files(ptr))
+		exit(1);
 	if (input_file(ptr))
 		dup_input_file(ptr);
 	if (output_file(ptr))
@@ -195,7 +196,8 @@ void	last_command(t_list *commands, t_list **env, int *fd)
 	ptr = (t_cmds *)commands->content;
 	envp = env_to_array(env);
 	argv = make_argv(commands);
-	open_files(ptr);
+	if (!open_files(ptr))
+		exit(1);
 	if (output_file(ptr))
 		dup_output_file(ptr);
 	if (input_file(ptr))
@@ -238,7 +240,8 @@ void	middle_command(t_list *commands, t_list **env, int *fdin, int *fdout)
 	ptr = (t_cmds *)commands->content;
 	envp = env_to_array(env);
 	argv = make_argv(commands);	
-	open_files(ptr);
+	if (!open_files(ptr))
+		exit(1);
 	if (output_file(ptr))
 		dup_output_file(ptr);
 	else
