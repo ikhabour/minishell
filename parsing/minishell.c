@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/15 15:31:46 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/15 17:43:30 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,7 +276,7 @@ void	get_input(char *input, t_list **env)
 	// tcsetattr(0, TCSANOW, &term);
 	// rl_catch_sigint = 0;
 	// input = readline("Minishell> ");
-if (!input || ft_strcmp(input, "") == 0)
+	if (!input || ft_strcmp(input, "") == 0)
 	{
 		if (!input)
 			exit(0);
@@ -300,6 +300,7 @@ if (!input || ft_strcmp(input, "") == 0)
 	input = add_spaces(input);
 	// printf("this is the line : %s\n", input);
 	cmd_array = ft_split(input, ' ');
+	arr = array_tokens(cmd_array, num_elemnts(cmd_array));
 	// array_printer(arr);
 	if (op_order(array_tokens(cmd_array, num_elemnts(cmd_array))))
 	{
@@ -308,7 +309,8 @@ if (!input || ft_strcmp(input, "") == 0)
 		free_2d(cmd_array);
 		return ;
 	}
-	new = expander(cmd_array, *env);
+	new = expander(cmd_array, *env, arr);
+	free(arr);
 	arr = array_tokens(new, num_elemnts(new));
 	new = quote_delete(new, &delimiter, arr);
 	// printf("this is the delimiter (%d)\n", delimiter);
@@ -323,7 +325,7 @@ if (!input || ft_strcmp(input, "") == 0)
 	}
 	commands = list_cmds(new, arr, &delimiter);
 	tmp = commands;
-	print_list(commands);
+	// print_list(commands);
 	add_history(input);
 	if (!commands)
 	{
@@ -335,7 +337,7 @@ if (!input || ft_strcmp(input, "") == 0)
 	while (tmp)
 	{
 		if (is_heredoc(tmp))
-			here_docc(tmp, env);
+			here_docc(tmp, *env);
 		tmp = tmp->next;
 	}
 	if (ft_lstsize(commands) > 1)

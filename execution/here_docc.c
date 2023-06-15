@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_docc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 15:02:45 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/15 15:31:22 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/15 17:45:59 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,106 @@ void	ft_putstr_fd(char *s, int fd)
 	write(fd, s, ft_strlen(s));
 }
 
+static char	*ft_expand(char *cmd, t_list *env, int *i)
+{
+	int		limiter;
+	static char *full_str;
+	char	*lineup;
+	char	*str;
+	char	*value;
+
+	limiter = *i + 1;
+	while (cmd[limiter] && (ft_isalnum(cmd[limiter]) || ft_ischar(cmd[limiter])))
+	{
+		limiter++;
+	}
+	str = ft_substr(cmd, (*i + 1), limiter - (*i + 1));
+	value = env_value(str, env);
+	if (value)
+	{
+		lineup = ft_substr(cmd, 0, (*i));
+		full_str = ft_strjoin(lineup, value);
+	}
+	else
+	{
+		lineup = ft_substr(cmd, 0, (*i));
+		full_str = ft_strdup(lineup);
+	}
+	free(lineup);
+	if (cmd[limiter])
+	{
+		if (cmd[limiter - 1] == '$')
+			lineup = ft_substr(cmd, limiter - 1, 1000);
+		else
+			lineup = ft_substr(cmd, limiter, 1000);
+		free(cmd);
+		cmd = ft_strjoin(full_str, lineup);
+		free(lineup);
+	}
+	else
+	{
+		free(cmd);
+		cmd = ft_strdup(full_str);
+	}
+	*i = ft_strlen(full_str);
+	free(full_str);
+	free(str);
+	if ((*i > 0) && cmd[*i] == '$')
+            *i -= 1;
+	return(cmd);
+}
+
+static char	*ft_expand_exit(char *cmd, t_list *env, int *i)
+{
+	(void) env;
+	char	*str;
+	char	*lineup;
+	char	*value;
+	int		limiter;
+	char	*full_str;
+
+	limiter = *(i) + 2;
+	str = ft_substr(cmd, limiter, 1000);
+	value = ft_itoa(exit_s);
+	lineup = ft_substr(cmd, 0, *i);
+	full_str = ft_strjoin(lineup, value);
+	free(lineup);
+	free(cmd);
+	cmd = ft_strjoin(full_str, str);
+	free(full_str);
+	free(value);
+	free(str);
+	if ((*i > 0) && cmd[*i] == '$')
+            *i -= 1;
+	return (cmd);
+}
+
+char	*expand_heredoc(char *input, t_list *env)
+{
+	int	i;
+
+	i = 0;
+	while (input[i])
+	{
+		if (input[i] && input[i + 1] && input[i] == '$' && input[i + 1] == '$')
+			i++;
+		if (input[i] && input[i + 1] && input[i] == '$' && input[i + 1] == '?')
+		{
+			input = ft_expand_exit(input, env, (&i));
+		}
+		if (input[i] && input[i + 1] && input[i] == '$' && input[i + 1] != '?')
+		{
+			input = ft_expand(input, env, (&i));
+		}
+		if (input[i] && input[i + 1] && input[i] == '$' && input[i + 1] == '?')
+		{
+			input = ft_expand_exit(input, env, (&i));
+		}
+		if (input[i])
+			i++;
+	}
+	return (input);
+}
 
 void	display_prompt(t_list *files, int fd, t_list *env)
 {
@@ -88,10 +188,12 @@ void	display_prompt(t_list *files, int fd, t_list *env)
 		if (ptr->has_quotes == 1)
 			joined = ft_strjoinn(input, "\n");
 		else
-			joined = expand_heredoc(input, env);
+		{
+			joined = ft_strjoinn(expand_heredoc(input, env), "\n");
+		}
 		ft_putstr_fd(joined, fd);
 		free(joined);
-		free(input);
+		// free(input);
 	}
 	close(fd);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/15 15:31:38 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/15 17:44:16 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ int					check_outside(int count);
 int					op_order(int *token);
 int					is_outside(int flag, char c);
 char				**quote_delete(char **cmd, int *delimiter, int *arr);
-char				**expander(char **cmd, t_list *env);
+char				**expander(char **cmd, t_list *env, int *arr);
 int					ft_envcmp(char *s1, char *s2, int length);
 // t_list	**list_cmds(char **cmd_array, int *arr);
 t_list				*my_lstnew(void *content);
@@ -127,6 +127,12 @@ char				*ft_itoa(int num);
 void				sig_handler();
 void				handler(int sig);
 int					check_delimiter(char *cmd);
+// static char			*ft_expand(char *cmd, t_list *env, int *i);
+// static char			*ft_expand_exit(char *cmd, t_list *env, int *i);
+int					ft_isalnum(int i);
+int					var_length(char *str);
+char				*env_value(char *str, t_list *env);
+int					ft_ischar(int i);
 
 //	################		execution prototypes 		##################	//
 

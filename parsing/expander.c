@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 14:14:21 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/14 23:42:47 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/15 17:42:01 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,7 @@ char	*env_value(char *str, t_list *env)
 	i = 0;
 	while (tmp)
 	{
-		if (ft_strncmp(str, tmp->content, var_length(tmp->content)) == 0)
+		if (ft_strncmp(str, tmp->content, var_length(tmp->content)) == 0 && (var_length(tmp->content) == ft_strlen(str)))
 		{
 			value = ft_strdup(tmp->content);
 			while (value[i] != '=')
@@ -314,7 +314,6 @@ char	*expand_processor(char *cmd, t_list *env)
 	// char	*str;
 	// char	*str2;
 	int		flag;
-	(void) env;
 
 	i = 0;
 	flag = 0;
@@ -344,18 +343,18 @@ char	*expand_processor(char *cmd, t_list *env)
 	return (cmd);
 }
 
-char	**expander(char **cmd, t_list *env)
+char	**expander(char **cmd, t_list *env, int *arr)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 	char	**new_cmd;
-	int	count = 0;
+	int		count = 0;
 
 	i = 0;
 	j = 0;
 	while (cmd[i])
 	{
-		if (ft_strchr(cmd[i], '$'))
+		if (ft_strchr(cmd[i], '$') && arr[i] != HEREDOC_LIM)
 		{
 			cmd[i] = expand_processor(cmd[i], env);
 			
