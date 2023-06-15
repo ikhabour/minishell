@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/14 23:03:37 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/15 15:31:46 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -335,7 +335,7 @@ if (!input || ft_strcmp(input, "") == 0)
 	while (tmp)
 	{
 		if (is_heredoc(tmp))
-			here_docc(tmp);
+			here_docc(tmp, env);
 		tmp = tmp->next;
 	}
 	if (ft_lstsize(commands) > 1)

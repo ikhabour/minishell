@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 15:02:45 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/14 15:54:04 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/15 15:31:22 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	ft_putstr_fd(char *s, int fd)
 }
 
 
-void	display_prompt(t_list *files, int fd)
+void	display_prompt(t_list *files, int fd, t_list *env)
 {
 	char *input;
 	t_filetype *ptr;
@@ -85,16 +85,18 @@ void	display_prompt(t_list *files, int fd)
 		input = readline("> ");
 		if (!input || !ft_strcmp(input, ptr->file_name))
 			break ;
-		joined = ft_strjoinn(input, "\n");
+		if (ptr->has_quotes == 1)
+			joined = ft_strjoinn(input, "\n");
+		else
+			joined = expand_heredoc(input, env);
 		ft_putstr_fd(joined, fd);
 		free(joined);
 		free(input);
-
 	}
 	close(fd);
 }
 
-void	here_docc(t_list *commands)
+void	here_docc(t_list *commands, t_list *env)
 {
 	int pid;
 	int **fds;
@@ -143,7 +145,7 @@ void	here_docc(t_list *commands)
 	{
 		while (tmp && i < docs)
 		{
-			display_prompt(tmp, fds[i][1]);
+			display_prompt(tmp, fds[i][1], env);
 			close(fds[i][0]);
 			tmp = tmp->next;
 			i++;
