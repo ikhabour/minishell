@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_docc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 15:02:45 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/15 17:45:59 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/16 18:56:15 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,14 +183,16 @@ void	display_prompt(t_list *files, int fd, t_list *env)
 	while (1)
 	{
 		input = readline("> ");
+		printf("delim : %s\n", ptr->file_name);
 		if (!input || !ft_strcmp(input, ptr->file_name))
+		{
+			printf("[%p]\n", joined);
 			break ;
+		}
 		if (ptr->has_quotes == 1)
 			joined = ft_strjoinn(input, "\n");
 		else
-		{
 			joined = ft_strjoinn(expand_heredoc(input, env), "\n");
-		}
 		ft_putstr_fd(joined, fd);
 		free(joined);
 		// free(input);

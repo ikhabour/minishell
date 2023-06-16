@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/14 16:44:06 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/16 18:54:49 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,10 @@ void	dup_fds(t_cmds *ptr)
 		if (!ft_strcmp(files->type, "OUTPUT") || !ft_strcmp(files->type, "APPEND"))
 			dup2(files->fd, 1);
 		else if(!ft_strcmp(files->type, "INPUT") || !ft_strcmp(files->type, "DELIMITER"))
+		{
+			printf("type : %s\n", files->type);
 			dup2(files->fd, 0);
+		}
 		tmp = tmp->next;
 		if (tmp)
 			files = (t_filetype *)tmp->content;

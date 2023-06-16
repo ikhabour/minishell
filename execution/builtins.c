@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/14 15:32:54 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/16 23:10:21 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,15 +271,19 @@ int	valid_identifier(char *str)
 		return (0);
 	if (is_space(str))
 		return (0);
-	if (str[i] && (is_alpha(str[i]) || str[i] == '_'))
+	while (str[i])
+	{
+		if (str[i] == '+' || str[i] == '=')
+			break ;
 		i++;
-	else
-		return (0);
-	while (is_alpha(str[i]) || str[i] == '_' || str[i] == '=' || str[i] == '+' || str[i] == '-' || str[i] == ' ')
-		i++;
-	if (!str[i])
-		return (1);
-	return (0);
+	}
+	while (i >= 0)
+	{
+		if (!is_alpha(str[i]) && str[i] != '_' && str[i] != '=' && str[i] != '+')
+			return (0);
+		i--;
+	}
+	return (1);
 }
 
 void	execute_export(t_list *cmd, t_list **env)
