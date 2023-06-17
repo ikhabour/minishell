@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 15:02:45 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/16 18:56:15 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/17 15:44:15 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,12 +183,8 @@ void	display_prompt(t_list *files, int fd, t_list *env)
 	while (1)
 	{
 		input = readline("> ");
-		printf("delim : %s\n", ptr->file_name);
 		if (!input || !ft_strcmp(input, ptr->file_name))
-		{
-			printf("[%p]\n", joined);
 			break ;
-		}
 		if (ptr->has_quotes == 1)
 			joined = ft_strjoinn(input, "\n");
 		else
@@ -247,12 +243,18 @@ void	here_docc(t_list *commands, t_list *env)
 	i = 0;
 	if (pid == 0)
 	{
+		p = (t_filetype *)tmp->content;
 		while (tmp && i < docs)
 		{
-			display_prompt(tmp, fds[i][1], env);
-			close(fds[i][0]);
+			if (!ft_strcmp(p->type, "DELIMITER"))
+			{
+				display_prompt(tmp, fds[i][1], env);
+				close(fds[i][0]);
+				i++;
+			}
 			tmp = tmp->next;
-			i++;
+			if (tmp)
+				p = (t_filetype *)tmp->content;
 		}
 		exit(0);
 	}
