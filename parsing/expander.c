@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 14:14:21 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/15 17:42:01 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/17 00:48:30 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,62 +107,6 @@ char	*get_value(char *cmd, char **env)
 	// }
 	return (NULL);
 }
-
-// int	dollar_index(char *cmd, int i)
-// {
-// 	while (i > 0)
-// 	{
-// 		if (cmd[i] == '$')
-// 			break ;
-// 		i--;
-// 	}
-// 	// if (i == 0)
-// 	return (i);
-// }
-
-// void	expand_processor(char *cmd, char **env)
-// {
-// 	int		i;
-// 	char	*str;
-// 	char	*str2;
-// 	int		prev_index;
-// 	// char	*value;
-// 	char	*substring;
-// 	int		flag = 0;
-// 	char	*full_str;
-// 	// char	*full_str;
-
-// 	i = 0;
-// 	while (cmd[i])
-// 	{
-// 		if (cmd[i] == '$')
-// 		{
-// 			if (flag == 1)
-// 			{
-// 				prev_index = dollar_index(cmd, i - 1);
-// 				str = ft_substr(cmd, prev_index, (i - prev_index));
-// 				str = get_value(++str, env);
-// 				// printf("this is the full str: %s\n", str);
-// 			}
-// 			else if (flag == 0)
-// 			{
-// 				substring = ft_substr(cmd, 0, i);
-// 				flag = 1;
-// 			}
-// 			full_str = ft_strjoin(substring, str);
-// 			// if (get_value(str, env) != NULL)
-// 			// 	value = get_value(str, env);
-// 			str2 = ft_substr(cmd, i, 1000);
-// 			// printf("str from :%d to %d is===>(%s)\n", prev_index, i - prev_index, str);
-// 			// printf("when str2 is: (%s), the first str is: (%s), the substring is: (%s)\n", str2, str, substring);
-			
-// 		}
-// 		i++;
-// 	}
-// 	// printf("this is the full str: %s\n", str2);
-// 	printf("this is the full str: %s\n", full_str);
-// }
-
 //==================================================================================================================
 
 int	dollar_index(char *cmd)
@@ -205,7 +149,9 @@ char	*env_value(char *str, t_list *env)
 	// (void) str;
 
 	if (ft_strcmp(str, "") == 0)
+	{
 		return (NULL);
+	}
 	tmp = env;
 	i = 0;
 	while (tmp)
@@ -215,12 +161,9 @@ char	*env_value(char *str, t_list *env)
 			value = ft_strdup(tmp->content);
 			while (value[i] != '=')
 				i++;
-			// printf("char : %c\n", value[i]);
-			// value = tmp->env_value;./
+			free(value);
 			return (tmp->content + i + 1);
 		}
-		// printf("the name is : %s\n", tmp->env_name);
-		// printf("the value is : %s\n", tmp->env_value);
 		tmp = tmp->next;
 	}
 	return (NULL);
@@ -253,6 +196,7 @@ static char	*ft_expand(char *cmd, t_list *env, int *i)
 	{
 		lineup = ft_substr(cmd, 0, (*i));
 		full_str = ft_strjoin(lineup, value);
+		// free(value);
 	}
 	else
 	{
@@ -263,7 +207,13 @@ static char	*ft_expand(char *cmd, t_list *env, int *i)
 	if (cmd[limiter])
 	{
 		if (cmd[limiter - 1] == '$')
-			lineup = ft_substr(cmd, limiter - 1, 1000);
+			{
+				if (cmd[limiter] == '"' || cmd[limiter] == '\'')
+					lineup = ft_substr(cmd, limiter, 1000);
+				else
+					lineup = ft_substr(cmd, limiter - 1, 1000);
+		
+			}
 		else
 			lineup = ft_substr(cmd, limiter, 1000);
 		free(cmd);
@@ -278,7 +228,7 @@ static char	*ft_expand(char *cmd, t_list *env, int *i)
 	*i = ft_strlen(full_str);
 	free(full_str);
 	free(str);
-	if ((*i > 0) && cmd[*i] == '$')
+	if ((*i > 0) && (cmd[*i] == '$' || cmd[*i] == '\'' || cmd[*i] == '"'))
             *i -= 1;
 	return(cmd);
 }
@@ -311,8 +261,6 @@ static char	*ft_expand_exit(char *cmd, t_list *env, int *i)
 char	*expand_processor(char *cmd, t_list *env)
 {
 	int	i;
-	// char	*str;
-	// char	*str2;
 	int		flag;
 
 	i = 0;
@@ -357,9 +305,7 @@ char	**expander(char **cmd, t_list *env, int *arr)
 		if (ft_strchr(cmd[i], '$') && arr[i] != HEREDOC_LIM)
 		{
 			cmd[i] = expand_processor(cmd[i], env);
-			
-			// if (ft_strcmp(cmd[i], "") == 0)
-			// 	return (1);
+			printf("this is the str (%s)\n", cmd[i]);
 		}
 		i++;
 	}
@@ -382,7 +328,6 @@ char	**expander(char **cmd, t_list *env, int *arr)
 		}
 		j++;
 	}
-	free_2d(cmd);
-	// split_print(new_cmd);
+	// free_2d(cmd);
 	return (new_cmd);
 }

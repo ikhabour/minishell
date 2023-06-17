@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/16 16:03:39 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/17 16:04:55 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ int	get_length(char *input)
 		i++;
 	while (input[i])
 	{
-		// skip_quotes(input, i)
 		if (input[i] == '"' || input[i] =='\'')
 			flag = is_outside(flag, input[i]);
 		if ((input[i] == ' ' || input[i] == '\t') && flag == 0)
@@ -45,7 +44,6 @@ int	get_length(char *input)
 		i--;
 		len--;
 	}
-	// printf("this is the length : %d\n", len);
 	return (len);
 }
 
@@ -77,7 +75,6 @@ char	*fill_line(char *input, int len)//get the line each of it's word separated 
 	}
 	line[j] = '\0';
 	free(input);
-	// printf("this is the line-->%s\n", line);
 	return (line);
 }
 
@@ -255,27 +252,24 @@ void	get_input(char *input, t_list **env)
 	int		delimiter = 0;
 	char	**cmd_array;
 	char	**new;
+	(void) env;
 	t_list	*commands;
 	t_list *tmp;
-	struct termios	term;
-	struct termios	original;
+	int		*arr;
+	// struct termios	term;
+	// struct termios	original;
 	
 	// t_cmds *ptr;
-	int		*arr;
 
 
-	sig_handler();
-	tcgetattr(0, &term);
-	tcgetattr(0, &original);
-	term.c_lflag &= ~(ECHOCTL);
-	tcsetattr(0, TCSANOW, &term);
-	input = readline("minishell> ");
-	tcsetattr(0, TCSANOW, &original);
-
-	// term.c_lflag &= ~(ECHOCTL);
+	// sig_handler();
+	// tcgetattr(0, &term); 
+	// tcgetattr(0, &original);
+	// term.c_lflag &= ~(ECHO | ECHOCTL);
+	// term.c_lflag &= ~(ICANON);
 	// tcsetattr(0, TCSANOW, &term);
-	// rl_catch_sigint = 0;
-	// input = readline("Minishell> ");
+	input = readline("minishell> ");
+	// tcsetattr(STDIN_FILENO, TCSANOW, &original);
 	if (!input || ft_strcmp(input, "") == 0)
 	{
 		if (!input)
@@ -300,9 +294,10 @@ void	get_input(char *input, t_list **env)
 	input = add_spaces(input);
 	// printf("this is the line : %s\n", input);
 	cmd_array = ft_split(input, ' ');
+	// split_print(cmd_array);
 	arr = array_tokens(cmd_array, num_elemnts(cmd_array));
 	// array_printer(arr);
-	if (op_order(array_tokens(cmd_array, num_elemnts(cmd_array))))
+	if (op_order(arr))
 	{
 		exit_s = 258;
 		free(input);
@@ -313,13 +308,14 @@ void	get_input(char *input, t_list **env)
 	free(arr);
 	arr = array_tokens(new, num_elemnts(new));
 	new = quote_delete(new, &delimiter, arr);
-	// printf("this is the delimiter (%d)\n", delimiter);
-	// split_print(new);
+	// // printf("this is the delimiter (%d)\n", delimiter);
+	// // split_print(new);
 	if (valid_command(new))
 	{
 		printf("nothing to do\n");
-		free(arr);
 		free_2d(new);
+		free_2d(cmd_array);
+		free(arr);
 		free(input);
 		return ;
 	}
@@ -360,6 +356,7 @@ void	get_input(char *input, t_list **env)
 	execute_commands(commands, env, new);
 	close_files(commands);
 	my_free(commands);
+	free_2d(cmd_array);
 	free(arr);
 	free(input);
 }

@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/15 17:44:16 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/16 16:51:26 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,11 +177,11 @@ char				**make_argv(t_list *commands);
 
 int				open_file_type(t_filetype *files);
 int				open_files(t_cmds *ptr);
-void		dup_fds(t_cmds *ptr);
-void	free_2d(char **array);
-void	free_files(t_list *files);
-void	my_free(t_list *commands);
-void	shlvl_edit(t_list **env, int op);
+void			dup_fds(t_cmds *ptr);
+void			free_2d(char **array);
+void			free_files(t_list *files);
+void			my_free(t_list *commands);
+void			shlvl_edit(t_list **env, int op);
 void		here_docc(t_list *commands, t_list *env);
 int	is_heredoc(t_list *commands);
 void	free_int_arr(int **arr, int size);
