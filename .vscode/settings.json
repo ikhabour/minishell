@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "cdefs.h": "c",
+        "filio.h": "c",
+        "ioccom.h": "c"
+    }
+}

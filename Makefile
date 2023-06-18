@@ -6,13 +6,13 @@
 #    By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/12 21:30:08 by bhazzout          #+#    #+#              #
-#    Updated: 2023/06/17 15:51:07 by bhazzout         ###   ########.fr        #
+#    Updated: 2023/06/18 01:17:13 by bhazzout         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	minishell
 
-CFLAGS	=	-Wall -Wextra -Werror #-fsanitize=address -g3 #-fno-omit-frame-pointer
+CFLAGS	=	-Wall -Wextra -Werror  -Ireadline/8.2.1/include  #-fsanitize=address -g3 #-fno-omit-frame-pointer
  
 
 RM		=	rm -rf
@@ -29,7 +29,7 @@ OBJECTS	=	$(SOURCES:.c=.o)
 all		:	$(NAME)
 
 $(NAME) : 	$(OBJECTS)
-	cc $(CFLAGS) $(OBJECTS) -o $(NAME) -lreadline
+	cc $(CFLAGS) $(OBJECTS) -o $(NAME) -lreadline  -L./readline/8.2.1/lib
 
 clean	:
 	$(RM) $(OBJECTS)

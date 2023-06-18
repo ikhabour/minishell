@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/17 16:04:55 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/18 01:22:42 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,20 +256,19 @@ void	get_input(char *input, t_list **env)
 	t_list	*commands;
 	t_list *tmp;
 	int		*arr;
-	// struct termios	term;
-	// struct termios	original;
+	struct termios	term;
+	struct termios	original;
 	
 	// t_cmds *ptr;
 
 
-	// sig_handler();
-	// tcgetattr(0, &term); 
-	// tcgetattr(0, &original);
-	// term.c_lflag &= ~(ECHO | ECHOCTL);
-	// term.c_lflag &= ~(ICANON);
+	sig_handler();
+	tcgetattr(0, &term); 
+	tcgetattr(0, &original);
+	term.c_lflag &= ~(ECHOCTL);
 	// tcsetattr(0, TCSANOW, &term);
 	input = readline("minishell> ");
-	// tcsetattr(STDIN_FILENO, TCSANOW, &original);
+	tcsetattr(STDIN_FILENO, TCSANOW, &original);
 	if (!input || ft_strcmp(input, "") == 0)
 	{
 		if (!input)

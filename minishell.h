@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/16 16:51:26 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/18 01:19:04 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ extern int			return_val;
 # include <unistd.h>
 # include <signal.h>
 # include <termios.h>
+#include <sys/ioctl.h>
 
 typedef struct s_vars
 {
@@ -127,6 +128,7 @@ char				*ft_itoa(int num);
 void				sig_handler();
 void				handler(int sig);
 int					check_delimiter(char *cmd);
+// void				rl_replace_line(const char *text, int clear_undo);
 // static char			*ft_expand(char *cmd, t_list *env, int *i);
 // static char			*ft_expand_exit(char *cmd, t_list *env, int *i);
 int					ft_isalnum(int i);

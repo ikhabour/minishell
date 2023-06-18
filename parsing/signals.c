@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 23:06:44 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/16 18:50:54 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/18 01:21:14 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,11 @@
 void	handler(int sig)
 {
 	(void) sig;
-	write (1, "\n", 2);
-	write (1, "Minishell> ", 11);
-	// write (1, "new prompt\n", 12);
-	// fflush(stdout);
+	exit_s = 1;
+	ioctl(STDIN_FILENO, TIOCSTI, "\n");
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	
 }
 
 void	sig_handler()
