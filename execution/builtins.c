@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/16 23:10:21 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/18 16:25:09 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -519,10 +519,13 @@ void	setpwd(t_list **env)
 	tmp = *env;
 	while (tmp && ft_strncmpp(tmp->content, "PWD=", 4))
 		tmp = tmp->next;
+	if (!pwd)
+		return ;
 	if (i > 0)
 		free(tmp->content);
 	tmp->content = ft_strjoinn("PWD=", pwd);
-	free(pwd);
+	if (pwd)
+		free(pwd);
 	i++;
 }
 
@@ -537,7 +540,8 @@ void	execute_cd(t_list *cmd, t_list **env)
 	tmp = *env;
 	fd = dup(1);
 	dir = getcwd(NULL, 0);
-	exportt(dir, "OLDPWD=", env);
+	if (dir)
+		exportt(dir, "OLDPWD=", env);
 	if (ptr->files)
 	{
 		open_files(ptr);
@@ -593,10 +597,15 @@ int	execute_builtins(t_list *cmd, t_list **env)
 			open_files(tmp);
 			dup_fds(tmp);
 		}
-		free(tmp->cmd_name);
+		(exit_s = 0, free(tmp->cmd_name));
 		tmp->cmd_name = getcwd(NULL, 0);
+		if (!tmp->cmd_name)
+		{
+			write(2, "bash : PATH NOT FOUND\n", 22);
+			return (1);
+		}
 		(printf("%s\n", tmp->cmd_name), dup2(fd, 1));
-		(exit_s = 0, close(fd));
+		close(fd);
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "echo"))
