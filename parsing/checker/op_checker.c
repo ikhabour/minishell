@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 09:16:16 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/03 14:48:11 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/18 15:13:29 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	check_redirec_op(char *input)
 	len = ft_strlen(input);
 	if (input[i] == '>' || (input[i  + 1] && input[i] == '<' && input[i + 1] != '<'))
 	{
-		if (input[i + 2] && (input[i] == '>' && input[i + 1] != ' ' && input[i + 2] == '>'))
+		if (input[i] && input[i + 1] && input[i + 2] && (input[i] == '>' && input[i + 1] != ' ' && input[i + 2] == '>'))
 		{
 			write (2, "syntax error near unexpected token `>'\n", 40);
 			exit_s = 258;
@@ -30,13 +30,13 @@ int	check_redirec_op(char *input)
 	}
 	while (input[i])
 	{
-		if (input[i + 2] && (input[i] == '>' && input[i + 1] == '>' && input[i + 2] == '>'))
+		if (input[i] && input[i + 1] && input[i + 2] && (input[i] == '>' && input[i + 1] == '>' && input[i + 2] == '>'))
 		{
 			write (2, "syntax error near unexpected token `>'\n", 40);
 			exit_s = 258;
 			return (exit_s);
 		}
-		if (input[i + 2] && (input[i] == '<' && input[i + 1] == '<' && input[i + 2] == '<'))
+		if (input[i] && input[i + 1] && input[i + 2] && (input[i] == '<' && input[i + 1] == '<' && input[i + 2] == '<'))
 		{
 			write (2, "syntax error near unexpected token `>'\n", 40);
 			exit_s = 258;

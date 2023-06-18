@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 22:23:04 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/17 15:46:59 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/13 15:00:41 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ char	**ft_split(char *s, char sep)
 		return (0);
 	words = calc_words(s, sep);
 	strs = (char **)ft_calloc(sizeof(char *), words + 1);
-	if (!strs)
+	if (!strs || !s)
 		return (NULL);
 	strs[words] = NULL;
 	while (j < words)

@@ -6,11 +6,31 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/16 00:27:03 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/06 15:15:19 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/18 20:27:56 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+char	*ft_strtrim(char *s1, char *set)
+{
+	int		i;
+	size_t	s1len;
+
+	i = 0;
+	if (!s1 || !set)
+		return (0);
+	if (s1[i] == '\0')
+		return (ft_strdup(""));
+	if (set[i] == '\0')
+		return (ft_strdup(s1));
+	while (s1[i] && ft_strchr(set, s1[i]))
+		i++;
+	s1len = ft_strlen(s1) - 1;
+	while (s1[i] >= 0 && ft_strchr(set, s1[s1len]))
+		s1len--;
+	return (ft_substr(s1, i, (s1len - i + 1)));
+}
 
 int	space_before(char *input, int i)
 {
@@ -140,15 +160,31 @@ char	*add_spaces(char *input)
 
 char	*skip_spaces(char *input)
 {
-	int	i;
+	int		i;
+	int		count;
+	// char	*tmp = NULL;
 
 	i = 0;
+	count = 0;
 	while (input[i] == ' ' || input[i] == '\t')
-		input++;
-	while (input[i])
 		i++;
+	int j = i;
+	while (input[i])
+	{
+		count++;
+		i++;
+	}
 	while ((i > 0) && (input[i - 1] == ' ' || input[i - 1] == '\t'))
+	{
+		count--;
 		i--;
-	input[i] = '\0';
+	}
+	i = 0;
+	while (j < count)
+	{
+		// tmp[i];
+		j++;
+	}
+	// input[i] = '\0';
 	return (input);
 }

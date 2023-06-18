@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/18 01:22:42 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/18 20:44:03 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int	get_length(char *input)
 		i++;
 	while (input[i])
 	{
+		// skip_quotes(input, i)
 		if (input[i] == '"' || input[i] =='\'')
 			flag = is_outside(flag, input[i]);
 		if ((input[i] == ' ' || input[i] == '\t') && flag == 0)
@@ -44,38 +45,18 @@ int	get_length(char *input)
 		i--;
 		len--;
 	}
+	// printf("this is the length : %d\n", len);
 	return (len);
 }
 
 
-char	*fill_line(char *input, int len)//get the line each of it's word separated by one space
+char	*fill_line(char *input)//get the line each of it's word separated by one space
 {
-	int		i;
-	int		j;
-	char	*line;
-	int		flag = 0;
+	char *tmp;
 
-	i = 0;
-	j = 0;
-	line = malloc (len + 1);
-	input = skip_spaces(input);
-	while (input[i])
-	{
-		if (input[i] == '"' || input[i] =='\'')
-			flag = is_outside(flag, input[i]);
-		if ((input[i] == ' ' || input[i] == '\t') && flag == 0)
-		{
-			while (input[i] == ' ' || input[i] == '\t')
-				i++;
-			i--;
-		}
-		line[j] = input[i];
-		j++;
-		i++;
-	}
-	line[j] = '\0';
+	tmp = ft_strtrim(input, " ");
 	free(input);
-	return (line);
+	return (tmp);
 }
 
 void	array_printer(int *input)
@@ -246,117 +227,121 @@ int	valid_command(char **new)
 	return (0);
 }
 
-void	get_input(char *input, t_list **env)
+char	*signal_handler(char *input)
 {
-	int		len;
-	int		delimiter = 0;
-	char	**cmd_array;
-	char	**new;
-	(void) env;
-	t_list	*commands;
-	t_list *tmp;
-	int		*arr;
 	struct termios	term;
 	struct termios	original;
-	
-	// t_cmds *ptr;
-
 
 	sig_handler();
-	tcgetattr(0, &term); 
+	tcgetattr(0, &term);
 	tcgetattr(0, &original);
 	term.c_lflag &= ~(ECHOCTL);
-	// tcsetattr(0, TCSANOW, &term);
+	tcsetattr(0, TCSANOW, &term);
 	input = readline("minishell> ");
-	tcsetattr(STDIN_FILENO, TCSANOW, &original);
+	tcsetattr(0, TCSANOW, &original);
 	if (!input || ft_strcmp(input, "") == 0)
 	{
 		if (!input)
-			exit(0);
+			exit (0);
 		free(input);
-		return ;
+		return (NULL);
 	}
-	if (is_space(input))
-	{
-		add_history(input);
-		free(input);
+	return (input);
+}
+
+int	add_free(char *input)
+{
+	add_history(input);
+	free(input);
+	return (1);
+}
+
+void	get_input(char *input, t_list **env)
+{
+	int		len;
+	// int		delimiter = 0;
+	(void) env;
+	char	**cmd_array;
+	// char	**new;
+	// t_list	*commands;
+	// t_list *tmp;
+	// int		*arr;
+	// char	*new_input;
+
+	input = signal_handler(input);
+	if (!input)
 		return ;
-	}
+	if (is_space(input) && add_free(input))
+		return ;
 	len = get_length(input);
-	// printf("len is : %d\n", len);
 	if (check_line(input))
-	{
-		free (input);
 		return ;
-	}
-	input = fill_line(input, len);
+	input = fill_line(input);
+	// printf("this is the input %p\n", new_input);
 	input = add_spaces(input);
-	// printf("this is the line : %s\n", input);
+	// // printf("this is the line : %s\n", new_input);
 	cmd_array = ft_split(input, ' ');
-	// split_print(cmd_array);
-	arr = array_tokens(cmd_array, num_elemnts(cmd_array));
-	// array_printer(arr);
-	if (op_order(arr))
-	{
-		exit_s = 258;
-		free(input);
-		free_2d(cmd_array);
-		return ;
-	}
-	new = expander(cmd_array, *env, arr);
-	free(arr);
-	arr = array_tokens(new, num_elemnts(new));
-	new = quote_delete(new, &delimiter, arr);
+	// arr = array_tokens(cmd_array, num_elemnts(cmd_array));
+	// // array_printer(arr);
+	// if (op_order(array_tokens(cmd_array, num_elemnts(cmd_array))))
+	// {
+	// 	exit_s = 258;
+	// 	free(new_input);
+	// 	free_2d(cmd_array);
+	// 	return ;
+	// }
+	// new = expander(cmd_array, *env, arr);
+	// free(arr);
+	// arr = array_tokens(new, num_elemnts(new));
+	// new = quote_delete(new, &delimiter, arr);
 	// // printf("this is the delimiter (%d)\n", delimiter);
 	// // split_print(new);
-	if (valid_command(new))
-	{
-		printf("nothing to do\n");
-		free_2d(new);
-		free_2d(cmd_array);
-		free(arr);
-		free(input);
-		return ;
-	}
-	commands = list_cmds(new, arr, &delimiter);
-	tmp = commands;
-	// print_list(commands);
-	add_history(input);
-	if (!commands)
-	{
-		free_2d(new);
-		free(arr);
-		free(input);
-		return ;
-	}
-	while (tmp)
-	{
-		if (is_heredoc(tmp))
-			here_docc(tmp, *env);
-		tmp = tmp->next;
-	}
-	if (ft_lstsize(commands) > 1)
-	{
-		multiple_pipes(commands, env);
-		close_files(commands);
-		my_free(commands);
-		free_all(input, new);
-		free(arr);
-		return ;
-	}
-	if (execute_builtins(commands, env))
-	{
-		close_files(commands);
-		my_free(commands);
-		free_all(input, new);
-		free(arr);
-		return ;
-	}
-	execute_commands(commands, env, new);
-	close_files(commands);
-	my_free(commands);
-	free_2d(cmd_array);
-	free(arr);
+	// if (valid_command(new))
+	// {
+	// 	printf("nothing to do\n");
+	// 	free(arr);
+	// 	free_2d(new);
+	// 	free(new_input);
+	// 	return ;
+	// }
+	// commands = list_cmds(new, arr, &delimiter);
+	// tmp = commands;
+	// // print_list(commands);
+	// add_history(new_input);
+	// if (!commands)
+	// {
+	// 	free_2d(new);
+	// 	free(arr);
+	// 	free(new_input);
+	// 	return ;
+	// }
+	// while (tmp)
+	// {
+	// 	if (is_heredoc(tmp))
+	// 		here_docc(tmp, *env);
+	// 	tmp = tmp->next;
+	// }
+	// if (ft_lstsize(commands) > 1)
+	// {
+	// 	multiple_pipes(commands, env);
+	// 	close_files(commands);
+	// 	my_free(commands);
+	// 	free_all(new_input, new);
+	// 	free(arr);
+	// 	return ;
+	// }
+	// if (execute_builtins(commands, env))
+	// {
+	// 	close_files(commands);
+	// 	my_free(commands);
+	// 	free_all(new_input, new);
+	// 	free(arr);
+	// 	return ;
+	// }
+	// execute_commands(commands, env, new);
+	// close_files(commands);
+	// my_free(commands);
+	// free(arr);
 	free(input);
 }
 
@@ -398,7 +383,7 @@ int main (int ac, char **av, char **envp)
 	
 	char    input;
 	t_list *env;
-	struct termios term;
+	// struct termios term;
 
 	if (ac > 1)
 	{
@@ -411,9 +396,9 @@ int main (int ac, char **av, char **envp)
 	shlvl_edit(&env, 0);
 	while (1)
 	{
-		tcgetattr(0, &term);
-		term.c_lflag &= ~(ECHOCTL);
-		tcsetattr(0, TCSANOW, &term);
+		// tcgetattr(0, &term);
+		// term.c_lflag &= ~(ECHOCTL);
+		// tcsetattr(0, TCSANOW, &term);
 		// signal(SIGINT, handler);
 		get_input(&input, &env);
 	}

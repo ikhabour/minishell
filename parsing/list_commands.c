@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/17 00:09:59 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/14 23:04:35 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	print_list(t_list *list)
     		t_filetype *file_node = (t_filetype *)node->files->content;
 			for (int i = 0; (node->files); i++)
 			{
-				// printf("haaaaaa\n");
+				printf("haaaaaa\n");
 				printf("the type : %s\n", file_node->type);
 				printf("the red : %s\n", file_node->red);
 				printf("the file name : %s\n", file_node->file_name);

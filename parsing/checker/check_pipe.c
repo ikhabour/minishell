@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 09:13:39 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/17 15:45:11 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/11 23:31:31 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 int check_pipe(char *input)
 {
+	(void) input;
 	int i;
 	int	flag;
 
@@ -34,7 +35,7 @@ int check_pipe(char *input)
 		{
 			// printf("Error, double pipe.\n");
 			// free(input);
-			write (2, "syntax error near unexpected token `||'\n", 41);
+			write (2, "command not found\n", 19);
 			exit_s = 127;
 			return (1);
 		}

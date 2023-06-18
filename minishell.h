@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/18 01:19:04 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/18 20:24:14 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,7 @@ int					ft_isalnum(int i);
 int					var_length(char *str);
 char				*env_value(char *str, t_list *env);
 int					ft_ischar(int i);
+char	*ft_strtrim(char *s1, char *set);
 
 //	################		execution prototypes 		##################	//
 
@@ -179,11 +180,11 @@ char				**make_argv(t_list *commands);
 
 int				open_file_type(t_filetype *files);
 int				open_files(t_cmds *ptr);
-void			dup_fds(t_cmds *ptr);
-void			free_2d(char **array);
-void			free_files(t_list *files);
-void			my_free(t_list *commands);
-void			shlvl_edit(t_list **env, int op);
+void		dup_fds(t_cmds *ptr);
+void	free_2d(char **array);
+void	free_files(t_list *files);
+void	my_free(t_list *commands);
+void	shlvl_edit(t_list **env, int op);
 void		here_docc(t_list *commands, t_list *env);
 int	is_heredoc(t_list *commands);
 void	free_int_arr(int **arr, int size);
