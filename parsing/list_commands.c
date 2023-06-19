@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/14 23:04:35 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/19 02:11:50 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,17 +153,14 @@ t_cmds	*fill_node(char **cmd_array, int *arr, int i, int *delimiter)
 			arg_counter++;
 		index--;
 	}
-	// if (arg_counter > 0)
-	// {
-		node->option = malloc ((arg_counter + 1) * sizeof(char *));
-		node->option[arg_counter] = NULL;
-	// }
+	node->option = malloc ((arg_counter + 1) * sizeof(char *));
+	node->option[arg_counter] = NULL;
 	while (i >= 0 && arr[i] != PIPE)
 	{
 		if (arr[i] == CMD_NAME)
 		{
 			node->cmd_name = ft_strdup(cmd_array[i]);
-		}	
+		}
 		else if (arr[i] == CMD_ARG)
 		{
 			node->option[arg_counter - 1] = ft_strdup(cmd_array[i]);

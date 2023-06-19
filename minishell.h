@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/18 20:24:14 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/19 18:48:39 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ extern int			return_val;
 # include <unistd.h>
 # include <signal.h>
 # include <termios.h>
-#include <sys/ioctl.h>
+# include <sys/ioctl.h>
 
 typedef struct s_vars
 {
@@ -67,6 +67,14 @@ typedef struct s_cmds
 	char			**option;
 	t_list			*files;
 }					t_cmds;
+
+typedef struct s_variables
+{
+	int		delimiter;
+	char	**cmd_array;
+	char	**new;
+	int		*arr;
+}			t_vars;
 
 typedef enum t_enum
 {

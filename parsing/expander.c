@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 14:14:21 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/15 17:42:01 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/19 01:48:41 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,14 +215,12 @@ char	*env_value(char *str, t_list *env)
 			value = ft_strdup(tmp->content);
 			while (value[i] != '=')
 				i++;
-			// printf("char : %c\n", value[i]);
-			// value = tmp->env_value;./
+			free(value);
 			return (tmp->content + i + 1);
 		}
-		// printf("the name is : %s\n", tmp->env_name);
-		// printf("the value is : %s\n", tmp->env_value);
 		tmp = tmp->next;
 	}
+
 	return (NULL);
 }
 
@@ -253,6 +251,7 @@ static char	*ft_expand(char *cmd, t_list *env, int *i)
 	{
 		lineup = ft_substr(cmd, 0, (*i));
 		full_str = ft_strjoin(lineup, value);
+		// free(value);
 	}
 	else
 	{
@@ -349,6 +348,8 @@ char	**expander(char **cmd, t_list *env, int *arr)
 	int		j;
 	char	**new_cmd;
 	int		count = 0;
+	(void) arr;
+	(void) env;
 
 	i = 0;
 	j = 0;
@@ -357,9 +358,6 @@ char	**expander(char **cmd, t_list *env, int *arr)
 		if (ft_strchr(cmd[i], '$') && arr[i] != HEREDOC_LIM)
 		{
 			cmd[i] = expand_processor(cmd[i], env);
-			
-			// if (ft_strcmp(cmd[i], "") == 0)
-			// 	return (1);
 		}
 		i++;
 	}
@@ -383,6 +381,5 @@ char	**expander(char **cmd, t_list *env, int *arr)
 		j++;
 	}
 	free_2d(cmd);
-	// split_print(new_cmd);
 	return (new_cmd);
 }

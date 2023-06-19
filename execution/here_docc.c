@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_docc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 15:02:45 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/17 15:44:15 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/19 23:26:58 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,6 +185,7 @@ void	display_prompt(t_list *files, int fd, t_list *env)
 		input = readline("> ");
 		if (!input || !ft_strcmp(input, ptr->file_name))
 			break ;
+		printf("has quotes : %d\n", ptr->has_quotes);
 		if (ptr->has_quotes == 1)
 			joined = ft_strjoinn(input, "\n");
 		else

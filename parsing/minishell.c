@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/18 20:44:03 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/19 23:17:45 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,39 +15,39 @@
 int	exit_s = 0;
 int return_val = 0;
 
-int	get_length(char *input)
-{
-	int	i;
-	int	len;
-	int	flag = 0;
+// int	get_length(char *input)
+// {
+// 	int	i;
+// 	int	len;
+// 	int	flag = 0;
 
-	i = 0;
-	len = 0;
-	while (input[i] && (input[i] == ' '|| input[i] == '\t'))
-		i++;
-	while (input[i])
-	{
-		// skip_quotes(input, i)
-		if (input[i] == '"' || input[i] =='\'')
-			flag = is_outside(flag, input[i]);
-		if ((input[i] == ' ' || input[i] == '\t') && flag == 0)
-		{
-			while (input[i] && (input[i] == ' ' || input[i] == '\t'))
-				i++;
-			i--;
-		}
-		len++;
-		i++;
-	}
-	i--;
-	if (input[i] == ' ' || input[i] == '\t')
-	{
-		i--;
-		len--;
-	}
-	// printf("this is the length : %d\n", len);
-	return (len);
-}
+// 	i = 0;
+// 	len = 0;
+// 	while (input[i] && (input[i] == ' '|| input[i] == '\t'))
+// 		i++;
+// 	while (input[i])
+// 	{
+// 		// skip_quotes(input, i)
+// 		if (input[i] == '"' || input[i] =='\'')
+// 			flag = is_outside(flag, input[i]);
+// 		if ((input[i] == ' ' || input[i] == '\t') && flag == 0)
+// 		{
+// 			while (input[i] && (input[i] == ' ' || input[i] == '\t'))
+// 				i++;
+// 			i--;
+// 		}
+// 		len++;
+// 		i++;
+// 	}
+// 	i--;
+// 	if (input[i] == ' ' || input[i] == '\t')
+// 	{
+// 		i--;
+// 		len--;
+// 	}
+// 	// printf("this is the length : %d\n", len);
+// 	return (len);
+// }
 
 
 char	*fill_line(char *input)//get the line each of it's word separated by one space
@@ -221,9 +221,15 @@ int	valid_command(char **new)
 	if (ft_strcmp(new[i - 1], "|") == 0)
 		return (1);
 	if (ft_strcmp(new[i - 1], ">") == 0)
+	{
+		printf("Minishell: ambiguous redirect\n");
 		return (1);
+	}
 	if (ft_strcmp(new[i - 1], ">>") == 0)
+	{
+		printf("Minishell: ambiguous redirect\n");
 		return (1);
+	}
 	return (0);
 }
 
@@ -256,92 +262,102 @@ int	add_free(char *input)
 	return (1);
 }
 
+int	input_checker(char *input)
+{
+	if (!input)
+		return (1);
+	if (is_space(input) && add_free(input))
+		return (1);
+	if (check_line(input))
+		return (1);
+	return (0);
+}
+
+int	order_checker(int *arr, char *input, char **cmd_array)
+{
+	if (op_order(arr))
+	{
+		exit_s = 258;
+		free(arr);
+		free(input);
+		free_2d(cmd_array);
+		return (1);
+	}
+	return (0);
+}
+
+char	*input_get(char *input)
+{
+	input = fill_line(input);
+	input = add_spaces(input);
+	return (input);
+}
+
 void	get_input(char *input, t_list **env)
 {
-	int		len;
-	// int		delimiter = 0;
-	(void) env;
-	char	**cmd_array;
-	// char	**new;
-	// t_list	*commands;
-	// t_list *tmp;
-	// int		*arr;
-	// char	*new_input;
+	t_list	*commands;
+	t_list *tmp;
+	t_vars	variables;
 
 	input = signal_handler(input);
-	if (!input)
+	if (input_checker(input))
 		return ;
-	if (is_space(input) && add_free(input))
+	input = input_get(input);
+	variables.cmd_array = ft_split(input, ' ');
+	variables.arr = array_tokens(variables.cmd_array, num_elemnts(variables.cmd_array));
+	if (order_checker(variables.arr, input, variables.cmd_array))
 		return ;
-	len = get_length(input);
-	if (check_line(input))
+	variables.new = expander(variables.cmd_array, *env, variables.arr);
+	free(variables.arr);
+	variables.arr = array_tokens(variables.new, num_elemnts(variables.new));
+	variables.new = quote_delete(variables.new, &variables.delimiter, variables.arr);
+	if (valid_command(variables.new))
+	{
+		free(variables.arr);
+		free_2d(variables.new);
+		free(input);
 		return ;
-	input = fill_line(input);
-	// printf("this is the input %p\n", new_input);
-	input = add_spaces(input);
-	// // printf("this is the line : %s\n", new_input);
-	cmd_array = ft_split(input, ' ');
-	// arr = array_tokens(cmd_array, num_elemnts(cmd_array));
-	// // array_printer(arr);
-	// if (op_order(array_tokens(cmd_array, num_elemnts(cmd_array))))
-	// {
-	// 	exit_s = 258;
-	// 	free(new_input);
-	// 	free_2d(cmd_array);
-	// 	return ;
-	// }
-	// new = expander(cmd_array, *env, arr);
-	// free(arr);
-	// arr = array_tokens(new, num_elemnts(new));
-	// new = quote_delete(new, &delimiter, arr);
-	// // printf("this is the delimiter (%d)\n", delimiter);
-	// // split_print(new);
-	// if (valid_command(new))
-	// {
-	// 	printf("nothing to do\n");
-	// 	free(arr);
-	// 	free_2d(new);
-	// 	free(new_input);
-	// 	return ;
-	// }
-	// commands = list_cmds(new, arr, &delimiter);
-	// tmp = commands;
-	// // print_list(commands);
-	// add_history(new_input);
-	// if (!commands)
-	// {
-	// 	free_2d(new);
-	// 	free(arr);
-	// 	free(new_input);
-	// 	return ;
-	// }
-	// while (tmp)
-	// {
-	// 	if (is_heredoc(tmp))
-	// 		here_docc(tmp, *env);
-	// 	tmp = tmp->next;
-	// }
-	// if (ft_lstsize(commands) > 1)
-	// {
-	// 	multiple_pipes(commands, env);
-	// 	close_files(commands);
-	// 	my_free(commands);
-	// 	free_all(new_input, new);
-	// 	free(arr);
-	// 	return ;
-	// }
-	// if (execute_builtins(commands, env))
-	// {
-	// 	close_files(commands);
-	// 	my_free(commands);
-	// 	free_all(new_input, new);
-	// 	free(arr);
-	// 	return ;
-	// }
-	// execute_commands(commands, env, new);
-	// close_files(commands);
-	// my_free(commands);
-	// free(arr);
+	}
+	variables.delimiter = 0;
+	commands = list_cmds(variables.new, variables.arr, &variables.delimiter);
+	tmp = commands;
+	// print_list(commands);
+	add_history(input);
+	if (!commands)
+	{
+		free_2d(variables.new);
+		free(variables.arr);
+		free(input);
+		return ;
+	}
+	while (tmp)
+	{
+		if (is_heredoc(tmp))
+			here_docc(tmp, *env);
+		tmp = tmp->next;
+	}
+	if (ft_lstsize(commands) > 1)
+	{
+		multiple_pipes(commands, env);
+		close_files(commands);
+		my_free(commands);
+		free_all(input, variables.new);
+		free(variables.arr);
+		return ;
+	}
+	if (execute_builtins(commands, env))
+	{
+		close_files(commands);
+		my_free(commands);
+		free_all(input, variables.new);
+		free(variables.arr);
+		return ;
+	}
+	execute_commands(commands, env, variables.new);
+	close_files(commands);
+	my_free(commands);
+	// free_2d(variables.new);
+	free(variables.arr);
 	free(input);
 }
 
