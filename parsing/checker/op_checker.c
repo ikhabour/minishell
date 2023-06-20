@@ -6,45 +6,30 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 09:16:16 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/18 15:13:29 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/20 03:37:08 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	check_redirec_op(char *input)
+int	op_start(char *input, int i)
 {
-	int	i;
-	int	len;
-
-	i = 0;
-	len = ft_strlen(input);
-	if (input[i] == '>' || (input[i  + 1] && input[i] == '<' && input[i + 1] != '<'))
+	if (input[i] == '>' || (input[i + 1]
+			&& input[i] == '<' && input[i + 1] != '<'))
 	{
-		if (input[i] && input[i + 1] && input[i + 2] && (input[i] == '>' && input[i + 1] != ' ' && input[i + 2] == '>'))
-		{
-			write (2, "syntax error near unexpected token `>'\n", 40);
-			exit_s = 258;
-			return (exit_s);
-		}
-	}
-	while (input[i])
-	{
-		if (input[i] && input[i + 1] && input[i + 2] && (input[i] == '>' && input[i + 1] == '>' && input[i + 2] == '>'))
-		{
-			write (2, "syntax error near unexpected token `>'\n", 40);
-			exit_s = 258;
-			return (exit_s);
-		}
-		if (input[i] && input[i + 1] && input[i + 2] && (input[i] == '<' && input[i + 1] == '<' && input[i + 2] == '<'))
+		if (input[i] && input[i + 1] && input[i + 2]
+			&& (input[i] == '>' && input[i + 1] != ' ' && input[i + 2] == '>'))
 		{
 			write (2, "syntax error near unexpected token `>'\n", 40);
 			exit_s = 258;
 			return (1);
 		}
-		i++;
 	}
-	i--;
+	return (0);
+}
+
+int	op_end(char *input, int i)
+{
 	if (input[i] == '>' || input[i] == '<')
 	{
 		if (input[i] == '<')
@@ -60,5 +45,45 @@ int	check_redirec_op(char *input)
 			return (1);
 		}
 	}
+	return (0);
+}
+
+int	op_mid(char *input, int i)
+{
+	if (input[i] && input[i + 1] && input[i + 2] && (input[i] == '>'
+			&& input[i + 1] == '>' && input[i + 2] == '>'))
+	{
+		write (2, "syntax error near unexpected token `>'\n", 40);
+		exit_s = 258;
+		return (1);
+	}
+	if (input[i] && input[i + 1] && input[i + 2] && (input[i] == '<'
+			&& input[i + 1] == '<' && input[i + 2] == '<'))
+	{
+		write (2, "syntax error near unexpected token `<'\n", 40);
+		exit_s = 258;
+		return (1);
+	}
+	return (0);
+}
+
+int	check_redirec_op(char *input)
+{
+	int	i;
+	int	len;
+
+	i = 0;
+	len = ft_strlen(input);
+	if (op_start(input, i))
+		return (1);
+	while (input[i])
+	{
+		if (op_mid(input, i))
+			return (1);
+		i++;
+	}
+	i--;
+	if (op_end(input, i))
+		return (1);
 	return (0);
 }

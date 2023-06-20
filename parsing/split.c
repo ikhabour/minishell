@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 22:23:04 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/13 15:00:41 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/20 03:38:33 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,9 @@ int	calc_words(char *s, char sep)
 			flag = is_outside(flag, s[i]);
 		if (s[i] == sep && flag == 0)
 		{
-			if (s[i] && s[i] == sep)
+			if (s[i] && s[i + 1] && s[i] == sep && s[i + 1] != sep)
 			{
 				word++;
-				// i++;
 			}
 		}
 		if (!s[i + 1])
@@ -72,8 +71,8 @@ int	ft_wordlen(char *s, int i, char c)
 		{
 			flag = is_outside(flag, s[i]);
 		}
-		if (s[i] == c && flag == 0)
-			break;
+		if (flag == 0 && s[i] == c)
+			break ;
 		i++;
 		len++;
 	}
@@ -110,10 +109,12 @@ char	*ft_charge(char *s, int i, char c, int flag)
 char	**ft_split(char *s, char sep)
 {
 	char	**strs;
-	int		j = 0;
-	int		length = 0;
+	int		j;
+	int		length;
 	int		words;
 
+	j = 0;
+	length = 0;
 	if (!s)
 		return (0);
 	words = calc_words(s, sep);
@@ -126,7 +127,7 @@ char	**ft_split(char *s, char sep)
 		length = ft_wordlen(s, 0, sep);
 		strs[j] = ft_substr(s, 0, length);
 		s += length;
-		if (*s == sep)
+		while (*s == sep)
 			s++;
 		j++;
 	}

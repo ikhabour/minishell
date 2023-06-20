@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:32:20 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/14 22:54:55 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/20 04:03:22 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,13 @@
 int	no_quotes_len(char *str)
 {
 	int	i;
-	int	flag = 0;
-	int	count = 0;
-	int	j = 0;
+	int	flag;
+	int	count;
+	int	j;
 
+	flag = 0;
+	count = 0;
+	j = 0;
 	i = 0;
 	while (str[i])
 	{
@@ -36,42 +39,19 @@ int	no_quotes_len(char *str)
 	return (count);
 }
 
-void	quoted(char *str, char *cmd, char c, int *i, int *j)
+char	*no_quote_fill(char *str, char *cmd)
 {
-	int	i_dex = *i;
-	int	j_dex = *j;
-	i_dex += 1;
-	while (str[i_dex] && str[i_dex] != c)
-	{
-		cmd[j_dex] = str[i_dex];
-		j_dex++;
-		i_dex++;
-	}
-	*i = i_dex;
-	*j = j_dex;
-}
-
-char	*quote_processor(char *str)
-{
-	int		i;
-	int		length;
-	char	*cmd;
-	int		j;
-	int		flag;
+	int	i;
+	int	j;
 
 	i = 0;
 	j = 0;
-	flag = 0;
-	length = no_quotes_len(str);
-	cmd = malloc (length + 1);
-	if (!cmd)
-		return (NULL);
 	while (str[i])
 	{
 		if (str[i] == '"')
-			quoted(str, cmd, '"', &i, &j);
+			d_quoted(str, cmd, &i, &j);
 		else if (str[i] == '\'')
-			quoted(str, cmd, '\'', &i, &j);
+			s_quoted(str, cmd, &i, &j);
 		else
 		{
 			cmd[j] = str[i];
@@ -81,6 +61,21 @@ char	*quote_processor(char *str)
 	}
 	free(str);
 	cmd[j] = '\0';
+	return (cmd);
+}
+
+char	*quote_processor(char *str)
+{
+	int		length;
+	char	*cmd;
+	int		flag;
+
+	flag = 0;
+	length = no_quotes_len(str);
+	cmd = malloc (length + 1);
+	if (!cmd)
+		return (NULL);
+	cmd = no_quote_fill(str, cmd);
 	return (cmd);
 }
 
@@ -101,10 +96,8 @@ int	check_delimiter(char *cmd)
 char	**quote_delete(char **cmd, int *delimiter, int *arr)
 {
 	int		i;
-	// int	flag;
 
 	i = 0;
-	// flag = 0;
 	while (cmd[i])
 	{
 		if (arr[i] == HEREDOC_LIM)

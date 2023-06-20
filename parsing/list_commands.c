@@ -6,187 +6,76 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:46:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/19 02:11:50 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/20 05:42:24 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-
-void	split_print(char **input)
+int	count_arg(int index, int *arr)
 {
-	int i;
+	int	arg_counter;
+	int	i;
 
-	i = 0;
-	while (input[i])
+	i = index;
+	arg_counter = 0;
+	while (i >= 0 && arr[i] != PIPE)
 	{
-		printf("the array contain this : %s\n", input[i]);
-		i++;
-	}
-}
-
-void	print_list(t_list *list)
-{
-	t_list *tmp = list;
-
-    while (tmp)
-    {
-		printf("==================\n");
-    	t_cmds *node = (t_cmds *)tmp->content;
-        printf("the command name is: (%s)\n", node->cmd_name);
-		if (node->files)
-		{
-    		t_filetype *file_node = (t_filetype *)node->files->content;
-			for (int i = 0; (node->files); i++)
-			{
-				printf("haaaaaa\n");
-				printf("the type : %s\n", file_node->type);
-				printf("the red : %s\n", file_node->red);
-				printf("the file name : %s\n", file_node->file_name);
-				printf("has quotes : %d\n", file_node->has_quotes);
-				node->files = node->files->next;
-				if (node->files)
-				{
-					file_node = (t_filetype *)node->files->content;
-				}
-			}
-		}
-		for(int i = 0; (node->option) && (node->option)[i] ; i++)
-		{
-			printf("The option is : %s\n", (node->option)[i]);
-		}
-        tmp = tmp->next;
-    }
-}
-
-t_filetype	*fill_file(char **cmd_array, int *arr, int i, int *delimiter)
-{
-	t_filetype	*file_node;
-	// int			flag;
-
-	file_node = malloc (sizeof(t_filetype));
-	file_node->red = NULL;
-	file_node->type = NULL;
-	file_node->file_name = NULL;
-	file_node->has_quotes = 0;
-	if (arr[i] == R_IN_OUT)
-	{
-		file_node->type = ft_strdup("OUTPUT");
-		file_node->red = ft_strdup(cmd_array[i]);
-		file_node->file_name = ft_strdup(cmd_array[i + 1]);
-	}
-	// else if (arr[i] == R_IN_SIG)
-	// 	file_node->red = ft_strdup(cmd_array[i]);
-	// else if (arr[i] == R_OUT_SIG)
-	// 		file_node->red = ft_strdup(cmd_array[i]);
-	else if (arr[i] == R_OUT_FILE)
-	{
-		file_node->type = ft_strdup("OUTPUT");
-		file_node->file_name = ft_strdup(cmd_array[i]);
-		file_node->red = ft_strdup(cmd_array[i - 1]);
-		// file_node->fd = open(file_node->file_name, O_CREAT, O_RDWR);
-	}
-	// else if (arr[i] == R_APP_SIG)
-	// 	file_node->red = ft_strdup(cmd_array[i]);
-	else if (arr[i] == R_APP_FILE)
-	{
-		file_node->type = ft_strdup("APPEND");
-		file_node->file_name = ft_strdup(cmd_array[i]);
-		file_node->red = ft_strdup(cmd_array[i - 1]);
-		// file_node->fd = open(file_node->file_name, O_CREAT, O_RDWR);
-	}
-	else if (arr[i] == R_IN_FILE)
-	{
-		file_node->type = ft_strdup("INPUT");
-		file_node->file_name = ft_strdup(cmd_array[i]);
-		file_node->red = ft_strdup(cmd_array[i - 1]);
-		// file_node->fd = open(file_node->file_name, O_CREAT, O_RDONLY);
-	}
-	// else if (arr[i] == HEREDOC_SIG)
-	// 	file_node->red = ft_strdup(cmd_array[i]);
-	else if (arr[i] == HEREDOC_LIM)
-	{
-		file_node->has_quotes = *delimiter;
-		file_node->type = ft_strdup("DELIMITER");
-		file_node->file_name = ft_strdup(cmd_array[i]);
-		file_node->red = ft_strdup(cmd_array[i - 1]);
-		// node->files.fd = open(node->files.file_name, O_CREAT, O_RDWR);
-	}
-	return (file_node);
-}
-
-void	node_printer(t_list *file_node)
-{
-	t_list *tmp = file_node;
-	
-	while (tmp)
-	{
-		t_filetype *file = (t_filetype *)tmp->content;
-		// for (int i = 0; file; i++)
-		// {
-			printf("this is the content (%s)\n", file->file_name);
-			// file = file->next;
-		// }
-		// printf("haaaa\n");
-		tmp = tmp->next;
-	}
-}
-
-t_cmds	*fill_node(char **cmd_array, int *arr, int i, int *delimiter)
-{
-	int	count;
-	int	arg_counter = 0;
-	int	index = i;
-
-	t_cmds		*node;
-	t_list		*file = NULL;
-	t_filetype	*file_node = NULL;
-
-	count = 0;
-	node = malloc (sizeof(t_cmds));
-	node->cmd_name = NULL;
-	node->option = NULL;
-
-	while (index >= 0 && arr[index] != PIPE)
-	{
-		if (arr[index] == CMD_ARG)
+		if (arr[i] == CMD_ARG)
 			arg_counter++;
-		index--;
+		i--;
 	}
-	node->option = malloc ((arg_counter + 1) * sizeof(char *));
-	node->option[arg_counter] = NULL;
+	return (arg_counter);
+}
+
+t_cmds	*node_init(t_vars f_list, int arg_counter)
+{
+	f_list.node = malloc (sizeof(t_cmds));
+	f_list.node->cmd_name = NULL;
+	f_list.node->option = NULL;
+	f_list.node->option = malloc ((arg_counter + 1) * sizeof(char *));
+	f_list.node->option[arg_counter] = NULL;
+	return (f_list.node);
+}
+
+t_cmds	*fill_node(char **cmd, int *arr, int i, int *delimiter)
+{
+	t_vars	f_l;
+
+	f_l.file_node = NULL;
+	f_l.file = NULL;
+	f_l.arg_counter = count_arg(i, arr);
+	f_l.node = node_init(f_l, f_l.arg_counter);
 	while (i >= 0 && arr[i] != PIPE)
 	{
 		if (arr[i] == CMD_NAME)
-		{
-			node->cmd_name = ft_strdup(cmd_array[i]);
-		}
+			f_l.node->cmd_name = ft_strdup(cmd[i]);
 		else if (arr[i] == CMD_ARG)
 		{
-			node->option[arg_counter - 1] = ft_strdup(cmd_array[i]);
-			arg_counter--;
+			f_l.node->option[f_l.arg_counter - 1] = ft_strdup(cmd[i]);
+			f_l.arg_counter--;
 		}
-		else if (arr[i] == R_IN_FILE || arr[i] == R_OUT_FILE || arr[i] == R_APP_FILE
-				|| arr[i] == HEREDOC_LIM)
+		else if (arr[i] == R_IN_FILE || arr[i] == 5 || arr[i] == 8
+			|| arr[i] == HEREDOC_LIM)
 		{
-			file_node = fill_file(cmd_array, arr, i, delimiter);
-			ft_lstadd_front(&file, my_lstnew(file_node));
+			f_l.file_node = fill_file(cmd, arr, i, delimiter);
+			ft_lstadd_front(&f_l.file, my_lstnew(f_l.file_node));
 		}
 		i--;
 	}
-	node->files = file;
-	return (node);
+	f_l.node->files = f_l.file;
+	return (f_l.node);
 }
 
 t_list	*list_cmds(char **cmd_array, int *arr, int *delimiter)
 {
 	int		i;
-	t_list *list = NULL;
-	// (void) cmd_array;
-	t_cmds	*node = NULL;
+	t_list	*list;
+	t_cmds	*node;
 
+	list = NULL;
+	node = NULL;
 	i = 0;
-	// list = malloc (sizeof(t_list));
 	while (arr[i])
 	{
 		if (arr[i] == PIPE)
@@ -201,6 +90,5 @@ t_list	*list_cmds(char **cmd_array, int *arr, int *delimiter)
 			my_lstadd_back(&list, my_lstnew(node));
 		}
 	}
-	// print_list(list);
 	return (list);
 }

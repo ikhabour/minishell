@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/19 23:17:45 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/20 05:46:01 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,41 +14,6 @@
 
 int	exit_s = 0;
 int return_val = 0;
-
-// int	get_length(char *input)
-// {
-// 	int	i;
-// 	int	len;
-// 	int	flag = 0;
-
-// 	i = 0;
-// 	len = 0;
-// 	while (input[i] && (input[i] == ' '|| input[i] == '\t'))
-// 		i++;
-// 	while (input[i])
-// 	{
-// 		// skip_quotes(input, i)
-// 		if (input[i] == '"' || input[i] =='\'')
-// 			flag = is_outside(flag, input[i]);
-// 		if ((input[i] == ' ' || input[i] == '\t') && flag == 0)
-// 		{
-// 			while (input[i] && (input[i] == ' ' || input[i] == '\t'))
-// 				i++;
-// 			i--;
-// 		}
-// 		len++;
-// 		i++;
-// 	}
-// 	i--;
-// 	if (input[i] == ' ' || input[i] == '\t')
-// 	{
-// 		i--;
-// 		len--;
-// 	}
-// 	// printf("this is the length : %d\n", len);
-// 	return (len);
-// }
-
 
 char	*fill_line(char *input)//get the line each of it's word separated by one space
 {
@@ -59,28 +24,62 @@ char	*fill_line(char *input)//get the line each of it's word separated by one sp
 	return (tmp);
 }
 
-void	array_printer(int *input)
-{
-	int i;
-
-	i = 0;
-	while (input[i])
-	{
-		printf("%d\n", input[i]);
-		i++;
-	}
-}
-
 int	num_elemnts(char **cmd_array)
 {
 	int	i;
 
 	i = 0;
 	while (cmd_array[i])
-	{
 		i++;
-	}
 	return (i);
+}
+
+int	name_arg(int *cmd_token, char **cmd_array, int i, int *flag)
+{
+	cmd_token[i] = CMD_NAME;
+	if ((i > 0) && (cmd_token[i - 1] == CMD_NAME || cmd_token[i - 1] == CMD_ARG)
+		&& ft_strcmp(cmd_array[i], ">") && ft_strcmp(cmd_array[i], "<")
+		&& ft_strcmp(cmd_array[i], ">>") && ft_strcmp(cmd_array[i], "<<")
+		&& ft_strcmp(cmd_array[i], "|"))
+		cmd_token[i] = CMD_ARG;
+	else if ((i > 0) && *flag == 1 && (cmd_token[i - 1] == R_OUT_FILE
+		|| cmd_token[i - 1] == R_IN_FILE || cmd_token[i - 1] == R_APP_FILE ||
+		cmd_token[i - 1] == CMD_ARG) && ft_strcmp(cmd_array[i], ">")
+		&& ft_strcmp(cmd_array[i], "<")
+		&& ft_strcmp(cmd_array[i], ">>") && ft_strcmp(cmd_array[i], "<<")
+		&& ft_strcmp(cmd_array[i], "|"))
+		cmd_token[i] = CMD_ARG;
+		*flag = 1;
+	return (cmd_token[i]);
+}
+
+int	enum_token(int *cmd_token, char **cmd_array, int i, int *flag)
+{
+	if (ft_strcmp(cmd_array[i], "|") == 0)
+		cmd_token[i] = PIPE;
+	else if (cmd_array[i + 1] && (ft_strcmp(cmd_array[i], "<>") == 0))
+		cmd_token[i] = R_IN_OUT;
+	else if (ft_strcmp(cmd_array[i], "<") == 0)
+		cmd_token[i] = R_IN_SIG;
+	else if (ft_strcmp(cmd_array[i], ">") == 0)
+		cmd_token[i] = R_OUT_SIG;
+	else if (ft_strcmp(cmd_array[i], ">>") == 0)
+		cmd_token[i] = R_APP_SIG;
+	else if (ft_strcmp(cmd_array[i], "<<") == 0)
+		cmd_token[i] = HEREDOC_SIG;
+	else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], "<<") == 0))
+		cmd_token[i] = HEREDOC_LIM;
+	else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], ">>") == 0))
+		cmd_token[i] = R_APP_FILE;
+	else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], ">") == 0))
+		cmd_token[i] = R_OUT_FILE;
+	else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], "<>") == 0))
+		cmd_token[i] = R_OUT_FILE;
+	else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], "<") == 0))
+		cmd_token[i] = R_IN_FILE;
+	else
+		cmd_token[i] = name_arg(cmd_token, cmd_array, i, flag);
+	return (cmd_token[i]);
 }
 
 int	*array_tokens(char **cmd_array, int elements)
@@ -95,44 +94,7 @@ int	*array_tokens(char **cmd_array, int elements)
 	i = 0;
 	while (cmd_array[i])
 	{
-		
-		if (ft_strcmp(cmd_array[i], "|") == 0)
-			cmd_token[i] = PIPE;
-		else if (cmd_array[i + 1] && (ft_strcmp(cmd_array[i], "<>") == 0))
-			cmd_token[i] = R_IN_OUT;
-		else if (ft_strcmp(cmd_array[i], "<") == 0)
-			cmd_token[i] = R_IN_SIG;
-		else if (ft_strcmp(cmd_array[i], ">") == 0)
-			cmd_token[i] = R_OUT_SIG;
-		else if (ft_strcmp(cmd_array[i], ">>") == 0)
-			cmd_token[i] = R_APP_SIG;
-		else if (ft_strcmp(cmd_array[i], "<<") == 0)
-			cmd_token[i] = HEREDOC_SIG;
-		else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], "<<") == 0))
-			cmd_token[i] = HEREDOC_LIM;
-		else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], ">>") == 0))
-			cmd_token[i] = R_APP_FILE;
-		else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], ">") == 0))
-			cmd_token[i] = R_OUT_FILE;
-		else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], "<>") == 0))
-			cmd_token[i] = R_OUT_FILE;
-		else if ((i > 0) && (ft_strcmp(cmd_array[i - 1], "<") == 0))
-			cmd_token[i] = R_IN_FILE;
-		else
-		{
-			cmd_token[i] = CMD_NAME;
-			if ((i > 0) && (cmd_token[i - 1] == CMD_NAME || cmd_token[i - 1] == CMD_ARG) && 
-				ft_strcmp(cmd_array[i], ">") && ft_strcmp(cmd_array[i], "<") && 
-				ft_strcmp(cmd_array[i], ">>") && ft_strcmp(cmd_array[i], "<<") && 
-				ft_strcmp(cmd_array[i], "|"))
-				cmd_token[i] = CMD_ARG;
-			else if ((i > 0) && flag == 1 && (cmd_token[i - 1] == R_OUT_FILE || cmd_token[i - 1] == R_IN_FILE || cmd_token[i - 1] == R_APP_FILE ||
-					cmd_token[i - 1] == CMD_ARG) && ft_strcmp(cmd_array[i], ">") && ft_strcmp(cmd_array[i], "<") && 
-					ft_strcmp(cmd_array[i], ">>") && ft_strcmp(cmd_array[i], "<<") && 
-					ft_strcmp(cmd_array[i], "|"))
-				cmd_token[i] = CMD_ARG;
-				flag = 1;
-		}
+		cmd_token[i] = enum_token(cmd_token, cmd_array, i, &flag);
 		i++;
 	}
 	return (cmd_token);
@@ -293,72 +255,95 @@ char	*input_get(char *input)
 	return (input);
 }
 
+int	command_valid(t_vars var, char *input)
+{
+	if (valid_command(var.new))
+	{
+		free(var.arr);
+		free_2d(var.new);
+		free(input);
+		return (1);
+	}
+	return (0);
+}
+
+void	my_allfree(char *input, t_vars var)
+{
+	free_2d(var.new);
+	free(var.arr);
+	free(input);
+}
+
+void	close_free(t_vars var, char *input)
+{
+	close_files(var.commands);
+	my_free(var.commands);
+	free_all(input, var.new);
+	free(var.arr);
+}
+
+int	executer(t_vars var, char *input, t_list **env)
+{
+	if (!var.commands)
+	{
+		my_allfree(input, var);
+		return (1);
+	}
+	while (var.tmp)
+	{
+		if (is_heredoc(var.tmp))
+			here_docc(var.tmp, *env);
+		var.tmp = var.tmp->next;
+	}
+	if (ft_lstsize(var.commands) > 1)
+	{
+		multiple_pipes(var.commands, env);
+		close_free(var, input);
+		return (1);
+	}
+	if (execute_builtins(var.commands, env))
+	{
+		close_free(var, input);
+		return (1);
+	}
+	return (0);
+}
+
+void	close_free_2(t_vars var, char *input)
+{
+	close_files(var.commands);
+	my_free(var.commands);
+	// free_2d(var.new);
+	free(var.arr);
+	free(input);
+}
+
 void	get_input(char *input, t_list **env)
 {
-	t_list	*commands;
-	t_list *tmp;
-	t_vars	variables;
+	t_vars	var;
 
+	var.delimiter = 0;
 	input = signal_handler(input);
 	if (input_checker(input))
 		return ;
 	input = input_get(input);
-	variables.cmd_array = ft_split(input, ' ');
-	variables.arr = array_tokens(variables.cmd_array, num_elemnts(variables.cmd_array));
-	if (order_checker(variables.arr, input, variables.cmd_array))
+	var.cmd_array = ft_split(input, ' ');
+	var.arr = array_tokens(var.cmd_array, num_elemnts(var.cmd_array));
+	if (order_checker(var.arr, input, var.cmd_array))
 		return ;
-	variables.new = expander(variables.cmd_array, *env, variables.arr);
-	free(variables.arr);
-	variables.arr = array_tokens(variables.new, num_elemnts(variables.new));
-	variables.new = quote_delete(variables.new, &variables.delimiter, variables.arr);
-	if (valid_command(variables.new))
-	{
-		free(variables.arr);
-		free_2d(variables.new);
-		free(input);
+	var.new = expander(var.cmd_array, *env, var.arr);
+	free(var.arr);
+	var.arr = array_tokens(var.new, num_elemnts(var.new));
+	var.new = quote_delete(var.new, &(var.delimiter), var.arr);
+	if (command_valid(var, input))
 		return ;
-	}
-	variables.delimiter = 0;
-	commands = list_cmds(variables.new, variables.arr, &variables.delimiter);
-	tmp = commands;
-	// print_list(commands);
+	var.commands = list_cmds(var.new, var.arr, &(var.delimiter));
+	var.tmp = var.commands;
 	add_history(input);
-	if (!commands)
-	{
-		free_2d(variables.new);
-		free(variables.arr);
-		free(input);
+	if (executer(var, input, env))
 		return ;
-	}
-	while (tmp)
-	{
-		if (is_heredoc(tmp))
-			here_docc(tmp, *env);
-		tmp = tmp->next;
-	}
-	if (ft_lstsize(commands) > 1)
-	{
-		multiple_pipes(commands, env);
-		close_files(commands);
-		my_free(commands);
-		free_all(input, variables.new);
-		free(variables.arr);
-		return ;
-	}
-	if (execute_builtins(commands, env))
-	{
-		close_files(commands);
-		my_free(commands);
-		free_all(input, variables.new);
-		free(variables.arr);
-		return ;
-	}
-	execute_commands(commands, env, variables.new);
-	close_files(commands);
-	my_free(commands);
-	// free_2d(variables.new);
-	free(variables.arr);
-	free(input);
+	execute_commands(var.commands, env, var.new);
+	close_free_2(var, input);
 }
 
 void	shlvl_edit(t_list **env, int op)
@@ -399,7 +384,6 @@ int main (int ac, char **av, char **envp)
 	
 	char    input;
 	t_list *env;
-	// struct termios term;
 
 	if (ac > 1)
 	{
@@ -412,10 +396,6 @@ int main (int ac, char **av, char **envp)
 	shlvl_edit(&env, 0);
 	while (1)
 	{
-		// tcgetattr(0, &term);
-		// term.c_lflag &= ~(ECHOCTL);
-		// tcsetattr(0, TCSANOW, &term);
-		// signal(SIGINT, handler);
 		get_input(&input, &env);
 	}
 }

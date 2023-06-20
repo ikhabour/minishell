@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/16 00:27:03 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/18 20:27:56 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/20 05:46:50 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,7 @@ int	full_length(char *input)
 			if (space_after(input, i) == 0)
 			{
 				count++;
-				// flag = 1;
 			}
-			// if ((input[i] == '>' && input[i + 1] == '>') || (input[i] == '<' && input[i + 1] == '<'))
-			// 	count--;
 		}
 		count++;
 		i++;
@@ -158,33 +155,33 @@ char	*add_spaces(char *input)
 	return (input);
 }
 
-char	*skip_spaces(char *input)
-{
-	int		i;
-	int		count;
-	// char	*tmp = NULL;
+// char	*skip_spaces(char *input)
+// {
+// 	int		i;
+// 	int		count;
+// 	// char	*tmp = NULL;
 
-	i = 0;
-	count = 0;
-	while (input[i] == ' ' || input[i] == '\t')
-		i++;
-	int j = i;
-	while (input[i])
-	{
-		count++;
-		i++;
-	}
-	while ((i > 0) && (input[i - 1] == ' ' || input[i - 1] == '\t'))
-	{
-		count--;
-		i--;
-	}
-	i = 0;
-	while (j < count)
-	{
-		// tmp[i];
-		j++;
-	}
-	// input[i] = '\0';
-	return (input);
-}
+// 	i = 0;
+// 	count = 0;
+// 	while (input[i] == ' ' || input[i] == '\t')
+// 		i++;
+// 	int j = i;
+// 	while (input[i])
+// 	{
+// 		count++;
+// 		i++;
+// 	}
+// 	while ((i > 0) && (input[i - 1] == ' ' || input[i - 1] == '\t'))
+// 	{
+// 		count--;
+// 		i--;
+// 	}
+// 	i = 0;
+// 	while (j < count)
+// 	{
+// 		// tmp[i];
+// 		j++;
+// 	}
+// 	// input[i] = '\0';
+// 	return (input);
+// }

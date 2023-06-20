@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 09:36:19 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/11 23:37:03 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/20 03:25:42 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,23 @@ int	check_outside(int count)
 {
 	if (count % 2 == 0)
 		return (1);
+	return (0);
+}
+
+int	count_checker(int s_count, int d_count)
+{
+	if (s_count % 2 != 0)
+	{
+		write(2, "syntax error, unclosed quotes\n", 31);
+		exit_s = 1;
+		return (1);
+	}
+	if (d_count % 2 != 0)
+	{
+		write(2, "syntax error, unclosed quotes\n", 31);
+		exit_s = 1;
+		return (1);
+	}
 	return (0);
 }
 
@@ -42,17 +59,7 @@ int	check_quotes(char *input)
 		}
 		i++;
 	}
-	if (s_count % 2 != 0)
-	{
-		write(2, "syntax error, unclosed quotes\n", 31);
-		exit_s = 1;
+	if (count_checker(s_count, d_count))
 		return (1);
-	}
-	if (d_count % 2 != 0)
-	{
-		write(2, "syntax error, unclosed quotes\n", 31);
-		exit_s = 1;
-		return (1);
-	}
 	return (0);
 }

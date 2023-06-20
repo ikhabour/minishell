@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/19 18:48:39 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/20 05:46:46 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,20 @@ typedef struct s_cmds
 
 typedef struct s_variables
 {
-	int		delimiter;
-	char	**cmd_array;
-	char	**new;
-	int		*arr;
+	int			delimiter;
+	char		**cmd_array;
+	char		**new;
+	int			*arr;
+	t_list		*commands;
+	t_list 		*tmp;
+	int			arg_counter;
+	t_cmds		*node;
+	t_list		*file;
+	t_filetype	*file_node;
 }			t_vars;
+
+
+
 
 typedef enum t_enum
 {
@@ -117,7 +126,7 @@ int					ft_strcmp(char *s1, char *s2);
 int					check_pipe(char *input);
 int					check_redirec_op(char *input);
 int					check_line(char *input);
-char				*skip_spaces(char *input);
+// char				*skip_spaces(char *input);
 int					check_quotes(char *input);
 int					check_outside(int count);
 int					op_order(int *token);
@@ -143,7 +152,31 @@ int					ft_isalnum(int i);
 int					var_length(char *str);
 char				*env_value(char *str, t_list *env);
 int					ft_ischar(int i);
-char	*ft_strtrim(char *s1, char *set);
+char				*ft_strtrim(char *s1, char *set);
+void				start(char *input);
+void				mid(char *input);
+int					end(char *input, int i);
+int					op_start(char *input, int i);
+int					op_end(char *input, int i);
+void				d_quoted(char *str, char *cmd, int *i, int *j);
+void				s_quoted(char *str, char *cmd, int *i, int *j);
+int					limiter_value(int *i, char *cmd);
+int					start_index(char *cmd, int *i);
+char				*expand_processor(char *cmd, t_list *env);
+int					ft_isalnum(int i);
+int					var_length(char *str);
+char				*env_value(char *str, t_list *env);
+int					ft_ischar(int i);
+char				*cmd_expand(char *cmd, int limiter, char *lineup, char *full_str);
+void				split_print(char **input);
+void				print_list(t_list *list);
+void				array_printer(int *input);
+void				node_printer(t_list *file_node);
+void				fill_in_out(char **cmd_array, int i, t_filetype *file_node);
+void				fill_out_file(char **cmd_array, int i, t_filetype *file_node);
+void				fill_app_file(char **cmd_array, int i, t_filetype *file_node);
+void				fill_in_file(char **cmd_array, int i, t_filetype *file_node);
+t_filetype	*fill_file(char **cmd_array, int *arr, int i, int *delimiter);
 
 //	################		execution prototypes 		##################	//
 

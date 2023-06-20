@@ -6,7 +6,7 @@
 /*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 01:09:29 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/06 17:31:03 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/20 03:35:48 by bhazzout         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 	unsigned char	*dest1;
 	unsigned char	*src1;
 	size_t			i;
-	
+
 	dest1 = (unsigned char *)dest;
 	src1 = (unsigned char *)src;
 	if (src1 == dest)
