@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:26 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/20 05:46:01 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:05:35 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	exit_s = 0;
-int return_val = 0;
+t_sig sigs;
 
 char	*fill_line(char *input)//get the line each of it's word separated by one space
 {
@@ -195,22 +194,26 @@ int	valid_command(char **new)
 	return (0);
 }
 
-char	*signal_handler(char *input)
+char	*signal_handler(char *input, t_list *commands)
 {
 	struct termios	term;
 	struct termios	original;
+	(void)commands;
 
 	sig_handler();
+	signal(SIGQUIT, sig_quit);
 	tcgetattr(0, &term);
 	tcgetattr(0, &original);
 	term.c_lflag &= ~(ECHOCTL);
 	tcsetattr(0, TCSANOW, &term);
+	sigs.readline = 1;
 	input = readline("minishell> ");
-	tcsetattr(0, TCSANOW, &original);
+	sigs.readline = 0;
+	// tcsetattr(0, TCSANOW, &original);
 	if (!input || ft_strcmp(input, "") == 0)
 	{
 		if (!input)
-			exit (0);
+			(write(2, "exit\n", 6), exit(0));
 		free(input);
 		return (NULL);
 	}
@@ -239,7 +242,7 @@ int	order_checker(int *arr, char *input, char **cmd_array)
 {
 	if (op_order(arr))
 	{
-		exit_s = 258;
+		sigs.exit_s = 258;
 		free(arr);
 		free(input);
 		free_2d(cmd_array);
@@ -289,7 +292,7 @@ int	executer(t_vars var, char *input, t_list **env)
 		my_allfree(input, var);
 		return (1);
 	}
-	while (var.tmp)
+	while (var.tmp && sigs.execc)
 	{
 		if (is_heredoc(var.tmp))
 			here_docc(var.tmp, *env);
@@ -323,7 +326,8 @@ void	get_input(char *input, t_list **env)
 	t_vars	var;
 
 	var.delimiter = 0;
-	input = signal_handler(input);
+	input = signal_handler(input, var.commands);
+	add_history(input);
 	if (input_checker(input))
 		return ;
 	input = input_get(input);
@@ -339,11 +343,14 @@ void	get_input(char *input, t_list **env)
 		return ;
 	var.commands = list_cmds(var.new, var.arr, &(var.delimiter));
 	var.tmp = var.commands;
-	add_history(input);
-	if (executer(var, input, env))
-		return ;
-	execute_commands(var.commands, env, var.new);
-	close_free_2(var, input);
+	sigs.execc = 1;
+	if (!executer(var, input, env))
+	{
+		execute_commands(var.commands, env, var.new);
+		close_free_2(var, input);
+	}
+	if (sigs.execc == 0)
+		sigs.exit_s = 1;
 }
 
 void	shlvl_edit(t_list **env, int op)

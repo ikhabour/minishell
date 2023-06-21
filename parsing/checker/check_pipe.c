@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_pipe.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 09:13:39 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/20 03:33:00 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:04:59 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,14 @@ void	start(char *input)
 {
 	(void) input;
 	write (2, "syntax error near unexpected token `|'\n", 40);
-	exit_s = 1;
+	sigs.exit_s = 1;
 }
 
 void	mid(char *input)
 {
 	(void) input;
 	write (2, "syntax error near unexpected token `||'\n", 40);
-	exit_s = 127;
+	sigs.exit_s = 127;
 }
 
 int	end(char *input, int i)
@@ -31,7 +31,7 @@ int	end(char *input, int i)
 	if (input[i] == '|')
 	{
 		write(2, "syntax error: unexpected end of file\n", 38);
-		exit_s = 1;
+		sigs.exit_s = 1;
 		return (1);
 	}
 	return (0);

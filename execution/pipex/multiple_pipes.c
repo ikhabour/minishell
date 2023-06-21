@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 15:40:24 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/14 16:45:37 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:04:59 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,6 +314,7 @@ void	multiple_pipes(t_list *commands, t_list **env)
 		if (i < pipes && pipe(fd[i]) < 0)
 			return ;
 		pids[i] = fork();
+		sigs.process = 1;
 		if (pids[i] == 0)
 		{
 			if (i == 0)
@@ -341,7 +342,8 @@ void	multiple_pipes(t_list *commands, t_list **env)
 	j = 0;
 	while (j < pipes + 1)
 		waitpid(pids[j++], &status, 0);
-	exit_s = WEXITSTATUS(status);
+	sigs.process = 0;
+	sigs.exit_s = WEXITSTATUS(status);
 	free(pids);
 	free_int_arr(fd, pipes);
 }

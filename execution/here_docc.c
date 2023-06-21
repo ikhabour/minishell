@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   here_docc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 15:02:45 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/19 23:26:58 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:04:59 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
 
 void	close_files(t_list *commands)
 {
@@ -132,7 +131,7 @@ static char	*ft_expand_exit(char *cmd, t_list *env, int *i)
 
 	limiter = *(i) + 2;
 	str = ft_substr(cmd, limiter, 1000);
-	value = ft_itoa(exit_s);
+	value = ft_itoa(sigs.exit_s);
 	lineup = ft_substr(cmd, 0, *i);
 	full_str = ft_strjoin(lineup, value);
 	free(lineup);
@@ -185,7 +184,6 @@ void	display_prompt(t_list *files, int fd, t_list *env)
 		input = readline("> ");
 		if (!input || !ft_strcmp(input, ptr->file_name))
 			break ;
-		printf("has quotes : %d\n", ptr->has_quotes);
 		if (ptr->has_quotes == 1)
 			joined = ft_strjoinn(input, "\n");
 		else
@@ -244,8 +242,9 @@ void	here_docc(t_list *commands, t_list *env)
 	i = 0;
 	if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
 		p = (t_filetype *)tmp->content;
-		while (tmp && i < docs)
+		while (sigs.execc && tmp && i < docs)
 		{
 			if (!ft_strcmp(p->type, "DELIMITER"))
 			{

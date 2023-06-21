@@ -3,21 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/20 05:46:46 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:05:08 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-// int	EXIT_S = 0;
-// #define EXIT_S 0
+// int	sigs.exit_s = 0;
+// #define sigs.exit_s 0
 
-extern int			exit_s;
-extern int			return_val;
+typedef struct s_sig
+{
+	int exit_s;
+	int execc;
+	int readline;
+	int process;
+}	t_sig;
+
+extern t_sig sigs;
 
 # include <fcntl.h>
 # include <readline/readline.h>
@@ -63,6 +70,7 @@ typedef struct s_list1
 
 typedef struct s_cmds
 {
+
 	char			*cmd_name;
 	char			**option;
 	t_list			*files;
@@ -142,7 +150,7 @@ void				print_list(t_list *list);
 t_list				*list_cmds(char **cmd_array, int *arr, int *delimiter);
 int					n_calculator(int num);
 char				*ft_itoa(int num);
-void				sig_handler();
+void				sig_handler(void);
 void				handler(int sig);
 int					check_delimiter(char *cmd);
 // void				rl_replace_line(const char *text, int clear_undo);
@@ -177,6 +185,7 @@ void				fill_out_file(char **cmd_array, int i, t_filetype *file_node);
 void				fill_app_file(char **cmd_array, int i, t_filetype *file_node);
 void				fill_in_file(char **cmd_array, int i, t_filetype *file_node);
 t_filetype	*fill_file(char **cmd_array, int *arr, int i, int *delimiter);
+void	sig_quit(int sig);
 
 //	################		execution prototypes 		##################	//
 

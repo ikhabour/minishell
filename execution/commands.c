@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/16 18:54:49 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:04:59 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ int	open_file_type(t_filetype *files)
 		write(2, "Minishell : ", 12);
 		write(2, files->file_name, ft_strlenn(files->file_name));
 		write(2, ": Permission denied\n", 20);
-		exit_s = 1;
+		sigs.exit_s = 1;
 		return (0);
 	}
 	if (!ft_strcmp(files->type, "INPUT"))
@@ -138,11 +138,15 @@ void	dup_fds(t_cmds *ptr)
 {
 	t_filetype *files;
 	t_list *tmp;
+	int in;
+	int out;
 
 	if (!ptr->files)
 		return ;
 	files = (t_filetype *)ptr->files->content;
 	tmp = ptr->files;
+	in = -1;
+	out = -1;
 	while (tmp)
 	{
 		if (files->fd == -1)
@@ -151,15 +155,30 @@ void	dup_fds(t_cmds *ptr)
 			return ;
 		}
 		if (!ft_strcmp(files->type, "OUTPUT") || !ft_strcmp(files->type, "APPEND"))
-			dup2(files->fd, 1);
+		{
+			out = files->fd;
+			// printf("out : %d\n", out);
+			// dup2(files->fd, 1);
+		}
 		else if(!ft_strcmp(files->type, "INPUT") || !ft_strcmp(files->type, "DELIMITER"))
 		{
-			printf("type : %s\n", files->type);
-			dup2(files->fd, 0);
+			in = files->fd;
+			// printf("in : %d\n", in);
+			// dup2(files->fd, 0);
 		}
 		tmp = tmp->next;
 		if (tmp)
 			files = (t_filetype *)tmp->content;
+	}
+	if (in != -1)
+	{
+		// printf("dkhel======in\n");
+		dup2(in, 0);
+	}
+	if (out != -1)
+	{
+		// printf("dkhel======out\n");
+		dup2(out, 1);
 	}
 }
 
@@ -189,6 +208,7 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 	ptr = (t_cmds *)cmd->content;
 	envp = env_to_array(env);
 	pid = fork();
+	sigs.process = 1;
 	if (has_redirection(args))
 	{
 		free_2d(args);
@@ -226,7 +246,8 @@ int	execute_commands(t_list *cmd, t_list **env, char **args)
 	else
 	{
 		waitpid(pid, &i, 0);
-		exit_s = WEXITSTATUS(i);
+		sigs.exit_s = WEXITSTATUS(i);
+		sigs.process = 0;
 	}
 	free_2d(envp);
 	if (args)

@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/18 16:25:09 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:07:02 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,12 +147,12 @@ void	execute_env(t_list **env, t_list *cmd)
 				printf("%s\n", tmp->content);
 			tmp = tmp->next;
 		}
-		(dup2(fd, 1), close(fd), exit_s = 0);
+		(dup2(fd, 1), close(fd), sigs.exit_s = 0);
 		return ;
 	}
 	(printf("env: %s: No such file or directory\n", ptr->option[0]), dup2(fd, 1));
 	close(fd);
-	exit_s = 127;
+	sigs.exit_s = 127;
 }
 
 int	append_value(char *argument)
@@ -306,7 +306,7 @@ void	execute_export(t_list *cmd, t_list **env)
 		open_files(ptr);
 		dup_fds(ptr);
 	}
-	exit_s = 0;
+	sigs.exit_s = 0;
 	if (!ptr->option[0])
 	{
 		(print_export(env), dup2(fd, 1), close(fd));
@@ -319,7 +319,7 @@ void	execute_export(t_list *cmd, t_list **env)
 			write(2, "Minishell : export: `", 21);
 			write(2, ptr->option[var.j], ft_strlenn(ptr->option[var.j]));
 			write(2, "': not a valid identifier\n", 26);
-			(exit_s = 1, var.j++);
+			(sigs.exit_s = 1, var.j++);
 			continue ;
 		}
 		if (append_value(ptr->option[var.j]))
@@ -394,7 +394,7 @@ void	execute_unset(t_list *cmd, t_list **env)
 		open_files(ptr);
 		dup_fds(ptr);
 	}
-	exit_s = 0;
+	sigs.exit_s = 0;
 	if (!ptr->option)
 	{
 		(dup2(fd, 1), close(fd));
@@ -407,7 +407,7 @@ void	execute_unset(t_list *cmd, t_list **env)
 			write(2, "Minishell : unset: `", 20);
 			write(2, ptr->option[i], ft_strlenn(ptr->option[i]));
 			write(2, "': not a valid identifier\n", 26);
-			(exit_s = 1, i++);
+			(sigs.exit_s = 1, i++);
 			continue ;
 		}
 		curr = *env;
@@ -437,10 +437,16 @@ void	execute_unset(t_list *cmd, t_list **env)
 	(dup2(fd, 1), close(fd));
 }
 
+void	write_exit(void)
+{
+	if (sigs.process == 0)
+		write(2, "exit\n", 6);
+}
+
 void	execute_exit(t_list *cmd, t_list **env)
 {
 	t_cmds	*ptr;
-	int		exit_status;
+	int	exit_status;
 	int i;
 	int fd;
 
@@ -454,6 +460,7 @@ void	execute_exit(t_list *cmd, t_list **env)
 	}
 	if (!ptr->option[0])
 	{
+		write_exit();
 		shlvl_edit(env, 1);
 		exit(0);
 	}
@@ -461,31 +468,35 @@ void	execute_exit(t_list *cmd, t_list **env)
 		i++;
 	if (i > 1)
 	{
+		write(2, "exit\n", 6);
 		(write(2, "exit: too many arguments\n", 25), dup2(fd, 1));
-		return_val = 1;
+		sigs.exit_s = 1;
 		return ;
 	}
 	if (!is_digit(ptr->option[0]))
-	{
-		write(2, "exit: ", 6);
+	{	
+		write_exit();
 		shlvl_edit(env, 1);
 		msg_exit(ptr->option[0], ": numeric argument required\n", 255);
 	}
 	exit_status = ft_atoi(ptr->option[0]);
 	if (exit_status < 0)
 	{
+		write_exit();
 		exit_status += 255;
 		shlvl_edit(env, 1);
 		exit(exit_status);
 	}
 	else if (exit_status > 255)
 	{
+		write_exit();
 		exit_status -= 256;
 		shlvl_edit(env, 1);
 		exit(exit_status);
 	}
 	else
 	{
+		write_exit();
 		shlvl_edit(env, 1);
 		exit(exit_status);
 	}
@@ -547,7 +558,7 @@ void	execute_cd(t_list *cmd, t_list **env)
 		open_files(ptr);
 		dup_fds(ptr);
 	}
-	exit_s = 0;
+	sigs.exit_s = 0;
 	if (!ptr->option[0])
 	{
 		while (tmp && ft_strncmpp(tmp->content, "HOME=", 5))
@@ -555,7 +566,7 @@ void	execute_cd(t_list *cmd, t_list **env)
 		if (!tmp)
 		{
 			(write(2, "cd: HOME not set\n", 17), dup2(fd, 1));
-			(exit_s = 1, close(fd));
+			(sigs.exit_s = 1, close(fd));
 			return ;
 		}
 		(chdir(tmp->content + 5), dup2(fd, 1));
@@ -565,13 +576,13 @@ void	execute_cd(t_list *cmd, t_list **env)
 	if (access(ptr->option[0], F_OK))
 	{
 		(write(2, "Minishell: cd: No such file or directory\n", 41), dup2(fd, 1));
-		(exit_s = 1, close(fd));
+		(sigs.exit_s = 1, close(fd));
 		return ;
 	}
 	else if (access(ptr->option[0], X_OK))
 	{
 		(write(2, "Minishell: cd: Permission Denied!\n", 21), dup2(fd, 1));
-		(exit_s = 1, close(fd));
+		(sigs.exit_s = 1, close(fd));
 		return ;
 	}
 	(chdir(ptr->option[0]), dup2(fd, 1));
@@ -597,7 +608,7 @@ int	execute_builtins(t_list *cmd, t_list **env)
 			open_files(tmp);
 			dup_fds(tmp);
 		}
-		(exit_s = 0, free(tmp->cmd_name));
+		(sigs.exit_s = 0, free(tmp->cmd_name));
 		tmp->cmd_name = getcwd(NULL, 0);
 		if (!tmp->cmd_name)
 		{
@@ -610,7 +621,7 @@ int	execute_builtins(t_list *cmd, t_list **env)
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "echo"))
 	{
-		(execute_echo(cmd), close(fd), exit_s = 0);
+		(execute_echo(cmd), close(fd), sigs.exit_s = 0);
 		return (1);
 	}
 	else if (!ft_strcmpp(tmp->cmd_name, "cd"))

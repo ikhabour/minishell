@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander_utils_1.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bhazzout <bhazzout@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/20 04:34:54 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/20 04:46:28 by bhazzout         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:04:59 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static char	*ft_expand_exit(char *cmd, int *i)
 
 	limiter = *(i) + 2;
 	str = ft_substr(cmd, limiter, 1000);
-	value = ft_itoa(exit_s);
+	value = ft_itoa(sigs.exit_s);
 	lineup = ft_substr(cmd, 0, *i);
 	full_str = ft_strjoin(lineup, value);
 	free(lineup);

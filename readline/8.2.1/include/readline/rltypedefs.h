@@ -19,11 +19,11 @@
    along with Readline.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef _RL_TYPEDEFS_H_
 #define _RL_TYPEDEFS_H_
 
 #include <stdio.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

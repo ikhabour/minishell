@@ -1,4 +1,4 @@
-prefix=/goinfre/bhazzout/homebrew/Cellar/readline/8.2.1
+prefix=/goinfre/ikhabour/homebrew/Cellar/readline/8.2.1
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
