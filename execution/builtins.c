@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/22 01:13:37 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/22 01:35:25 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,78 +309,103 @@ void	identifier_error(char *option)
 	sigs.exit_s = 1;
 }
 
+void	export_helper(t_bvars var, t_cmds *ptr, t_list *tmp, t_list **env)
+{
+	var.i = 0;
+	while (ptr->option[var.j][var.i])
+		var.i++;
+	tmp = *env;
+	while (tmp && ft_strncmpp(tmp->content, ptr->option[var.j], var.i))
+		tmp = tmp->next;
+	if (!tmp)
+		ft_lstadd_backk(env, ft_lstneww(ft_strdup(ptr->option[var.j])));
+}
+
+void	export_helper2(t_bvars var, t_list *tmp, t_cmds *ptr, t_list **env)
+{
+	char	*temp;
+
+	var.i = 0;
+	tmp = *env;
+	while (ptr->option[var.j][var.i] != '=')
+		var.i++;
+	while (tmp && ft_strncmpp(tmp->content, ptr->option[var.j], var.i - 1))
+		tmp = tmp->next;
+	if (!tmp)
+		ft_lstadd_backk(env, ft_lstneww(remove_plus(ptr->option[var.j])));
+	else
+	{
+		temp = tmp->content;
+		if (!change_value(tmp->content))
+		{
+			tmp->content = ft_strjoinn(temp, ptr->option[var.j] + (var.i));
+			free(temp);
+		}
+		else
+		{
+			tmp->content = ft_strjoinn(temp, ptr->option[var.j] + (var.i + 1));
+			free(temp);
+		}
+	}
+}
+
+void	init_bvars(t_bvars *var)
+{
+	var->i = 0;
+	var->j = 0;
+	var->n = 0;
+}
+
+void	export_helper3(t_bvars var, t_list **tmp, t_list **env, t_cmds *ptr)
+{
+	var.i = 0;
+	*tmp = *env;
+	while (ptr->option[var.j][var.i] != '=')
+		var.i++;
+	while (*tmp && ft_strncmpp((*tmp)->content, ptr->option[var.j], var.i))
+		*tmp = (*tmp)->next;
+}
+
+int	export_and_files(t_cmds *ptr, t_list **env, int fd)
+{
+	if (ptr->files)
+		(open_files(ptr), dup_fds(ptr));
+	sigs.exit_s = 0;
+	if (!ptr->option[0])
+	{
+		(print_export(env), dup2(fd, 1));
+		close(fd);
+		return (1);
+	}
+	return (0);
+}
+
 void	execute_export(t_list *cmd, t_list **env)
 {
 	t_cmds	*ptr;
 	t_bvars	var;
 	t_list	*tmp;
-	char	*temp;
 	int		fd;
 
 	ptr = (t_cmds *)cmd->content;
-	var.i = 0;
-	var.j = 0;
-	var.n = 0;
+	init_bvars(&var);
 	tmp = *env;
 	fd = dup(1);
-	if (ptr->files)
-	{
-		open_files(ptr);
-		dup_fds(ptr);
-	}
-	sigs.exit_s = 0;
-	if (!ptr->option[0])
-	{
-		(print_export(env), dup2(fd, 1), close(fd));
+	if (export_and_files(ptr, env, fd))
 		return ;
-	}
 	while (ptr->option[var.j])
 	{
 		if (!valid_identifier(ptr->option[var.j]))
 		{
-			write(2, "Minishell : export: `", 21);
-			write(2, ptr->option[var.j], ft_strlenn(ptr->option[var.j]));
-			write(2, "': not a valid identifier\n", 26);
-			(sigs.exit_s = 1, var.j++);
+			identifier_error(ptr->option[var.j]);
+			var.j++;
 			continue ;
 		}
 		if (append_value(ptr->option[var.j]))
-		{
-			var.i = 0;
-			tmp = *env;
-			while (ptr->option[var.j][var.i] != '=')
-				var.i++;
-			while (tmp && ft_strncmpp(tmp->content, ptr->option[var.j], var.i
-					- 1))
-				tmp = tmp->next;
-			if (!tmp)
-				ft_lstadd_backk(env,
-					ft_lstneww(remove_plus(ptr->option[var.j])));
-			else
-			{
-				temp = tmp->content;
-				if (!change_value(tmp->content))
-				{
-					tmp->content = ft_strjoinn(temp, ptr->option[var.j]
-						+ (var.i));
-					free(temp);
-				}
-				else
-				{
-					tmp->content = ft_strjoinn(temp, ptr->option[var.j] + (var.i
-							+ 1));
-					free(temp);
-				}
-			}
-		}
+			export_helper2(var, tmp, ptr, env);
 		else if (change_value(ptr->option[var.j]))
 		{
-			var.i = 0;
-			tmp = *env;
-			while (ptr->option[var.j][var.i] != '=')
-				var.i++;
-			while (tmp && ft_strncmpp(tmp->content, ptr->option[var.j], var.i))
-				tmp = tmp->next;
+			export_helper3(var, &tmp, env, ptr);
 			if (!tmp)
 			{
 				ft_lstadd_backk(env, ft_lstneww(ptr->option[var.j]));
@@ -389,16 +414,7 @@ void	execute_export(t_list *cmd, t_list **env)
 			tmp->content = ft_strdup(ptr->option[var.j]);
 		}
 		else
-		{
-			var.i = 0;
-			while (ptr->option[var.j][var.i])
-				var.i++;
-			tmp = *env;
-			while (tmp && ft_strncmpp(tmp->content, ptr->option[var.j], var.i))
-				tmp = tmp->next;
-			if (!tmp)
-				ft_lstadd_backk(env, ft_lstneww(ft_strdup(ptr->option[var.j])));
-		}
+			export_helper(var, ptr, tmp, env);
 		var.j++;
 	}
 	(dup2(fd, 1), close(fd));
