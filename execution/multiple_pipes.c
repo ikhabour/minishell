@@ -6,15 +6,15 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 15:40:24 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/21 22:04:59 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/22 00:24:16 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "../minishell.h"
 
 int	count_pipes(t_list *commands)
 {
-	int pipe;
+	int	pipe;
 
 	pipe = -1;
 	while (commands)
@@ -27,10 +27,10 @@ int	count_pipes(t_list *commands)
 
 char	**make_argv(t_list *commands)
 {
-	char **argv;
-	t_cmds *ptr;
-	int i;
-	int j;
+	char	**argv;
+	t_cmds	*ptr;
+	int		i;
+	int		j;
 
 	ptr = (t_cmds *)commands->content;
 	i = 0;
@@ -57,8 +57,8 @@ char	**make_argv(t_list *commands)
 
 int	input_file(t_cmds *ptr)
 {
-	t_list *tmp;
-	t_filetype *files;
+	t_list		*tmp;
+	t_filetype	*files;
 
 	if (!ptr->files)
 		return (0);
@@ -66,7 +66,8 @@ int	input_file(t_cmds *ptr)
 	files = (t_filetype *)tmp->content;
 	while (tmp)
 	{
-		if (!ft_strcmp(files->type, "INPUT") || !ft_strcmp(files->type, "DELIMITER"))
+		if (!ft_strcmp(files->type, "INPUT") || !ft_strcmp(files->type,
+				"DELIMITER"))
 			return (1);
 		tmp = tmp->next;
 		if (tmp)
@@ -77,8 +78,8 @@ int	input_file(t_cmds *ptr)
 
 void	dup_input_file(t_cmds *ptr)
 {
-	t_filetype *files;
-	t_list *tmp;
+	t_filetype	*files;
+	t_list		*tmp;
 
 	if (!ptr->files)
 		return ;
@@ -93,7 +94,8 @@ void	dup_input_file(t_cmds *ptr)
 			write(2, ": No such file or directory\n", 28);
 			return ;
 		}
-		if (!ft_strcmp(files->type, "INPUT") || !ft_strcmp(files->type, "DELIMITER"))
+		if (!ft_strcmp(files->type, "INPUT") || !ft_strcmp(files->type,
+				"DELIMITER"))
 			dup2(files->fd, 0);
 		tmp = tmp->next;
 		if (tmp)
@@ -103,8 +105,8 @@ void	dup_input_file(t_cmds *ptr)
 
 int	output_file(t_cmds *ptr)
 {
-	t_list *tmp;
-	t_filetype *files;
+	t_list		*tmp;
+	t_filetype	*files;
 
 	if (!ptr->files)
 		return (0);
@@ -112,7 +114,8 @@ int	output_file(t_cmds *ptr)
 	files = (t_filetype *)tmp->content;
 	while (tmp)
 	{
-		if (!ft_strcmp(files->type, "OUTPUT") || !ft_strcmp(files->type, "APPEND"))
+		if (!ft_strcmp(files->type, "OUTPUT") || !ft_strcmp(files->type,
+				"APPEND"))
 			return (1);
 		tmp = tmp->next;
 		if (tmp)
@@ -123,8 +126,8 @@ int	output_file(t_cmds *ptr)
 
 void	dup_output_file(t_cmds *ptr)
 {
-	t_filetype *files;
-	t_list *tmp;
+	t_filetype	*files;
+	t_list		*tmp;
 
 	if (!ptr->files)
 		return ;
@@ -132,7 +135,8 @@ void	dup_output_file(t_cmds *ptr)
 	files = (t_filetype *)tmp->content;
 	while (tmp)
 	{
-		if (!ft_strcmp(files->type, "OUTPUT") || !ft_strcmp(files->type, "APPEND"))
+		if (!ft_strcmp(files->type, "OUTPUT") || !ft_strcmp(files->type,
+				"APPEND"))
 			dup2(files->fd, 1);
 		tmp = tmp->next;
 		if (tmp)
@@ -142,12 +146,13 @@ void	dup_output_file(t_cmds *ptr)
 
 void	first_command(t_list *commands, t_list **env, int *fd)
 {
-	char **argv;
-	char **paths;
-	char *f_path;
-	char **envp;
-	int i;
-	t_cmds *ptr;
+	char	**argv;
+	char	**paths;
+	char	*f_path;
+	char	**envp;
+	int		i;
+	t_cmds	*ptr;
+
 	i = 0;
 	ptr = (t_cmds *)commands->content;
 	envp = env_to_array(env);
@@ -185,14 +190,14 @@ void	first_command(t_list *commands, t_list **env, int *fd)
 
 void	last_command(t_list *commands, t_list **env, int *fd)
 {
-	char **argv;
-	char **paths;
-	char *f_path;
-	char **envp;
-	int i;
-	t_cmds *ptr;
-	i = 0;
+	char	**argv;
+	char	**paths;
+	char	*f_path;
+	char	**envp;
+	int		i;
+	t_cmds	*ptr;
 
+	i = 0;
 	ptr = (t_cmds *)commands->content;
 	envp = env_to_array(env);
 	argv = make_argv(commands);
@@ -226,20 +231,20 @@ void	last_command(t_list *commands, t_list **env, int *fd)
 	execve(paths[i], argv, envp);
 	msg_exit(ptr->cmd_name, ": command not found\n", 127);
 }
-	
+
 void	middle_command(t_list *commands, t_list **env, int *fdin, int *fdout)
 {
-	char **argv;
-	char **paths;
-	char *f_path;
-	char **envp;
-	int i;
-	t_cmds *ptr;
-	i = 0;
+	char	**argv;
+	char	**paths;
+	char	*f_path;
+	char	**envp;
+	int		i;
+	t_cmds	*ptr;
 
+	i = 0;
 	ptr = (t_cmds *)commands->content;
 	envp = env_to_array(env);
-	argv = make_argv(commands);	
+	argv = make_argv(commands);
 	if (!open_files(ptr))
 		exit(1);
 	if (output_file(ptr))
@@ -272,11 +277,11 @@ void	middle_command(t_list *commands, t_list **env, int *fdin, int *fdout)
 	}
 	execve(paths[i], argv, envp);
 	msg_exit(ptr->cmd_name, ": command not fosund\n", 127);
-}	
+}
 
 void	free_int_arr(int **arr, int size)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < size)
@@ -299,7 +304,7 @@ void	multiple_pipes(t_list *commands, t_list **env)
 	i = 0;
 	tmp = commands;
 	pipes = count_pipes(commands);
-	fd = malloc(sizeof(int *) *(pipes + 1));
+	fd = malloc(sizeof(int *) * (pipes + 1));
 	pids = malloc(sizeof(int) * (pipes + 1));
 	while (i < pipes)
 	{

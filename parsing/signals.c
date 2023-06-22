@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 23:06:44 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/21 22:04:59 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:41:19 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@ void	handler(int sig)
 {
 	(void) sig;
 	sigs.exit_s = 130;
+	printf("sigs process : %d\n", sigs.process);
+	printf("sigs exec : %d\n", sigs.execc);
+
 	write (1, "\n", 1);
 	if (sigs.readline == 1)
 	{
