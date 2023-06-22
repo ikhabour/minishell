@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 16:31:49 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/22 01:35:25 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/22 01:52:37 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,22 +34,52 @@ int	check_echo_option(char *str, t_bvars *var)
 	return (0);
 }
 
+void	init_bvars(t_bvars *var)
+{
+	var->i = 0;
+	var->j = 0;
+	var->n = 0;
+}
+
+void	echo_helper(t_bvars var, t_cmds *tmp, int out_fd)
+{
+	while (var.i < var.n)
+		var.i++;
+	while (tmp->option[var.i])
+	{
+		write(1, tmp->option[var.i], ft_strlenn(tmp->option[var.i]));
+		var.i++;
+		if (tmp->option[var.i])
+			write(1, " ", 1);
+	}
+	(dup2(out_fd, 1), close(out_fd));
+}
+
+void	echo_helper2(t_bvars var, t_cmds *tmp)
+{
+	while (var.i < var.n)
+		var.i++;
+	while (tmp->option[var.i])
+	{
+		write(1, tmp->option[var.i], ft_strlenn(tmp->option[var.i]));
+		var.i++;
+		if (tmp->option[var.i])
+			write(1, " ", 1);
+	}
+	write(1, "\n", 1);
+}
+
 void	execute_echo(t_list *cmd)
 {
 	t_bvars	var;
 	t_cmds	*tmp;
 	int		out_fd;
 
-	var.n = 0;
-	var.j = 0;
+	init_bvars(&var);
 	tmp = (t_cmds *)cmd->content;
-	var.i = 0;
 	out_fd = dup(1);
 	if (tmp->files)
-	{
-		open_files(tmp);
-		dup_fds(tmp);
-	}
+		(open_files(tmp), dup_fds(tmp));
 	if (!tmp->option[0])
 	{
 		write(1, "\n", 1);
@@ -60,31 +90,11 @@ void	execute_echo(t_list *cmd)
 		var.j++;
 	if (var.n)
 	{
-		while (var.i < var.n)
-			var.i++;
-		while (tmp->option[var.i])
-		{
-			write(1, tmp->option[var.i], ft_strlenn(tmp->option[var.i]));
-			var.i++;
-			if (tmp->option[var.i])
-				write(1, " ", 1);
-		}
-		(dup2(out_fd, 1), close(out_fd));
+		echo_helper(var, tmp, out_fd);
 		return ;
 	}
 	else
-	{
-		while (var.i < var.n)
-			var.i++;
-		while (tmp->option[var.i])
-		{
-			write(1, tmp->option[var.i], ft_strlenn(tmp->option[var.i]));
-			var.i++;
-			if (tmp->option[var.i])
-				write(1, " ", 1);
-		}
-		write(1, "\n", 1);
-	}
+		echo_helper2(var, tmp);
 	(dup2(out_fd, 1), close(out_fd));
 }
 
@@ -349,13 +359,6 @@ void	export_helper2(t_bvars var, t_list *tmp, t_cmds *ptr, t_list **env)
 	}
 }
 
-void	init_bvars(t_bvars *var)
-{
-	var->i = 0;
-	var->j = 0;
-	var->n = 0;
-}
-
 void	export_helper3(t_bvars var, t_list **tmp, t_list **env, t_cmds *ptr)
 {
 	var.i = 0;
@@ -380,19 +383,8 @@ int	export_and_files(t_cmds *ptr, t_list **env, int fd)
 	return (0);
 }
 
-void	execute_export(t_list *cmd, t_list **env)
+void	export_while(t_cmds *ptr, t_bvars var, t_list *tmp, t_list **env)
 {
-	t_cmds	*ptr;
-	t_bvars	var;
-	t_list	*tmp;
-	int		fd;
-
-	ptr = (t_cmds *)cmd->content;
-	init_bvars(&var);
-	tmp = *env;
-	fd = dup(1);
-	if (export_and_files(ptr, env, fd))
-		return ;
 	while (ptr->option[var.j])
 	{
 		if (!valid_identifier(ptr->option[var.j]))
@@ -417,6 +409,22 @@ void	execute_export(t_list *cmd, t_list **env)
 			export_helper(var, ptr, tmp, env);
 		var.j++;
 	}
+}
+
+void	execute_export(t_list *cmd, t_list **env)
+{
+	t_cmds	*ptr;
+	t_bvars	var;
+	t_list	*tmp;
+	int		fd;
+
+	ptr = (t_cmds *)cmd->content;
+	init_bvars(&var);
+	tmp = *env;
+	fd = dup(1);
+	if (export_and_files(ptr, env, fd))
+		return ;
+	export_while(ptr, var, tmp, env);
 	(dup2(fd, 1), close(fd));
 }
 
@@ -624,13 +632,15 @@ int	check_for_permission(t_cmds *ptr, int fd)
 	{
 		(write(2, "Minishell: cd: No such file or directory\n", 41), dup2(fd,
 				1));
-		(sigs.exit_s = 1, close(fd));
+		sigs.exit_s = 1;
+		close(fd);
 		return (1);
 	}
 	else if (access(ptr->option[0], X_OK))
 	{
 		(write(2, "Minishell: cd: Permission Denied!\n", 21), dup2(fd, 1));
-		(sigs.exit_s = 1, close(fd));
+		sigs.exit_s = 1;
+		close(fd);
 		return (1);
 	}
 	return (0);
@@ -643,7 +653,8 @@ int	find_home(t_list *tmp, int fd)
 	if (!tmp)
 	{
 		(write(2, "cd: HOME not set\n", 17), dup2(fd, 1));
-		(sigs.exit_s = 1, close(fd));
+		sigs.exit_s = 1;
+		close(fd);
 		return (1);
 	}
 	return (0);
@@ -717,7 +728,8 @@ int	exec_builtins_pt2(t_list *cmd, t_cmds *tmp, t_list **env, int fd)
 	{
 		if (tmp->files)
 			(open_files(tmp), dup_fds(tmp));
-		(sigs.exit_s = 0, free(tmp->cmd_name));
+		sigs.exit_s = 0;
+		free(tmp->cmd_name);
 		tmp->cmd_name = getcwd(NULL, 0);
 		if (!tmp->cmd_name)
 		{
