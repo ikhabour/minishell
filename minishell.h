@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:36:24 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/23 02:58:55 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/23 03:01:37 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,6 @@ int					ft_strcmp(char *s1, char *s2);
 int					check_pipe(char *input);
 int					check_redirec_op(char *input);
 int					check_line(char *input);
-// char				*skip_spaces(char *input);
 int					check_quotes(char *input);
 int					check_outside(int count);
 int					op_order(int *token);
@@ -167,7 +166,6 @@ int					is_outside(int flag, char c);
 char				**quote_delete(char **cmd, int *delimiter, int *arr);
 char				**expander(char **cmd, t_list *env, int *arr);
 int					ft_envcmp(char *s1, char *s2, int length);
-// t_list	**list_cmds(char **cmd_array, int *arr);
 t_list				*my_lstnew(void *content);
 void				my_lstadd_back(t_list **lst, t_list *new);
 void				split_print(char **input);
@@ -178,9 +176,6 @@ char				*ft_itoa(int num);
 void				sig_handler(void);
 void				handler(int sig);
 int					check_delimiter(char *cmd);
-// void				rl_replace_line(const char *text, int clear_undo);
-// static char			*ft_expand(char *cmd, t_list *env, int *i);
-// static char			*ft_expand_exit(char *cmd, t_list *env, int *i);
 int					ft_isalnum(int i);
 int					var_length(char *str);
 char				*env_value(char *str, t_list *env);
@@ -383,8 +378,6 @@ void				here_doc_helper1(t_heredoc *var, t_cmds *ptr);
 void				here_docc(t_list *commands, t_list *env);
 
 int					start_index_ex(char *cmd, int *i);
-// static char			*ft_expand_ex(char *cmd, t_list *env, int *i);
-// static char			*ft_expand_exit_ex(char *cmd, t_list *env, int *i);
 char				*expand_heredoc(char *input, t_list *env);
 void				display_prompt(t_list *files, int fd, t_list *env);
 
@@ -407,36 +400,38 @@ void				subpipes_helper(t_cmds *ptr, t_list *commands, t_list **env,
 void				subpipes_helper2(t_cmds *ptr, t_list *commands,
 						t_list **env, int *fd);
 
-void	*add_space_before(char *input, int i);
-void	*add_space_after(char *input, int i);
-char	*process_before(char *input, int i, int *flag);
-char	*process_after(char *input, int i, int *flag);
-char	*add_spaces(char *input);
+void				*add_space_before(char *input, int i);
+void				*add_space_after(char *input, int i);
+char				*process_before(char *input, int i, int *flag);
+char				*process_after(char *input, int i, int *flag);
+char				*add_spaces(char *input);
 
-char	*input_get(char *input);
-int	command_valid(t_vars var, char *input);
-void	my_allfree(char *input, t_vars var);
-void	close_free(t_vars var, char *input);
-int	executer(t_vars var, char *input, t_list **env);
+char				*input_get(char *input);
+int					command_valid(t_vars var, char *input);
+void				my_allfree(char *input, t_vars var);
+void				close_free(t_vars var, char *input);
+int					executer(t_vars var, char *input, t_list **env);
 
-int	valid_command(char **new);
-char	*signal_handler(char *input, t_list *commands);
-int	add_free(char *input);
-int	input_checker(char *input);
-int	order_checker(int *arr, char *input, char **cmd_array);
+int					valid_command(char **new);
+char				*signal_handler(char *input, t_list *commands);
+int					add_free(char *input);
+int					input_checker(char *input);
+int					order_checker(int *arr, char *input, char **cmd_array);
 
-int	is_space(char *str);
-void	free_files(t_list *files);
-void	my_free(t_list *commands);
-void	free_2d(char **array);
-void	free_all(char *input, char **array);
+int					is_space(char *str);
+void				free_files(t_list *files);
+void				my_free(t_list *commands);
+void				free_2d(char **array);
+void				free_all(char *input, char **array);
 
-char	*fill_line(char *input);
-int	name_arg(int *cmd_token, char **cmd_array, int i, int *flag);
-int	enum_token(int *cmd_token, char **cmd_array, int i, int *flag);
-int	*array_tokens(char **cmd_array, int elements);
-int	num_elemnts(char **cmd_array);
+char				*fill_line(char *input);
+int					name_arg(int *cmd_token, char **cmd_array, int i,
+						int *flag);
+int					enum_token(int *cmd_token, char **cmd_array, int i,
+						int *flag);
+int					*array_tokens(char **cmd_array, int elements);
+int					num_elemnts(char **cmd_array);
 
-int	space_before(char *input, int i);
-int	space_after(char *input, int i);
+int					space_before(char *input, int i);
+int					space_after(char *input, int i);
 #endif
