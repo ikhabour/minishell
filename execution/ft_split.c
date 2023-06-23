@@ -6,13 +6,13 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 17:53:10 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/20 16:04:14 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/23 01:49:45 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static	int	ft_len(const char *s, char c)
+static int	ft_len(const char *s, char c)
 {
 	int	i;
 	int	j;
@@ -29,7 +29,7 @@ static	int	ft_len(const char *s, char c)
 	return (j);
 }
 
-static	char	*my_strdup(const char *s, char c)
+static char	*my_strdup(const char *s, char c)
 {
 	char	*pointer;
 	size_t	i;
@@ -52,7 +52,7 @@ static	char	*my_strdup(const char *s, char c)
 	return (pointer);
 }
 
-static	int	stringcount(const char *s, char c)
+static int	stringcount(const char *s, char c)
 {
 	int	i;
 	int	j;
@@ -71,14 +71,14 @@ static	int	stringcount(const char *s, char c)
 	return (j);
 }
 
-static	void	ft_free(char **str, int j)
+static void	ft_free(char **str, int j)
 {
 	while (str[j])
 	{
-		free (str[j]);
+		free(str[j]);
 		j--;
 	}
-	free (str);
+	free(str);
 	return ;
 }
 

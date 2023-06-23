@@ -6,251 +6,78 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 21:48:37 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/06/21 22:04:59 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/23 02:16:25 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	count_len(t_list **env)
+void	cmd_checks(t_cmds *ptr)
 {
-	int i;
-	t_list *tmp;
-
-	i = 0;
-	tmp = *env;
-	while (tmp)
-	{
-		i++;
-		tmp = tmp->next;
-	}
-	return (i);
-
+	if (!open_files(ptr))
+		exit(1);
+	dup_fds(ptr);
+	if (!ptr->cmd_name)
+		exit(0);
+	if (ptr->cmd_name[0] == '.' && access(ptr->cmd_name, X_OK))
+		msg_exit(ptr->cmd_name, ": No such file or directory\n", 127);
 }
 
-char	**env_to_array(t_list **env)
+void	cmds_while(t_exec *vars, char **paths, t_cmds *ptr)
 {
-	t_list *tmp;
-	int i;
-	char **array;
-
-	tmp = *env;
-	i = count_len(env);
-	array = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (tmp)
+	while (paths[vars->i])
 	{
-		array[i++] = ft_strdupp(tmp->content);
-		tmp = tmp->next;
-	}
-	array[i] = NULL;
-	return (array);
-
-}
-
-char **get_path(char **envp)
-{
-	int i;
-	char **paths;
-	char *save;
-
-	i = 0;
-	while (envp[i] && ft_strncmpp(envp[i], "PATH=", 5))
-		i++;
-	if (!envp[i])
-		return NULL;
-	paths = ft_split(envp[i] + 5, ':');
-	i = 0;
-	while (paths[i])
-	{
-		save = paths[i];
-		paths[i] = ft_strjoinn(paths[i], "/");
-		free(save);
-		i++;
-	}
-	return (paths);
-	
-}
-
-int get_len(char **arg)
-{
-	int i;
-
-	i = 0;
-	while (arg[i])
-		i++;
-	return (i);
-}
-
-void	msg_exit(char *msg, char *msg1, int status)
-{
-	write(2, msg, ft_strlenn(msg));
-	write(2, msg1, ft_strlenn(msg1));
-	exit(status);
-}
-
-int	open_file_type(t_filetype *files)
-{
-	if (!access(files->file_name, F_OK) && (access(files->file_name, W_OK) || access(files->file_name, R_OK)))
-	{
-		write(2, "Minishell : ", 12);
-		write(2, files->file_name, ft_strlenn(files->file_name));
-		write(2, ": Permission denied\n", 20);
-		sigs.exit_s = 1;
-		return (0);
-	}
-	if (!ft_strcmp(files->type, "INPUT"))
-		files->fd = open(files->file_name, O_RDONLY, 0644);
-	else if (!ft_strcmp(files->type, "OUTPUT"))
-		files->fd = open(files->file_name, O_CREAT | O_TRUNC | O_RDWR, 0644);
-	else if (!ft_strcmp(files->type, "APPEND"))
-		files->fd = open(files->file_name, O_CREAT | O_APPEND | O_RDWR, 0644);
-	else if (!ft_strcmp(files->type, "DELIMITER"))
-		return (1);
-	else
-		files->fd = -1;
-	return (1);
-		
-}
-
-int	open_files(t_cmds *ptr)
-{
-	t_filetype *files;
-	t_list *tmp;
-
-	if (!ptr->files)
-		return (1);
-	tmp = ptr->files;
-	files = (t_filetype *)ptr->files->content;
-	while (tmp)
-	{
-		if (!open_file_type(files))
-			return (0);
-		tmp = tmp->next;
-		if (tmp)
-			files = (t_filetype *)tmp->content;
-	}
-	return (1);
-
-}
-
-void	dup_fds(t_cmds *ptr)
-{
-	t_filetype *files;
-	t_list *tmp;
-	int in;
-	int out;
-
-	if (!ptr->files)
-		return ;
-	files = (t_filetype *)ptr->files->content;
-	tmp = ptr->files;
-	in = -1;
-	out = -1;
-	while (tmp)
-	{
-		if (files->fd == -1)
-		{
-			msg_exit(files->file_name, ": No such file or directory\n", 1);
-			return ;
-		}
-		if (!ft_strcmp(files->type, "OUTPUT") || !ft_strcmp(files->type, "APPEND"))
-		{
-			out = files->fd;
-			// printf("out : %d\n", out);
-			// dup2(files->fd, 1);
-		}
-		else if(!ft_strcmp(files->type, "INPUT") || !ft_strcmp(files->type, "DELIMITER"))
-		{
-			in = files->fd;
-			// printf("in : %d\n", in);
-			// dup2(files->fd, 0);
-		}
-		tmp = tmp->next;
-		if (tmp)
-			files = (t_filetype *)tmp->content;
-	}
-	if (in != -1)
-	{
-		// printf("dkhel======in\n");
-		dup2(in, 0);
-	}
-	if (out != -1)
-	{
-		// printf("dkhel======out\n");
-		dup2(out, 1);
+		vars->f_path = paths[vars->i];
+		paths[vars->i] = ft_strjoinn(vars->f_path, ptr->cmd_name);
+		free(vars->f_path);
+		if (access(paths[vars->i], X_OK) == 0)
+			break ;
+		vars->i++;
 	}
 }
 
-int	has_redirection(char **args)
+void	cmds_free(char **envp, char **args)
 {
-	int i;
+	free_2d(envp);
+	if (args)
+		free_2d(args);
+}
 
-	i = 0;
-	while (args[i])
-	{
-		if (args[i][0] == '<' || args[i][0] == '>')
-			return (1);
-		i++;
-	}
-	return (0);
+void	cmd_helper(t_cmds *ptr, char **args, char **envp, t_exec vars)
+{
+	char	**paths;
+
+	cmd_checks(ptr);
+	(access(ptr->cmd_name, X_OK) == 0) && execve(ptr->cmd_name, args, envp);
+	paths = get_path(envp);
+	vars.i = 0;
+	if (!paths)
+		msg_exit(ptr->cmd_name, ": No such file or directory\n", 127);
+	cmds_while(&vars, paths, ptr);
+	execve(paths[vars.i], args, envp);
+	msg_exit(ptr->cmd_name, ": command not found\n", 127);
 }
 
 int	execute_commands(t_list *cmd, t_list **env, char **args)
 {
-	char **envp;
-	char **paths;
-	char *f_path;
-	int pid;
-	int i;
-	t_cmds *ptr;
+	char	**envp;
+	t_exec	vars;
+	t_cmds	*ptr;
 
 	ptr = (t_cmds *)cmd->content;
 	envp = env_to_array(env);
-	pid = fork();
-	sigs.process = 1;
+	vars.pid = fork();
+	g_sigs.process = 1;
 	if (has_redirection(args))
 	{
 		free_2d(args);
 		args = make_argv(cmd);
 	}
-	if (pid == -1)
+	if (vars.pid == -1)
 		(write(2, "Fork Failed\n", 12), exit(1));
-	else if (pid == 0)
-	{
-		if (!open_files(ptr))
-			exit(1);
-		dup_fds(ptr);
-		if (!ptr->cmd_name)
-			exit(0);
-		if (ptr->cmd_name[0] == '.' && access(ptr->cmd_name, X_OK))
-			msg_exit(ptr->cmd_name, ": No such file or directory\n", 127);
-		if (access(ptr->cmd_name, X_OK) == 0)
-			execve(ptr->cmd_name, args, envp);
-		paths = get_path(envp);
-		i = 0;
-		if (!paths)
-			msg_exit(ptr->cmd_name, ": No such file or directory\n", 127);
-		while (paths[i])
-		{
-			f_path = paths[i];
-			paths[i] = ft_strjoinn(f_path, ptr->cmd_name);
-			free(f_path);
-			if (access(paths[i], X_OK) == 0)
-				break ;	
-			i++;
-		}
-		execve(paths[i], args, envp);
-		msg_exit(ptr->cmd_name, ": command not found\n", 127);
-	}
+	else if (vars.pid == 0)
+		cmd_helper(ptr, args, envp, vars);
 	else
-	{
-		waitpid(pid, &i, 0);
-		sigs.exit_s = WEXITSTATUS(i);
-		sigs.process = 0;
-	}
-	free_2d(envp);
-	if (args)
-		free_2d(args);
-	return (1);
+		wait_process(&vars);
+	return (cmds_free(envp, args), 1);
 }

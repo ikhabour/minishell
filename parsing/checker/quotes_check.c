@@ -6,7 +6,7 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/27 09:36:19 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/21 22:04:59 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/23 02:03:04 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@ int	count_checker(int s_count, int d_count)
 	if (s_count % 2 != 0)
 	{
 		write(2, "syntax error, unclosed quotes\n", 31);
-		sigs.exit_s = 1;
+		g_sigs.exit_s = 1;
 		return (1);
 	}
 	if (d_count % 2 != 0)
 	{
 		write(2, "syntax error, unclosed quotes\n", 31);
-		sigs.exit_s = 1;
+		g_sigs.exit_s = 1;
 		return (1);
 	}
 	return (0);

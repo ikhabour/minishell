@@ -6,11 +6,11 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/20 04:34:54 by bhazzout          #+#    #+#             */
-/*   Updated: 2023/06/21 22:04:59 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/23 02:03:04 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../minishell.h"
 
 int	limiter_value(int *i, char *cmd)
 {
@@ -71,7 +71,7 @@ static char	*ft_expand_exit(char *cmd, int *i)
 
 	limiter = *(i) + 2;
 	str = ft_substr(cmd, limiter, 1000);
-	value = ft_itoa(sigs.exit_s);
+	value = ft_itoa(g_sigs.exit_s);
 	lineup = ft_substr(cmd, 0, *i);
 	full_str = ft_strjoin(lineup, value);
 	free(lineup);
@@ -81,14 +81,14 @@ static char	*ft_expand_exit(char *cmd, int *i)
 	free(value);
 	free(str);
 	if ((*i > 0) && cmd[*i] == '$')
-			*i -= 1;
+		*i -= 1;
 	return (cmd);
 }
 
 char	*expand_processor(char *cmd, t_list *env)
 {
-	int		i;
-	int		flag;
+	int	i;
+	int	flag;
 
 	i = 0;
 	flag = 0;
@@ -96,17 +96,17 @@ char	*expand_processor(char *cmd, t_list *env)
 	{
 		if (cmd[i] == '\'' || cmd[i] == '"')
 			flag = is_outside(flag, cmd[i]);
-		if (cmd[i] && cmd[i + 1] && cmd[i] == '$'
-			&& cmd[i + 1] == '$' && flag != 1)
+		if (cmd[i] && cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] == '$'
+			&& flag != 1)
 			i++;
-		if (cmd[i] && cmd[i + 1] && cmd[i] == '$'
-			&& cmd[i + 1] == '?' && flag != 1)
+		if (cmd[i] && cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] == '?'
+			&& flag != 1)
 			cmd = ft_expand_exit(cmd, (&i));
-		if (cmd[i] && cmd[i + 1] && cmd[i] == '$'
-			&& cmd[i + 1] != '?' && flag != 1)
+		if (cmd[i] && cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] != '?'
+			&& flag != 1)
 			cmd = ft_expand(cmd, env, (&i));
-		if (cmd[i] && cmd[i + 1] && cmd[i] == '$'
-			&& cmd[i + 1] == '?' && flag != 1)
+		if (cmd[i] && cmd[i + 1] && cmd[i] == '$' && cmd[i + 1] == '?'
+			&& flag != 1)
 			cmd = ft_expand_exit(cmd, (&i));
 		if (cmd[i])
 			i++;

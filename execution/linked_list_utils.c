@@ -6,13 +6,13 @@
 /*   By: ikhabour <ikhabour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 17:14:44 by ikhabour          #+#    #+#             */
-/*   Updated: 2023/05/20 16:05:09 by ikhabour         ###   ########.fr       */
+/*   Updated: 2023/06/23 01:50:51 by ikhabour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-t_list	*ft_lstneww(void	*content)
+t_list	*ft_lstneww(void *content)
 {
 	t_list	*first;
 
@@ -27,7 +27,7 @@ t_list	*ft_lstneww(void	*content)
 int	ft_lstsize(t_list *lst)
 {
 	t_list	*tmp;
-	int			i;
+	int		i;
 
 	tmp = lst;
 	i = 0;
